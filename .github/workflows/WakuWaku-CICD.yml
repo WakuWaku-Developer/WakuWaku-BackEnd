@@ -1,4 +1,4 @@
-name: WaakuWaku-CICD
+name: WakuWaku-CICD
 
 on:
   push:
