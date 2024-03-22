@@ -2,7 +2,6 @@
 
 # 이 배포 스크립트는 Spring Boot 애플리케이션을 배포하기 위해 사용되며
 # 이전에 실행중인 프로세스를 중단하고 최신 버전의 JAR 파일을 실행하는 작업을 수행한다.
-[CD]
 REPOSITORY=/home/ubuntu/wakuwaku
 cd $REPOSITORY
 
