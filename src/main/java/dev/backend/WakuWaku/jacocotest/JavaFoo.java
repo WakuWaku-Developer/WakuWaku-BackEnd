@@ -8,7 +8,7 @@ public class JavaFoo {
             case "hello":
                 return "spring";
             default:
-                return "no one";
+                return "no";
         }
     }
 
