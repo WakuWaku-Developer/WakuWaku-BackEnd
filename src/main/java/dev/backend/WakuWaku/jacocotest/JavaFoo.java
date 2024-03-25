@@ -6,7 +6,7 @@ public class JavaFoo {
             case "펭":
                 return "하";
             case "hello":
-                return "world";
+                return "spring";
             default:
                 return "no one";
         }
