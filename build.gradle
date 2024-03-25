@@ -2,6 +2,9 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.4'
+
+	id 'jacoco'
+	id "org.sonarqube" version "4.4.1.3373"
 }
 
 group = 'dev.back-end'
@@ -36,6 +39,109 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	jacoco {
+		destinationFile= layout.buildDirectory.file("jacoco/jacoco.exec").get().asFile
+	}
+
+	finalizedBy 'jacocoTestReport'
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+// 측정 안하고 싶은 패턴
+def jacocoExcludePatterns = [
+		"**/*Application*",
+		"**/*Config*",
+		"**/*Exception*",
+		"**/*Request*",
+		"**/*Response*",
+		"**/*Dto*",
+		"**/test/**",
+		"**/resources/**",
+		"**/domain/**",
+		"**/annotation/**",
+		"**/constant/**",
+		"**/parser/**"
+]
+
+//테스트 커버리지 규칙 정의하고 검증
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			enabled = true
+
+			element = 'CLASS'
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.10
+			}
+
+			limit {
+				counter = 'METHOD'
+				value = 'COVEREDRATIO'
+				minimum = 0.10
+			}
+
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.10
+			}
+
+			excludes = jacocoExcludePatterns
+		}
+	}
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+		html.required.set(true)
+		xml.required.set(true)
+		csv.required.set(true)
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, excludes: jacocoExcludePatterns)
+				})
+		)
+	}
+
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+tasks.register('testCoverage', Test) {
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	dependsOn(':test',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "AK-47-GrandMother_WakuWaku-Backend"
+		property "sonar.organization", "wakuwaku"
+		property "sonar.host.url", "https://sonarcloud.io"
+		property 'sonar.sources', 'src'
+		property 'sonar.language', 'java'
+		property 'sonar.sourceEncoding', 'UTF-8'
+		property 'sonar.test.exclusions', jacocoExcludePatterns.join(',')
+		property 'sonar.test.inclusions', '**/*Test.java'
+		property 'sonar.java.coveragePlugin', 'jacoco'
+		property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
+	}
 }
 
 jar {
