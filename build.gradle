@@ -77,19 +77,19 @@ jacocoTestCoverageVerification {
 			limit {
 				counter = 'LINE'
 				value = 'COVEREDRATIO'
-				minimum = 0.10
+				minimum = 0.50
 			}
 
 			limit {
 				counter = 'METHOD'
 				value = 'COVEREDRATIO'
-				minimum = 0.10
+				minimum = 0.50
 			}
 
 			limit {
 				counter = 'BRANCH'
 				value = 'COVEREDRATIO'
-				minimum = 0.10
+				minimum = 0.50
 			}
 
 			excludes = jacocoExcludePatterns
