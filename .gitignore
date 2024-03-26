@@ -302,4 +302,6 @@ gradle-app.setting
 # ---------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------
 
-!src/main/resources/static/dist
+!src/main/resources/static/dist/*.css
+!src/main/resources/static/dist/*.js
+!src/main/resources/static/dist/*.html
