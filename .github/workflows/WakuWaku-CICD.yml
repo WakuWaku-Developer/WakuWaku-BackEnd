@@ -52,8 +52,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonar --info --stacktrace
 
-      - name: Build and Test with Gradle Wrapper
-        run: ./gradlew build test
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      # API 문서를 생성하고 적절한 위치로 복사
+      - name: Generate and Copy OpenAPI Documentation
+        run: ./gradlew copyOasToSwagger
 
       # zip 파일을 생성
       - name: Make Zip File
