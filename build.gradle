@@ -5,6 +5,8 @@ plugins {
 
 	id 'jacoco'
 	id "org.sonarqube" version "4.4.1.3373"
+
+	id 'com.epages.restdocs-api-spec' version '0.18.2'
 }
 
 group = 'dev.back-end'
@@ -35,6 +37,9 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	testImplementation('com.epages:restdocs-api-spec-mockmvc:0.18.2') //2.2
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 tasks.named('test') {
@@ -146,4 +151,29 @@ sonar {
 
 jar {
 	enabled = false
+}
+
+openapi3 {
+	setServers([
+			{
+				url = "http://localhost:8080"
+				description = "local server"
+			},
+			{
+				url = "http://15.164.249.106:8080"
+				description = "Develop server"
+			}
+	])
+	title = "WakuWaku API Document"
+	description = "WakuWaku API 명세서입니다."
+	version = "0.1.0"
+	format = "yaml"
+}
+
+tasks.register('copyOasToSwagger', Copy) {
+	delete "src/main/resources/static/swagger-ui/openapi3.yaml"
+
+	from layout.buildDirectory.dir("/api-spec/openapi3.yaml").get().asFile
+	into "src/main/resources/static/swagger-ui/"
+	dependsOn "openapi3"
 }
