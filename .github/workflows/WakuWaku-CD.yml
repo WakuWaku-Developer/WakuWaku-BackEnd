@@ -1,9 +1,7 @@
-name: WakuWaku-CICD
+name: WakuWaku-CD
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
 env:
@@ -32,39 +30,19 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       # 다운로드한 종속성 캐싱을 포함하여 GiHub 작업에서 최적의 사용을 위해 Gradle을 구성한다.
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-        with:
-          arguments: check
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
-
-      - name: SonarCloud scan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --info --stacktrace
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build
-
-      # API 문서를 생성하고 적절한 위치로 복사
-      - name: Generate and Copy OpenAPI Documentation
-        run: ./gradlew copyOasToSwagger
 
       # zip 파일을 생성
       - name: Make Zip File
         run: zip -qq -r ./$GITHUB_SHA.zip .
         shell: bash
 
-      # ACCESS TOKEN을 통해 AWS 계정의 서비스에 접근할수 있는 권한을 얻음
+      # ACCESS TOKEN을 통해 AWS 계정의 서비스에 접근할 수 있는 권한을 얻음
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -83,23 +61,3 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name $CODE_DEPLOY_DEPLOYMENT_GROUP_NAME
           --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
-
-  # Java 프로젝트의 종속성 그래프를 생성하고 이를 GitHub에 제출하여 Dependabot 경고를 활성화하는 데 사용
-  # Dependabot은 프로젝트의 종속성에서 보안 취약점이 발견될 경우 자동으로 경고를 보내주는 도구
-  dependency-submission:
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # 종속성 그래프를 생성하고 제출하여 모든 프로젝트 종속성에 대해 dependencyabot 경고를 활성화한다.
-      - name: Generate and submit dependency graph
-        uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5
