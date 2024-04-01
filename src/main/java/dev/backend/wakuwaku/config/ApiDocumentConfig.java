@@ -1,4 +1,4 @@
-package dev.backend.WakuWaku.config;
+package dev.backend.wakuwaku.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
