@@ -305,3 +305,6 @@ gradle-app.setting
 !src/main/resources/static/dist/*.css
 !src/main/resources/static/dist/*.js
 !src/main/resources/static/dist/*.html
+
+# SECRET-VALUE
+application-SECRET-VALUE.properties
