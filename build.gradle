@@ -2,6 +2,11 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.4'
+
+	id 'jacoco'
+	id "org.sonarqube" version "4.4.1.3373"
+
+	id 'com.epages.restdocs-api-spec' version '0.18.2'
 }
 
 group = 'dev.back-end'
@@ -23,7 +28,6 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -32,12 +36,143 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	testImplementation('com.epages:restdocs-api-spec-mockmvc:0.18.2') //2.2
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	jacoco {
+		destinationFile= layout.buildDirectory.file("jacoco/jacoco.exec").get().asFile
+	}
+
+	finalizedBy 'jacocoTestReport'
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+// 측정 안하고 싶은 패턴
+def jacocoExcludePatterns = [
+		"**/*Application*",
+		"**/*Config*",
+		"**/*Exception*",
+		"**/*Request*",
+		"**/*Response*",
+		"**/*Dto*",
+		"**/test/**",
+		"**/resources/**",
+		"**/domain/**",
+		"**/annotation/**",
+		"**/constant/**",
+		"**/parser/**"
+]
+
+//테스트 커버리지 규칙 정의하고 검증
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			enabled = true
+
+			element = 'CLASS'
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.30
+			}
+
+			limit {
+				counter = 'METHOD'
+				value = 'COVEREDRATIO'
+				minimum = 0.30
+			}
+
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.30
+			}
+
+			excludes = jacocoExcludePatterns
+		}
+	}
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+		html.required.set(true)
+		xml.required.set(true)
+		csv.required.set(true)
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, excludes: jacocoExcludePatterns)
+				})
+		)
+	}
+
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+tasks.register('testCoverage', Test) {
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	dependsOn(':test',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "AK-47-GrandMother_WakuWaku-Backend"
+		property "sonar.organization", "wakuwaku"
+		property "sonar.host.url", "https://sonarcloud.io"
+		property 'sonar.sources', 'src'
+		property 'sonar.language', 'java'
+		property 'sonar.sourceEncoding', 'UTF-8'
+		property 'sonar.test.exclusions', jacocoExcludePatterns.join(',')
+		property 'sonar.test.inclusions', '**/*Test.java'
+		property 'sonar.java.coveragePlugin', 'jacoco'
+		property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
+	}
 }
 
 jar {
 	enabled = false
+}
+
+openapi3 {
+	setServers([
+			{
+				url = "http://localhost:8080"
+				description = "local server"
+			},
+			{
+				url = "http://15.164.249.106:8080"
+				description = "Develop server"
+			}
+	])
+	title = "WakuWaku API Document"
+	description = "WakuWaku API 명세서입니다."
+	version = "0.1.0"
+	format = "yaml"
+}
+
+tasks.register('copyOasToSwagger', Copy) {
+	delete "src/main/resources/static/swagger-ui/openapi3.yaml"
+
+	from layout.buildDirectory.dir("/api-spec/openapi3.yaml").get().asFile
+	into "src/main/resources/static/swagger-ui/"
+	dependsOn "openapi3"
 }

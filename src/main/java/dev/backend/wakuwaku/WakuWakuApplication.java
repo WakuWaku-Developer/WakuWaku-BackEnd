@@ -1,4 +1,4 @@
-package dev.backend.WakuWaku;
+package dev.backend.wakuwaku;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
