@@ -306,5 +306,8 @@ gradle-app.setting
 !src/main/resources/static/dist/*.js
 !src/main/resources/static/dist/*.html
 
-# SECRET-VALUE
-application-SECRET-VALUE.properties
+# yml
+application-API-KEY.yml
+application.yml
+application-dev.yml
+application-prod.yml
