@@ -25,6 +25,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: make application-prod.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-prod.yml
+          echo "${{ secrets.APPLICATION_PROD_YML }}" > ./application-prod.yml
+
+      - name: make application-API-KEY.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-API-KEY.yml
+          echo "${{ secrets.APPLICATION_API_KEY_YML }}" > ./application-API-KEY.yml
+
       # gradlew 파일에 실행 권한을 부여
       - name: Permission for gradlew
         run: chmod +x ./gradlew
