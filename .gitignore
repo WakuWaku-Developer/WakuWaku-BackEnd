@@ -308,6 +308,5 @@ gradle-app.setting
 
 # yml
 application-API-KEY.yml
-application.yml
 application-dev.yml
 application-prod.yml
