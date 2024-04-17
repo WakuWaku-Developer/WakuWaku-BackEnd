@@ -11,6 +11,4 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long>{
     // (select * from member_table where member_id =?)
     // 모든 레파지토리에서 주고받는 객체 = Entity
     Optional<MemberEntity> findByMemberId(String memberId);
-
-
 }
