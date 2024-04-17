@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface SpringDataJpaMemberRepository {
     Optional<MemberEntity> findByMemberEntity(String memberId);
+
 }
