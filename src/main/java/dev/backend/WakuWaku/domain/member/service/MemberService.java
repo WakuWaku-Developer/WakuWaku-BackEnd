@@ -11,11 +11,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+
+    // feat#12
     private final MemberRepository memberRepository;
+
+
 
     /*
     회원가입
      */
+
     public Long register(MemberEntity memberEntity) {
         // 중복 검사 로직
         validateDuplicateMember(memberEntity);
