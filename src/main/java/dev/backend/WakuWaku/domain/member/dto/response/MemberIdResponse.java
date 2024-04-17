@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MemberIdResponse {
-
     private Long id;
-
     public MemberIdResponse(Long id) {
         this.id = id;
     }

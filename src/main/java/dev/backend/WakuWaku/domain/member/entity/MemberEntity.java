@@ -40,6 +40,5 @@ public class MemberEntity extends StatusEntity {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
-
     }
 }

@@ -24,7 +24,6 @@ public class BaseEntity {
     @Column(name = "last_modified_date_time")
     private LocalDateTime lastModifiedDateTime;
 
-
     // 호출 될 때마다 최신화
     public BaseEntity() {
         this.createDateTime = LocalDateTime.now();

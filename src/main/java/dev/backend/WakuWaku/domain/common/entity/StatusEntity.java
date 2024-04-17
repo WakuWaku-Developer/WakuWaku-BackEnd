@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 public class StatusEntity extends BaseEntity {
-
     @Column(name = "check_status")
     private String checkStatus;
 }
