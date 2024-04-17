@@ -23,6 +23,7 @@ public class MemberUpdateRequest {
     public void setMemberName(String memberName) {
         this.memberName = memberName;
     }
+
     public MemberEntity toMemberEntity() {
         return MemberEntity.builder()
                 .memberName(this.memberName)

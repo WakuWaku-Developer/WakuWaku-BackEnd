@@ -16,6 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table (name = "member_table")
 public class MemberEntity extends StatusEntity {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

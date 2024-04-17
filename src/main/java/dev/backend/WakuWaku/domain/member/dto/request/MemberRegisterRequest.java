@@ -19,6 +19,7 @@ public class MemberRegisterRequest {
         this.memberName = memberName;
     }
 
+
     public MemberEntity toMemberEntity() {
         return MemberEntity.builder()
                 .memberName(this.memberName)
