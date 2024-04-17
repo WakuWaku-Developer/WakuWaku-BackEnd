@@ -10,7 +10,6 @@ public class MemberDTO {
     private String memberId;
     private String memberName;
     private String memberEmail;
-
     public MemberEntity toMemberEntity() {
         return MemberEntity.builder()
                 .memberId(memberId)

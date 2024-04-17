@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 public class MemberLoginRequest {
     private String memberId;
     private String password;
-
     public MemberLoginRequest(String memberId, String password) {
         this.memberId = memberId;
         this.password = password;

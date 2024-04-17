@@ -15,7 +15,6 @@ public class MemberUpdateRequest {
         this.memberPassword = memberPassword;
         this.memberName = memberName;
     }
-
     public void setMemberPassword(String memberPassword) {
         this.memberPassword = memberPassword;
     }
