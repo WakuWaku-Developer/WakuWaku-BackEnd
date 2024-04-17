@@ -15,8 +15,6 @@ public class MemberService {
     // feat#12
     private final MemberRepository memberRepository;
 
-
-
     /*
     회원가입
      */
