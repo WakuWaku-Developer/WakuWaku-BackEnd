@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class MemberUpdateRequest {
     private String memberPassword;
     private String memberName;
+//
 
     public MemberUpdateRequest(String memberPassword, String memberName)
     {

@@ -27,6 +27,7 @@ public class MemberController {
 
 
     /*
+
     기능: 회원가입
     ※ @Valid: 유효성 검사 거쳐야 함 / @RequestBody: 요청 body 데이터 자바 객체로 변환
      */
