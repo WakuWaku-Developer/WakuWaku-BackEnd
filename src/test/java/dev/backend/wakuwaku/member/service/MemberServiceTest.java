@@ -4,9 +4,11 @@ import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.MemberEntity;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +26,11 @@ class MemberServiceTest {
     @InjectMocks
     private MemberService memberService;
 
-    /*
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-    }*/
+    }
 
 
 
