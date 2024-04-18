@@ -13,6 +13,7 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
 
+
     /*
     회원가입
      */
@@ -35,6 +36,7 @@ public class MemberService {
     로그인
      */
     public Long login(String memberId, String password) {
+
         MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
                 .orElseThrow(
                         () -> new IllegalStateException()
@@ -45,6 +47,7 @@ public class MemberService {
         }
 
         return memberEntity.getId();
+
     }
 
 
