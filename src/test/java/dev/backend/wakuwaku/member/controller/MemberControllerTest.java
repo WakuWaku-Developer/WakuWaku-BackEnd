@@ -148,7 +148,6 @@ public class MemberControllerTest {
         verify(memberService, times(1)).deleteById(memberIdToDelete);
     }
 
-
     @Test
     @DisplayName("회원 리스트")
     public void testFindAll() throws Exception {
