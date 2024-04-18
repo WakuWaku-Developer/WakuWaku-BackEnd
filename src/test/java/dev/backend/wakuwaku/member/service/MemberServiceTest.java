@@ -111,6 +111,7 @@ class MemberServiceTest {
         verify(memberRepository, times(1)).save(any(MemberEntity.class));
     }
 
+
     @Test
     void testDeleteById() {
         Long id = 1L;
