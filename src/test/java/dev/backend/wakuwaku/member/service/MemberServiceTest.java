@@ -30,35 +30,73 @@ class MemberServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+//    @Test
+//    void testRegister() {
+//
+//        MemberEntity memberEntity = new MemberEntity();
+//        memberEntity.setMemberId("testMember");
+//        when(memberRepository.findByMemberId(anyString())).thenReturn(Optional.empty());
+//        when(memberRepository.save(any())).thenReturn(memberEntity);
+//
+//        Long memberId = memberService.register(memberEntity);
+//
+//        assertNotNull(memberId); // memberId가 null이 아닌지 확인
+//        verify(memberRepository, times(1)).findByMemberId(anyString());
+//        verify(memberRepository, times(1)).save(any(MemberEntity.class));
+//    }
     @Test
     void testRegister() {
+        // 테스트에 필요한 MemberEntity 생성
         MemberEntity memberEntity = new MemberEntity();
         memberEntity.setMemberId("testMember");
-        when(memberRepository.findByMemberId(anyString())).thenReturn(Optional.empty());
-        when(memberRepository.save(any())).thenReturn(memberEntity);
 
+        // 중복 회원이 없는 상황 가정
+        when(memberRepository.findByMemberId(anyString())).thenReturn(Optional.empty());
+
+        // 저장된 MemberEntity의 아이디를 반환하도록 설정
+        when(memberRepository.save(any())).thenAnswer(invocation -> {
+            MemberEntity savedMember = invocation.getArgument(0);
+            savedMember.setId(1L); // 임의의 아이디 설정
+            return savedMember;
+        });
+
+        // register 메서드 호출 및 반환 값 받기
         Long memberId = memberService.register(memberEntity);
 
+        // 반환된 memberId가 null이 아닌지 확인
         assertNotNull(memberId);
+
+        // memberRepository의 메서드가 호출되었는지 확인
         verify(memberRepository, times(1)).findByMemberId(anyString());
         verify(memberRepository, times(1)).save(any(MemberEntity.class));
     }
 
     @Test
     void testLogin() {
-        String memberId = "testMember";
-        String password = "password";
+
+        // 테스트 변수
+        String memberId = "testId";
+        String password = "testPw";
+
+        // 회원 정보를 담은 MemberEntity 생성
         MemberEntity memberEntity = new MemberEntity();
         memberEntity.setMemberId(memberId);
         memberEntity.setMemberPassword(password);
+        memberEntity.setId(1L);
 
+        // 회원 아이디로 조회 시 해당 회원이 존재하는 상황을 가정
         when(memberRepository.findByMemberId(anyString())).thenReturn(Optional.of(memberEntity));
 
+        // 로그인 메서드 호출 및 반환 값 받기
         Long foundId = memberService.login(memberId, password);
 
+        // founId가 null이 아닌지 확인
         assertNotNull(foundId);
+
+        // memberRepository의 findByMemberId 메서드가 호출됐는지 확인
         verify(memberRepository, times(1)).findByMemberId(anyString());
     }
+
 
     @Test
     void testFindAll() {
