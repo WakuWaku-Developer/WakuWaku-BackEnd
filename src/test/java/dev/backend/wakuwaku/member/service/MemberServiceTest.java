@@ -54,6 +54,7 @@ class MemberServiceTest {
         // 반환된 memberId가 null이 아닌지 확인
         assertNotNull(memberId);
 
+
         // memberRepository의 메서드가 호출되었는지 확인
         verify(memberRepository, times(1)).findByMemberId(anyString());
         verify(memberRepository, times(1)).save(any(MemberEntity.class));
