@@ -47,7 +47,6 @@ public class MemberService {
         return memberEntity.getId();
     }
 
-
     /*
     회원 리스트
      */

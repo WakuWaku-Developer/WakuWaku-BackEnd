@@ -16,6 +16,7 @@ spring:
 #        format_sql: 'true'
 # 이걸로 하면 레파지토리 테스트가 안 됨 h2로 해야 됨
 
+
   jpa:
     database: h2
     properties:
