@@ -31,6 +31,7 @@ public class MemberRepositoryTest {
         // 그 외 필요한 필드들을 확인할 수 있음
     }
 
+
     @Test
     public void testFindByMemberId_NonExistingMemberId() {
         // Given
