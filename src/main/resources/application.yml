@@ -22,7 +22,6 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         hbm2ddl.auto: update
-
  # 수정사항
 
 
