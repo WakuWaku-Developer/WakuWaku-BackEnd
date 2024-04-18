@@ -131,6 +131,7 @@ public class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 // 업데이트된 회원 엔터티의 내용을 확인하기 위해 반환된 JSON의 필드와 값 확인
                 .andExpect(jsonPath("$.id").exists());
+
     }
 
     @Test
