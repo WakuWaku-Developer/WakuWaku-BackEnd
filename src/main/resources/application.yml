@@ -22,7 +22,8 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         hbm2ddl.auto: update
- # 수정사항 -> 테스트 코드
+
+ # 수정사항
 
 
     # 데이터 소스 초기화를 지연시키는 옵션
