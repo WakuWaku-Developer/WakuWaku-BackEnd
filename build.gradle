@@ -68,6 +68,7 @@ def jacocoExcludePatterns = [
 		"**/domain/**/entity/**",
 		"**/annotation/**",
 		"**/constant/**"
+//		"**/parser/**"
 ]
 
 //테스트 커버리지 규칙 정의하고 검증
