@@ -1,27 +1,27 @@
 package dev.backend.wakuwaku.domain.likes.dto;
 
 
-import dev.backend.wakuwaku.domain.member.entity.MemberEntity;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
+import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.common.entity.StatusEntity;
-import dev.backend.wakuwaku.domain.likes.entity.LikesEntity;
-import dev.backend.wakuwaku.domain.restaurant.entity.RestaurantEntity;
+import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class LikesDTO extends StatusEntity {
+public class LikesDto extends StatusEntity {
     private long id;
 
-    private MemberEntity memberId;
+    private Member memberId;
 
-    private RestaurantEntity restaurantId;
+    private Restaurant restaurantId;
     private String likesStatus;
 
 
-    public LikesEntity toLikesEntity(){
-        return LikesEntity.builder()
+    public Likes toLikesEntity(){
+        return Likes.builder()
                 .memberId(memberId)
                 .restaurantId(restaurantId)
                 .likesStatus(likesStatus)

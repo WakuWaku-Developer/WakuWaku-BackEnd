@@ -1,7 +1,9 @@
 package dev.backend.wakuwaku.domain.restaurant.repository;
 
-import dev.backend.wakuwaku.domain.restaurant.entity.RestaurantEntity;
+import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface RestaurantRepository extends JpaRepository<RestaurantEntity, Long> {
+@Repository
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 }

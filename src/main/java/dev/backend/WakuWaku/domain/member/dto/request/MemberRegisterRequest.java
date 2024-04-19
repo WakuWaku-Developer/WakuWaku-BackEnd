@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.member.dto.request;
 
-import dev.backend.wakuwaku.domain.member.entity.MemberEntity;
+import dev.backend.wakuwaku.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +19,8 @@ public class MemberRegisterRequest {
         this.memberName = memberName;
     }
 
-    public MemberEntity toMemberEntity() {
-        return MemberEntity.builder()
+    public Member toMemberEntity() {
+        return Member.builder()
                 .memberName(this.memberName)
                 .memberId(this.memberId)
                 .memberPassword(this.memberPassword)

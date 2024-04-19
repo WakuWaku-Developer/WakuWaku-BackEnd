@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.likes.dto.response;
 
-import dev.backend.wakuwaku.domain.likes.entity.LikesEntity;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,10 +11,10 @@ public class GetLikesResponse {
     private Long restaurantId;
     private String likesStatus;
 
-    public GetLikesResponse(LikesEntity likesEntity){
-        this.memberId = likesEntity.getMemberId().getId();
-        this.restaurantId = likesEntity.getRestaurantId().getId();
-        this.likesStatus = likesEntity.getLikesStatus();
+    public GetLikesResponse(Likes likes){
+        this.memberId = likes.getMemberId().getId();
+        this.restaurantId = likes.getRestaurantId().getId();
+        this.likesStatus = likes.getLikesStatus();
     }
 
 }

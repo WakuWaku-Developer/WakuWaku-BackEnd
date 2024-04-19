@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table (name = "member_table")
-public class MemberEntity extends StatusEntity {
+public class Member extends StatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +33,7 @@ public class MemberEntity extends StatusEntity {
     private String memberName;
 
     @Builder
-    public MemberEntity(String memberId, String memberEmail, String memberPassword, String memberName) {
+    public Member(String memberId, String memberEmail, String memberPassword, String memberName) {
         this.memberId = memberId;
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
