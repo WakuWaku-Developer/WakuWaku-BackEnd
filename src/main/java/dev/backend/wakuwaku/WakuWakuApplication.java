@@ -9,5 +9,4 @@ public class WakuWakuApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WakuWakuApplication.class, args);
 	}
-
 }

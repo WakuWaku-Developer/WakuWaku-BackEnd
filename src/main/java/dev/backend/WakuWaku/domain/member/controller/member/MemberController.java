@@ -5,7 +5,7 @@ import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponse;
 import dev.backend.wakuwaku.domain.member.dto.response.MemberIdResponse;
-import dev.backend.wakuwaku.domain.member.entity.MemberEntity;
+import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +18,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("wakuwaku/v1/members")
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
-
     private final MemberService memberService;
 
+  
     /*
-    feat:#11
     기능: 회원가입
     ※ @Valid: 유효성 검사 거쳐야 함 / @RequestBody: 요청 body 데이터 자바 객체로 변환
      */
@@ -40,7 +39,7 @@ public class MemberController {
 
     @GetMapping("/{id}")
     public ResponseEntity<GetMemberResponse> findById(@PathVariable("id") Long id) {
-        MemberEntity memberEntity = memberService.findById(id);
+        Member memberEntity = memberService.findById(id);
 
         return ResponseEntity.ok().body(new GetMemberResponse(memberEntity));
     }
@@ -61,7 +60,7 @@ public class MemberController {
 
     @GetMapping("/list")
     public ResponseEntity<List<GetMemberResponse>> findAll() {
-        List<MemberEntity> memberList = memberService.findAll();
+        List<Member> memberList = memberService.findAll();
 
         return ResponseEntity.ok().body(memberList.stream()
                 .map(GetMemberResponse::new)

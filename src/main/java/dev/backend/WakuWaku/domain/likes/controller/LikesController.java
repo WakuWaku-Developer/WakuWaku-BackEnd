@@ -1,27 +1,21 @@
 package dev.backend.wakuwaku.domain.likes.controller;
 
-
 import dev.backend.wakuwaku.domain.likes.dto.request.LikesPushRequest;
 import dev.backend.wakuwaku.domain.likes.dto.response.GetLikesResponse;
-import dev.backend.wakuwaku.domain.likes.entity.LikesEntity;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-
 @RestController
-@RequestMapping("/likes")
+@RequestMapping("wakuwaku/v1/likes")
 @RequiredArgsConstructor
 @Slf4j
 public class LikesController {
-
-    @Autowired
     private final LikesService likesService;
 
     // 좋아요 추가 또는 제거
@@ -45,7 +39,7 @@ public class LikesController {
 
     @GetMapping("/list")
     public ResponseEntity<List<GetLikesResponse>> findAll(){
-        List<LikesEntity> likesList = likesService.findAll();
+        List<Likes> likesList = likesService.findAll();
 
         return ResponseEntity.ok().body(likesList.stream()
                 .map(GetLikesResponse::new)
