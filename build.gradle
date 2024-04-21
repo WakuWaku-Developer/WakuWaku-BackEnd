@@ -62,8 +62,8 @@ def jacocoExcludePatterns = [
 		"**/test/**",
 		"**/resources/**",
 		"**/dto/**",
-		"**/domain/**/entity/**",
-		"**/domain/*Entity*",
+		"**/entity/**",
+		"**/*Entity*",
 		"**/annotation/**",
 		"**/constant/**"
 ]
