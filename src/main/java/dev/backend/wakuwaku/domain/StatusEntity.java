@@ -1,4 +1,4 @@
-package dev.backend.wakuwaku;
+package dev.backend.wakuwaku.domain;
 
 
 import jakarta.persistence.Column;
