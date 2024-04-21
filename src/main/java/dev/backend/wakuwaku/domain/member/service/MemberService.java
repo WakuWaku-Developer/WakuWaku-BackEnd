@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.member.service;
 
-import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequestDto;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +70,7 @@ public class MemberService {
     /*
     회원 정보 수정
      */
-    public Long update(Long id, MemberUpdateRequestDto memberUpdateRequest) {
+    public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member memberEntity = memberRepository.findById(id)
                 .orElseThrow(
                         () -> new IllegalStateException()

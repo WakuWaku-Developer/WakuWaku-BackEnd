@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GetMemberResponseDto {
+public class GetMemberResponse {
 
     private String memberId;
     private String memberEmail;
     private String memberName;
 
-    public GetMemberResponseDto(Member memberEntity) {
+    public GetMemberResponse(Member memberEntity) {
         this.memberId = memberEntity.getMemberId();
         this.memberEmail = memberEntity.getMemberEmail();
         this.memberName = memberEntity.getMemberName();

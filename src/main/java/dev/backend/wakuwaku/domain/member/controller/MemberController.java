@@ -1,11 +1,11 @@
 package dev.backend.wakuwaku.domain.member.controller;
 
 
-import dev.backend.wakuwaku.domain.member.dto.request.MemberLoginRequestDto;
-import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequestDto;
-import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequestDto;
-import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponseDto;
-import dev.backend.wakuwaku.domain.member.dto.response.MemberIdResponseDto;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberLoginRequest;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
+import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponse;
+import dev.backend.wakuwaku.domain.member.dto.response.MemberIdResponse;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -30,25 +30,25 @@ public class MemberController {
     ※ @Valid: 유효성 검사 거쳐야 함 / @RequestBody: 요청 body 데이터 자바 객체로 변환
      */
     @PostMapping("/save")
-    public ResponseEntity<MemberIdResponseDto> register(@RequestBody MemberRegisterRequestDto registerRequest) {
+    public ResponseEntity<MemberIdResponse> register(@RequestBody MemberRegisterRequest registerRequest) {
         Long id = memberService.register(registerRequest.toMemberEntity());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MemberIdResponseDto(id));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MemberIdResponse(id));
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetMemberResponseDto> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<GetMemberResponse> findById(@PathVariable("id") Long id) {
         Member memberEntity = memberService.findById(id);
 
-        return ResponseEntity.ok().body(new GetMemberResponseDto(memberEntity));
+        return ResponseEntity.ok().body(new GetMemberResponse(memberEntity));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MemberIdResponseDto> update(@PathVariable("id") Long id, @RequestBody MemberUpdateRequestDto memberUpdateRequest) {
+    public ResponseEntity<MemberIdResponse> update(@PathVariable("id") Long id, @RequestBody MemberUpdateRequest memberUpdateRequest) {
         Long dbId = memberService.update(id, memberUpdateRequest);
 
-        return ResponseEntity.ok().body(new MemberIdResponseDto(dbId));
+        return ResponseEntity.ok().body(new MemberIdResponse(dbId));
     }
 
     @DeleteMapping("/{id}") // 삭제
@@ -59,19 +59,19 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<GetMemberResponseDto>> findAll() {
+    public ResponseEntity<List<GetMemberResponse>> findAll() {
         List<Member> memberList = memberService.findAll();
 
         return ResponseEntity.ok().body(memberList.stream()
-                .map(GetMemberResponseDto::new)
+                .map(GetMemberResponse::new)
                 .collect(Collectors.toList()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MemberIdResponseDto> login(@RequestBody MemberLoginRequestDto memberLoginRequest) {
+    public ResponseEntity<MemberIdResponse> login(@RequestBody MemberLoginRequest memberLoginRequest) {
         Long id = memberService.login(memberLoginRequest.getMemberId(), memberLoginRequest.getMemberPassword());
 
-        return ResponseEntity.ok().body(new MemberIdResponseDto(id));
+        return ResponseEntity.ok().body(new MemberIdResponse(id));
     }
 
 //    @GetMapping("/logout")

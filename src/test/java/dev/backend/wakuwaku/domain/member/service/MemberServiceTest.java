@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.member.service;
 
-import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequestDto;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,7 +105,7 @@ public class MemberServiceTest {
     @DisplayName("회원 정보 수정 서비스")
     void testUpdate() {
         Long id = 1L;
-        MemberUpdateRequestDto updateRequest = new MemberUpdateRequestDto();
+        MemberUpdateRequest updateRequest = new MemberUpdateRequest();
 
         updateRequest.setMemberPassword("newPassword");
         updateRequest.setMemberName("New Name");

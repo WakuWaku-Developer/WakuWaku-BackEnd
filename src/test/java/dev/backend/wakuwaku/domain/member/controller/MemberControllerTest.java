@@ -2,8 +2,8 @@ package dev.backend.wakuwaku.domain.member.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequestDto;
-import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequestDto;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ public class MemberControllerTest {
     @Test
     @DisplayName("회원 가입")
     public void testRegister() throws Exception {
-        MemberRegisterRequestDto registerRequest = new MemberRegisterRequestDto();
+        MemberRegisterRequest registerRequest = new MemberRegisterRequest();
         // 아이디, 비밀번호 설정 - 테스트
         registerRequest.setMemberId("testMemberId");
         registerRequest.setMemberPassword("testMemberPassword");
@@ -101,7 +101,7 @@ public class MemberControllerTest {
         String newPassword = "newPassword123";
         String newName = "newName123";
         // PUT 요청에 사용할 MemberUpdateRequest 객체 생성
-        MemberUpdateRequestDto memberUpdateRequest = new MemberUpdateRequestDto();
+        MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest();
         memberUpdateRequest.setMemberPassword(newPassword);
         memberUpdateRequest.setMemberName(newName);
         // memberService.findById() 메서드 호출 -> 반환값 설정

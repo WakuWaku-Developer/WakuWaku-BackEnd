@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberRegisterRequestDto {
+public class MemberRegisterRequest {
 
     private String memberId;
     private String memberPassword;
     private String memeberEmail;
     private String memberName;
 
-    public MemberRegisterRequestDto(String memberId, String memberPassword, String memeberEmail, String memberName){
+    public MemberRegisterRequest(String memberId, String memberPassword, String memeberEmail, String memberName){
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memeberEmail = memeberEmail;
