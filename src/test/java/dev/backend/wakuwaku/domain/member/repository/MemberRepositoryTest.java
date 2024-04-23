@@ -12,7 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class MemberRepositoryTest {
+class MemberRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
