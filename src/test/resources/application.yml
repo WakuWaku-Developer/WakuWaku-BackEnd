@@ -1,9 +1,14 @@
+# Test profile
 spring:
-  # 테스트 코드 실행하기 위해 h2 DB 사용
+  profiles:
+    active: API-KEY
+
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driverClassName: org.h2.Driver
+
   jpa:
-    database: h2
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-        hbm2ddl.auto: update
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      format_sql: true
