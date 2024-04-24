@@ -1,9 +1,9 @@
 package dev.backend.wakuwaku.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -12,22 +12,15 @@ import java.time.LocalDateTime;
  * '@EntityListeners(AuditingEntityListener.class)': BaseTimeEntiy 클래스에 Auditing 기능을 포함시킵니다.
  * '@CreatedDate': Entity가 생성되어 저장될 때 시간이 자동 저장됩니다.
  * '@LastModifiedDate': 조회한 Entity의 값을 변경할 때 시간이 자동 저장됩니다.
-
  */
-
 @Getter
-@Setter
 @MappedSuperclass
 public class BaseEntity {
+    @CreatedDate
+    protected LocalDateTime createDateTime;
 
-    @Column(name = "create_date_time")
-    private LocalDateTime createDateTime;
-
-    @Column(name = "last_modified_date_time")
-    private LocalDateTime lastModifiedDateTime;
-
-    // 호출 될 때마다 현재시간으로 최신화
-    public BaseEntity(){
-        this.lastModifiedDateTime = LocalDateTime.now();
-    }
+    @LastModifiedDate
+    protected LocalDateTime lastModifiedDateTime;
 }
+
+

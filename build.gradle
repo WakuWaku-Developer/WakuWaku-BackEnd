@@ -54,20 +54,32 @@ jacoco {
 	toolVersion = "0.8.11"
 }
 
-// 측정 안하고 싶은 패턴
+// JaCoCo 테스트 커버리지 측정 안하고 싶은 패턴
 def jacocoExcludePatterns = [
-		"**/*Application*",
+		'*.*Application*',
+		"*.*Config*",
+		"*.*Exception*",
+		"*.test.*",
+		"*.resources.*",
+		"*.dto.*",
+		"*.entity.*",
+		"*.*Entity*",
+		"*.annotation.*",
+		"*.constant.*"
+]
+
+// JaCoCo 보고서 + SonarCloud 관련 제외 패턴
+def sonarCloudExcludePatterns = [
+		'**/*Application*',
 		"**/*Config*",
 		"**/*Exception*",
-		"**/test/**",
-		"**/resources/**",
-		"**/dto/**",
-		"**/entity/**",
+		"**/test/**/*",
+		"**/resources/**/*",
+		"**/dto/**/*",
+		"**/entity/**/*",
 		"**/*Entity*",
-		"**/annotation/**",
-		"**/constant/**",
-		"**/dto/request/**",
-		"**/dto/response/**"
+		"**/annotation/**/*",
+		"**/constant/**/*"
 ]
 
 //테스트 커버리지 규칙 정의하고 검증
@@ -113,7 +125,8 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(
 				files(classDirectories.files.collect {
-					fileTree(dir: it, excludes: jacocoExcludePatterns)
+									  // JaCoCo 리포트 결과에 제외 시킬 패턴
+					fileTree(dir: it, excludes: sonarCloudExcludePatterns)
 				})
 		)
 	}
@@ -141,10 +154,11 @@ sonar {
 		property 'sonar.sources', 'src'
 		property 'sonar.language', 'java'
 		property 'sonar.sourceEncoding', 'UTF-8'
-		property 'sonar.test.exclusions', jacocoExcludePatterns.join(',')
+		property 'sonar.test.exclusions', sonarCloudExcludePatterns.join(',')
 		property 'sonar.test.inclusions', '**/*Test.java'
 		property 'sonar.java.coveragePlugin', 'jacoco'
 		property 'sonar.coverage.jacoco.xmlReportPaths', 'build/reports/jacoco/test/jacocoTestReport.xml'
+		property 'sonar.coverage.exclusions', sonarCloudExcludePatterns.join(',')
 	}
 }
 
