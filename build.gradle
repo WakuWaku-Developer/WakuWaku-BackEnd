@@ -125,7 +125,7 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(
 				files(classDirectories.files.collect {
-									  // JaCoCo 리포트 결과에 제외 시킬 패턴
+					// JaCoCo 리포트 결과에 제외 시킬 패턴
 					fileTree(dir: it, excludes: sonarCloudExcludePatterns)
 				})
 		)

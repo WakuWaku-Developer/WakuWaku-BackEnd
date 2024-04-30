@@ -15,10 +15,12 @@ import java.time.LocalDateTime;
  */
 @Getter
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
     @CreatedDate
     protected LocalDateTime createDateTime;
 
     @LastModifiedDate
     protected LocalDateTime lastModifiedDateTime;
 }
+
+

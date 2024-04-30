@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Getter
 @MappedSuperclass
-public class StatusEntity extends BaseEntity{
+public abstract class StatusEntity extends BaseEntity{
     protected String checkStatus;
 }
