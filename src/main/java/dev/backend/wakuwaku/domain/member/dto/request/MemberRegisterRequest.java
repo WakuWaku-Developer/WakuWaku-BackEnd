@@ -3,33 +3,26 @@ package dev.backend.wakuwaku.domain.member.dto.request;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class MemberRegisterRequest {
 
-    private String memberId;
+    private String memberEmail;
     private String memberPassword;
-    private String memeberEmail;
     private String memberName;
-
-    public MemberRegisterRequest(String memberId, String memberPassword, String memeberEmail, String memberName){
-        this.memberId = memberId;
-        this.memberPassword = memberPassword;
-        this.memeberEmail = memeberEmail;
-        this.memberName = memberName;
-    }
+    private String memberNickname;
+    private String memberBirth;
 
     public Member toMemberEntity(){
         return Member.builder()
-                .memberId(this.memberId)
+                .memberEmail(this.memberEmail)
                 .memberPassword(this.memberPassword)
-                .memberEmail(this.memeberEmail)
                 .memberName(this.memberName)
+                .memberNickname(this.memberNickname)
+                .memberBirth(this.memberBirth)
                 .build();
     }
-
-    public void setMemberId(String memberId) {this.memberId = memberId; }
-
-    public void setMemberPassword(String memberPassword) {this.memberPassword = memberPassword; }
 }

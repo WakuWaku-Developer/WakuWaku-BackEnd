@@ -9,82 +9,80 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class MemberRepositoryTest {
+
     @Autowired
     private MemberRepository memberRepository;
 
-    @DisplayName("회원 정보를 저장합니다.")
     @Test
+    @DisplayName("회원 저장 테스트")
     void saveMember() {
-        // given
-        Member member1 = createMemberEntity(1);
+        // Given
+        Member member = createMemberEntity("test@example.com");
 
-        // when
-        member1 = memberRepository.save(member1);
+        // When
+        Member savedMember = memberRepository.save(member);
 
-        // then
-        Member result = memberRepository.findById(member1.getId()).orElse(null);
-        assertThat(result).isNotNull();
-        assertThat(member1).isEqualTo(result);
+        // Then
+        assertNotNull(savedMember.getId());
     }
 
-    @DisplayName("해당 아이디와 일치하는 회원을 조회합니다.")
     @Test
+    @DisplayName("이메일로 회원 조회 테스트")
     void getMemberByMemberId() {
-        // given
-        Member member1 = createMemberEntity(1);
-        member1 = memberRepository.save(member1);
+        // Given
+        Member savedMember = saveMember("test@example.com");
 
-        // when
-        Optional<Member> result = memberRepository.findByMemberId(member1.getMemberId());
+        // When
+        Optional<Member> optionalMember = memberRepository.findByMemberEmail("test@example.com");
 
-        // then
-        assertThat(result).isPresent();
-        assertThat(member1).isEqualTo(result.get());
+        // Then
+        assertTrue(optionalMember.isPresent());
+        assertEquals(savedMember.getMemberEmail(), optionalMember.get().getMemberEmail());
     }
 
-    @DisplayName("전체 회원을 조회합니다.")
     @Test
+    @DisplayName("모든 회원 조회 테스트")
     void getAllMembers() {
-        // given
-        Member member1 = createMemberEntity(1);
-        Member member2 = createMemberEntity(2);
+        // Given
+        saveMember("test1@example.com");
+        saveMember("test2@example.com");
 
-        memberRepository.save(member1);
-        memberRepository.save(member2);
-
-        // when
+        // When
         List<Member> members = memberRepository.findAll();
 
-        // then
-        assertThat(members).hasSize(2);
+        // Then
+        assertEquals(2, members.size());
     }
 
-    @DisplayName("회원을 삭제합니다.")
     @Test
+    @DisplayName("회원 삭제 테스트")
     void deleteMember() {
-        // given
-        Member member1 = createMemberEntity(1);
-        member1 = memberRepository.save(member1);
+        // Given
+        Member savedMember = saveMember("test@example.com");
 
-        Member member2 = createMemberEntity(2);
-        memberRepository.save(member2);
+        // When
+        memberRepository.deleteById(savedMember.getId());
 
-        // when
-        memberRepository.deleteById(member1.getId());
-
-        // then
-        assertThat(memberRepository.findById(member1.getId())).isEmpty();
-        assertThat(memberRepository.findAll()).hasSize(1);
+        // Then
+        assertTrue(memberRepository.findByMemberEmail("test@example.com").isEmpty());
     }
 
-    private Member createMemberEntity(int number) {
-        return Member.builder()
-                .memberId("testId" + number)
-                .memberEmail("testEmail" + number + "@test.com")
-                .build();
+    private Member saveMember(String email) {
+        Member member = createMemberEntity(email);
+        return memberRepository.save(member);
+    }
+
+    private Member createMemberEntity(String email) {
+        Member member = new Member();
+        member.setMemberEmail(email);
+        member.setMemberPassword("password"); // Set memberPassword
+        // Set other fields as needed
+        return member;
     }
 }

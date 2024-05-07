@@ -1,5 +1,7 @@
 package dev.backend.wakuwaku.domain.member.service;
 
+import dev.backend.wakuwaku.domain.member.dto.request.MemberLoginRequest;
+import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
@@ -15,80 +17,64 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    /*
-    회원가입
-     */
-    public Long register(Member memberEntity) {
-        // 중복 검사 로직
+    public Long register(MemberRegisterRequest registerRequest) {
+        Member memberEntity = registerRequest.toMemberEntity();
         validateDuplicateMember(memberEntity);
         memberRepository.save(memberEntity);
-
         return memberEntity.getId();
     }
 
-    private void validateDuplicateMember(Member member) {
-        memberRepository.findByMemberId(member.getMemberId())
-                .ifPresent(m -> {
-                    throw new IllegalStateException();
-                });
-    }
+    public Long login(MemberLoginRequest loginRequest) {
+        Member memberEntity = memberRepository.findByMemberEmail(loginRequest.getMemberEmail())
+                .orElseThrow(() -> new IllegalStateException("등록되지 않은 이메일입니다."));
 
-    /*
-    로그인
-     */
-    public Long login(String memberId, String password) {
-        Member memberEntity = memberRepository.findByMemberId(memberId)
-                .orElseThrow(
-                        () -> new IllegalStateException()
-                );
-
-        if (!memberEntity.getMemberPassword().equals(password)) {
-            throw new IllegalStateException();
+        if (!memberEntity.getMemberPassword().equals(loginRequest.getMemberPassword())) {
+            throw new IllegalStateException("비밀번호가 틀렸습니다.");
         }
 
         return memberEntity.getId();
     }
 
-
-    /*
-    회원 리스트
-     */
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
-    /*
-    회원 ID 찾기
-     */
     public Member findById(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(
-                        () -> new IllegalStateException()
-                );
+                .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다."));
     }
 
-    /*
-    회원 정보 수정
-     */
-    public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
+    public Long update(Long id, MemberUpdateRequest updateRequest) {
         Member memberEntity = memberRepository.findById(id)
-                .orElseThrow(
-                        () -> new IllegalStateException()
-                );
+                .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다."));
 
-        memberEntity.setMemberPassword(memberUpdateRequest.getMemberPassword());
-        memberEntity.setMemberName(memberUpdateRequest.getMemberName());
+        if (updateRequest.getMemberPassword() != null) {
+            memberEntity.setMemberPassword(updateRequest.getMemberPassword());
+        }
+        if (updateRequest.getMemberName() != null) {
+            memberEntity.setMemberName(updateRequest.getMemberName());
+        }
+        if (updateRequest.getMemberNickname() != null) {
+            memberEntity.setMemberNickname(updateRequest.getMemberNickname());
+        }
+        if (updateRequest.getMemberBirth() != null) {
+            memberEntity.setMemberBirth(updateRequest.getMemberBirth());
+        }
 
         memberRepository.save(memberEntity);
-
-        // id;
         return memberEntity.getId();
     }
 
-    /*
-    회원 탈퇴
-     */
+
+
     public void deleteById(Long id) {
         memberRepository.deleteById(id);
+    }
+
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByMemberEmail(member.getMemberEmail())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 존재하는 이메일입니다.");
+                });
     }
 }

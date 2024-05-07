@@ -12,3 +12,4 @@ public class MemberIdResponse {
         this.id = id;
     }
 }
+

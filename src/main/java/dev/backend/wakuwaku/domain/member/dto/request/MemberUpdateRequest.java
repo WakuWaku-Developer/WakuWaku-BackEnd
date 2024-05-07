@@ -9,11 +9,15 @@ import lombok.NoArgsConstructor;
 public class MemberUpdateRequest {
     private String memberPassword;
     private String memberName;
+    private String memberNickname;
+    private String memberBirth;
 
-    public MemberUpdateRequest(String memberPassword, String memberName)
+    public MemberUpdateRequest(String memberPassword, String memberName, String memberNickname, String memberBirth)
     {
         this.memberPassword = memberPassword;
         this.memberName = memberName;
+        this.memberNickname = memberNickname;
+        this.memberBirth = memberBirth;
     }
 
     public void setMemberPassword(String memberPassword) {
@@ -23,11 +27,20 @@ public class MemberUpdateRequest {
     public void setMemberName(String memberName) {
         this.memberName = memberName;
     }
+    public void setMemberNickname(String memberNickname) {
+        this.memberNickname = memberNickname;
+    }
+    public void setMemberBirth(String memberBirth) {
+        this.memberBirth = memberBirth;
+    }
+
 
     public Member toMemberEntity() {
         return Member.builder()
                 .memberName(this.memberName)
                 .memberPassword(this.memberPassword)
+                .memberNickname(this.memberNickname)
+                .memberBirth(this.memberBirth)
                 .build();
     }
 }

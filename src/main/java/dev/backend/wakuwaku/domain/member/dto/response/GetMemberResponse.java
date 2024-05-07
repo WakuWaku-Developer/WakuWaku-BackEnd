@@ -8,14 +8,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetMemberResponse {
 
-    private String memberId;
+    private Long id;
     private String memberEmail;
     private String memberName;
+    private String memberNickname;
+    private String memberBirth;
 
     public GetMemberResponse(Member memberEntity) {
-        this.memberId = memberEntity.getMemberId();
+        this.id = memberEntity.getId();
         this.memberEmail = memberEntity.getMemberEmail();
         this.memberName = memberEntity.getMemberName();
+        this.memberNickname = memberEntity.getMemberNickname();
+        this.memberBirth = memberEntity.getMemberBirth();
     }
 
 }
