@@ -1,7 +1,6 @@
 package dev.backend.wakuwaku.domain.member.controller;
 
 
-import dev.backend.wakuwaku.domain.member.dto.request.MemberLoginRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponse;
@@ -27,11 +26,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new MemberIdResponse(id));
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<MemberIdResponse> login(@RequestBody MemberLoginRequest loginRequest) {
-        Long id = memberService.login(loginRequest);
-        return ResponseEntity.ok().body(new MemberIdResponse(id));
-    }
+//    @GetMapping("/login")
+//    public ResponseEntity<MemberIdResponse> login(@RequestBody MemberLoginRequest loginRequest) {
+//        Long id = memberService.login(loginRequest);
+//        return ResponseEntity.ok().body(new MemberIdResponse(id));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<GetMemberResponse> findById(@PathVariable("id") Long id) {

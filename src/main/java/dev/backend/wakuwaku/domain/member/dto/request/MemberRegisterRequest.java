@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.member.dto.request;
 
 import dev.backend.wakuwaku.domain.member.entity.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class MemberRegisterRequest {
 
     private String memberEmail;

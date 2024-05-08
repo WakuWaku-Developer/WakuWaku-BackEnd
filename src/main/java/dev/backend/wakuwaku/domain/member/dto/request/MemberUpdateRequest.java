@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.member.dto.request;
 
 import dev.backend.wakuwaku.domain.member.entity.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,6 +36,7 @@ public class MemberUpdateRequest {
     }
 
 
+    @Builder
     public Member toMemberEntity() {
         return Member.builder()
                 .memberName(this.memberName)

@@ -1,30 +1,35 @@
+
 package dev.backend.wakuwaku.domain.member.controller;
 
-import dev.backend.wakuwaku.domain.member.dto.request.MemberLoginRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
-import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponse;
-import dev.backend.wakuwaku.domain.member.dto.response.MemberIdResponse;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class MemberControllerTest {
+
+    private MockMvc mockMvc;
 
     @Mock
     private MemberService memberService;
@@ -32,94 +37,86 @@ class MemberControllerTest {
     @InjectMocks
     private MemberController memberController;
 
-    @Test
-    @DisplayName("회원 가입 테스트")
-    void register() {
-        // Given
-        MemberRegisterRequest registerRequest = new MemberRegisterRequest();
-        when(memberService.register(registerRequest)).thenReturn(1L);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-        // When
-        ResponseEntity<MemberIdResponse> response = memberController.register(registerRequest);
+    private final String NAME_SPACE = "/wakuwaku/v1/members";
 
-        // Then
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(1L, response.getBody().getId());
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(memberController).build();
     }
 
     @Test
-    @DisplayName("회원 로그인 테스트")
-    void login() {
+    @DisplayName("회원 가입 테스트")
+    void register() throws Exception {
         // Given
-        MemberLoginRequest loginRequest = new MemberLoginRequest();
-        when(memberService.login(loginRequest)).thenReturn(1L);
+        MemberRegisterRequest registerRequest = new MemberRegisterRequest();
+        when(memberService.register(any(MemberRegisterRequest.class))).thenReturn(1L);
 
-        // When
-        ResponseEntity<MemberIdResponse> response = memberController.login(loginRequest);
-
-        // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1L, response.getBody().getId());
+        // When/Then
+        mockMvc.perform(post(NAME_SPACE +"/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L));
     }
 
     @Test
     @DisplayName("회원 조회 테스트")
-    void findById() {
+    void findById() throws Exception {
         // Given
         Long memberId = 1L;
         Member member = new Member();
-        when(memberService.findById(memberId)).thenReturn(member);
+        member.setId(memberId);
+        when(memberService.findById(anyLong())).thenReturn(member);
 
-        // When
-        ResponseEntity<GetMemberResponse> response = memberController.findById(memberId);
-
-        // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(member.getId(), response.getBody().getId()); // 변경된 부분
-    }
-
-    @Test
-    @DisplayName("회원 정보 업데이트 테스트")
-    void update() {
-        // Given
-        Long memberId = 1L;
-        MemberUpdateRequest updateRequest = new MemberUpdateRequest();
-        when(memberService.update(memberId, updateRequest)).thenReturn(1L);
-
-        // When
-        ResponseEntity<MemberIdResponse> response = memberController.update(memberId, updateRequest);
-
-        // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1L, response.getBody().getId());
+        // When/Then
+        mockMvc.perform(get(NAME_SPACE+"/{id}", memberId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(memberId));
     }
 
     @Test
     @DisplayName("회원 삭제 테스트")
-    void delete() {
+    void delete() throws Exception {
         // Given
         Long memberId = 1L;
 
-        // When
-        ResponseEntity<Void> response = memberController.delete(memberId);
+        // When/Then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/wakuwaku/v1/members/{id}", memberId))
+                .andExpect(status().isOk());
 
-        // Then
+        // Verify
         verify(memberService).deleteById(memberId);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+
+    @Test
+    @DisplayName("회원 정보 업데이트 테스트")
+    void update() throws Exception {
+        // Given
+        Long memberId = 1L;
+        MemberUpdateRequest updateRequest = new MemberUpdateRequest();
+        when(memberService.update(eq(memberId), any(MemberUpdateRequest.class))).thenReturn(1L);
+
+        // When/Then
+        mockMvc.perform(put(NAME_SPACE+"/{id}", memberId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
     }
 
     @Test
-    @DisplayName("회원 조회 테스트")
-    void findAll() {
+    @DisplayName("회원 목록 조회 테스트")
+    void findAll() throws Exception {
         // Given
         List<Member> members = new ArrayList<>();
         when(memberService.findAll()).thenReturn(members);
 
-        // When
-        ResponseEntity<List<GetMemberResponse>> response = memberController.findAll();
-
-        // Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(members.size(), response.getBody().size());
+        // When/Then
+        mockMvc.perform(get(NAME_SPACE+"/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
     }
 }
