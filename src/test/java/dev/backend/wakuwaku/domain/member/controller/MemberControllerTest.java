@@ -83,7 +83,7 @@ class MemberControllerTest {
         Long memberId = 1L;
 
         // When/Then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/wakuwaku/v1/members/{id}", memberId))
+        mockMvc.perform(MockMvcRequestBuilders.delete(NAME_SPACE+"/{id}", memberId))
                 .andExpect(status().isOk());
 
         // Verify
