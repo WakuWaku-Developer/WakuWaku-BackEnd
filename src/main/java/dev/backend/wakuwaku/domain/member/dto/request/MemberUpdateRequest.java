@@ -7,27 +7,28 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MemberUpdateRequest {
-    private String memberPassword;
-    private String memberName;
 
-    public MemberUpdateRequest(String memberPassword, String memberName)
+    private String nickname;
+    private String profileImageUrl;
+
+    public MemberUpdateRequest(String nickname, String profileImageUrl)
     {
-        this.memberPassword = memberPassword;
-        this.memberName = memberName;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
     }
 
-    public void setMemberPassword(String memberPassword) {
-        this.memberPassword = memberPassword;
+    public void setMemberPassword(String nickname) {
+        this.nickname = nickname;
     }
 
-    public void setMemberName(String memberName) {
-        this.memberName = memberName;
+    public void setMemberName(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public Member toMemberEntity() {
         return Member.builder()
-                .memberName(this.memberName)
-                .memberPassword(this.memberPassword)
+                .nickname(this.nickname)
+                .profileImageUrl(this.profileImageUrl)
                 .build();
     }
 }

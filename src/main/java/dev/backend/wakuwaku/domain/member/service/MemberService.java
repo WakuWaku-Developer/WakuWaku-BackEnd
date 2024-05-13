@@ -27,7 +27,8 @@ public class MemberService {
     }
 
     private void validateDuplicateMember(Member member) {
-        memberRepository.findByMemberId(member.getMemberId())
+        memberRepository.findByoauthServerId
+                        (member.oauthServerId())
                 .ifPresent(m -> {
                     throw new IllegalStateException();
                 });
@@ -36,6 +37,7 @@ public class MemberService {
     /*
     로그인
      */
+    /*
     public Long login(String memberId, String password) {
         Member memberEntity = memberRepository.findByMemberId(memberId)
                 .orElseThrow(
@@ -48,7 +50,7 @@ public class MemberService {
 
         return memberEntity.getId();
     }
-
+*/
 
     /*
     회원 리스트
@@ -76,8 +78,8 @@ public class MemberService {
                         () -> new IllegalStateException()
                 );
 
-        memberEntity.setMemberPassword(memberUpdateRequest.getMemberPassword());
-        memberEntity.setMemberName(memberUpdateRequest.getMemberName());
+        memberEntity.setNickname(memberUpdateRequest.getNickname());
+        memberEntity.setProfileImageUrl(memberUpdateRequest.getProfileImageUrl());
 
         memberRepository.save(memberEntity);
 

@@ -1,8 +1,6 @@
 package dev.backend.wakuwaku.domain.member.controller;
 
 
-import dev.backend.wakuwaku.domain.member.dto.request.MemberLoginRequest;
-import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponse;
 import dev.backend.wakuwaku.domain.member.dto.response.MemberIdResponse;
@@ -10,7 +8,6 @@ import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,13 +26,14 @@ public class MemberController {
     기능: 회원가입
     ※ @Valid: 유효성 검사 거쳐야 함 / @RequestBody: 요청 body 데이터 자바 객체로 변환
      */
+    /*
     @PostMapping("/save")
     public ResponseEntity<MemberIdResponse> register(@RequestBody MemberRegisterRequest registerRequest) {
         Long id = memberService.register(registerRequest.toMemberEntity());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new MemberIdResponse(id));
     }
-
+ */
 
     @GetMapping("/{id}")
     public ResponseEntity<GetMemberResponse> findById(@PathVariable("id") Long id) {
@@ -66,13 +64,14 @@ public class MemberController {
                 .map(GetMemberResponse::new)
                 .collect(Collectors.toList()));
     }
-
+/*
     @PostMapping("/login")
     public ResponseEntity<MemberIdResponse> login(@RequestBody MemberLoginRequest memberLoginRequest) {
         Long id = memberService.login(memberLoginRequest.getMemberId(), memberLoginRequest.getMemberPassword());
 
         return ResponseEntity.ok().body(new MemberIdResponse(id));
     }
+    */
 
 //    @GetMapping("/logout")
 //    public ResponseEntity<Void> logout(HttpSession session) {
