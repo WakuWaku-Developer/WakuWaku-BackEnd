@@ -42,7 +42,6 @@ public class OauthController {
         return ResponseEntity.ok().build();
     }
 
-
      */
 
     @GetMapping("/{oauthServerType}")
