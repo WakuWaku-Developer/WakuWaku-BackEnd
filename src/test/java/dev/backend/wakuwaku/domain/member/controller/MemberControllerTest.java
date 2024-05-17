@@ -96,6 +96,7 @@ public class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 // 응답 id 필드 존재하는지 확인
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                // API 문서 설정
                 .andDo(MockMvcRestDocumentationWrapper.document("Test-Register",
                         ResourceSnippetParameters.builder()
                         .tag("Tag Test")
