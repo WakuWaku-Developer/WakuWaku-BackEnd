@@ -63,6 +63,13 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build
 
+      - name: API 문서 파일 Artifact 업로드
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi3.yaml
+          path: build/api-spec/openapi3.yaml
+          overwrite: true
+
   # Java 프로젝트의 종속성 그래프를 생성하고 이를 GitHub에 제출하여 Dependabot 경고를 활성화하는 데 사용
   # Dependabot은 프로젝트의 종속성에서 보안 취약점이 발견될 경우 자동으로 경고를 보내주는 도구
   dependency-submission:
