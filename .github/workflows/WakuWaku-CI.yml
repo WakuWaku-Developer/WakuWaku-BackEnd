@@ -56,17 +56,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonar --info --stacktrace
 
-      # API 문서를 생성하고 해당 문서를 복사
-      - name: Generate and Copy OpenAPI Documentation
-        run: ./gradlew copyOasToSwagger
-
-      - name: API 문서 파일 Artifact 업로드
-        uses: actions/upload-artifact@v4
-        with:
-          name: openapi3.yaml
-          path: build/api-spec/openapi3.yaml
-          overwrite: true
-
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build
 
