@@ -1,6 +1,9 @@
 package dev.backend.wakuwaku.domain.member.controller;
 
 
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberRegisterRequest;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
@@ -9,12 +12,20 @@ import dev.backend.wakuwaku.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -24,6 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,21 +48,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@AutoConfigureMockMvc
 // 웹 관련 테스트만 실행 (test속도 up)
 @WebMvcTest(controllers = MemberController.class)
+@ExtendWith(RestDocumentationExtension.class)
+//@AutoConfigureMockMvc
+//@AutoConfigureRestDocs
 public class MemberControllerTest {
-    @Autowired
-    private WebApplicationContext wac;
+//    @Autowired
+//    private WebApplicationContext wac;
 
-    // 메서드 실행할 때, 각각 실행됨.
-    @BeforeEach
-    void setUp() {
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(wac) // MockMvc 인스턴스를 생성하며, 웹 애플리케이션 컨텍스트를 설정한다. 이를 통해 컨트롤러와 같은 웹 계층의 컴포넌트를 테스트할 수 있다.
-                .addFilter(new CharacterEncodingFilter("UTF-8", true)) // 요청과 응답에 대한 문자 인코딩 필터를 추가한다. 이 필터는 UTF-8 인코딩을 사용하며, 모든 요청에 대해 적용된다.
-                .alwaysDo(print()) // 모든 요청/응답을 콘솔에 출력한다.
-                .build(); // 설정된 내용을 바탕으로 MockMvc 인스턴스를 생성한다.
-    }
-
-    //@Autowired
+//    @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
@@ -55,6 +63,22 @@ public class MemberControllerTest {
     @MockBean
     private MemberService memberService;
     private final String URL_PATH = "/wakuwaku/v1/members";
+
+    // 메서드 실행할 때, 각각 실행됨.
+    @BeforeEach
+    void setUp(final WebApplicationContext context,
+               final RestDocumentationContextProvider restDocumentation) {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(documentationConfiguration(restDocumentation))
+                .alwaysDo(MockMvcResultHandlers.print())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+//        this.mockMvc = MockMvcBuilders
+//                .webAppContextSetup(wac) // MockMvc 인스턴스를 생성하며, 웹 애플리케이션 컨텍스트를 설정한다. 이를 통해 컨트롤러와 같은 웹 계층의 컴포넌트를 테스트할 수 있다.
+//                .addFilter(new CharacterEncodingFilter("UTF-8", true)) // 요청과 응답에 대한 문자 인코딩 필터를 추가한다. 이 필터는 UTF-8 인코딩을 사용하며, 모든 요청에 대해 적용된다.
+//                .alwaysDo(print()) // 모든 요청/응답을 콘솔에 출력한다.
+//                .build(); // 설정된 내용을 바탕으로 MockMvc 인스턴스를 생성한다.
+    }
 
     @Test
     @DisplayName("회원 가입")
@@ -64,14 +88,26 @@ public class MemberControllerTest {
         registerRequest.setMemberId("testMemberId");
         registerRequest.setMemberPassword("testMemberPassword");
         // save 엔드포인트에 post요청 보냄
-        mockMvc.perform(MockMvcRequestBuilders.post(URL_PATH + "/save")
+        mockMvc.perform(RestDocumentationRequestBuilders.post(URL_PATH + "/save")
                         // json 문자열로 변환
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerRequest)))
                 // 상태코드 201인지 확인
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 // 응답 id 필드 존재하는지 확인
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andDo(MockMvcRestDocumentationWrapper.document("Test-Register",
+                        ResourceSnippetParameters.builder()
+                        .tag("Tag Test")
+                        .summary("Summary Test")
+                        .description("DESCRIPTION TEST")
+                        .responseSchema(Schema.schema("Schema Test"))
+                        ,
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("식별자")
+                        )));
     }
 
     @Test
