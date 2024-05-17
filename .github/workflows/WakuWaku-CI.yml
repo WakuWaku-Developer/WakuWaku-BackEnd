@@ -44,12 +44,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonar --info --stacktrace
 
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
-
       # API 문서를 생성하고 적절한 위치로 복사
       - name: Generate and Copy OpenAPI Documentation
         run: ./gradlew copyOasToSwagger
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew clean build
 
   # Java 프로젝트의 종속성 그래프를 생성하고 이를 GitHub에 제출하여 Dependabot 경고를 활성화하는 데 사용
   # Dependabot은 프로젝트의 종속성에서 보안 취약점이 발견될 경우 자동으로 경고를 보내주는 도구
