@@ -18,6 +18,7 @@ public class MemberService {
     /*
     회원가입
      */
+    /*
     public Long register(Member memberEntity) {
         // 중복 검사 로직
         validateDuplicateMember(memberEntity);
@@ -25,6 +26,9 @@ public class MemberService {
 
         return memberEntity.getId();
     }
+
+
+     */
 
     private void validateDuplicateMember(Member member) {
         memberRepository.findByoauthServerId
@@ -73,18 +77,19 @@ public class MemberService {
     회원 정보 수정
      */
     public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
-        Member memberEntity = memberRepository.findById(id)
+        Member member = memberRepository.findById(id)
                 .orElseThrow(
                         () -> new IllegalStateException()
                 );
 
-        memberEntity.setNickname(memberUpdateRequest.getNickname());
-        memberEntity.setProfileImageUrl(memberUpdateRequest.getProfileImageUrl());
+        member.setNickname(memberUpdateRequest.getNickname());
+        member.setProfileImageUrl(memberUpdateRequest.getProfileImageUrl());
+        member.setBirthday(memberUpdateRequest.getBirthday());
 
-        memberRepository.save(memberEntity);
+        memberRepository.save(member);
 
         // id;
-        return memberEntity.getId();
+        return member.getId();
     }
 
     /*

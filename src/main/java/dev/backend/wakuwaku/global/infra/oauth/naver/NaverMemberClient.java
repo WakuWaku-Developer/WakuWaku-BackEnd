@@ -2,7 +2,7 @@ package dev.backend.wakuwaku.global.infra.oauth.naver;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthMember;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
-import dev.backend.wakuwaku.domain.client.OauthMemberClient;
+import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClient;
 import dev.backend.wakuwaku.global.infra.oauth.naver.client.NaverApiClient;
 import dev.backend.wakuwaku.global.infra.oauth.naver.dto.NaverMemberResponse;
 import dev.backend.wakuwaku.global.infra.oauth.naver.dto.NaverToken;
