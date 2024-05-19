@@ -38,6 +38,10 @@ public class GooglePlacesPhotoService {
         Pattern pattern = Pattern.compile("<A HREF=\"([^\"]+)\">");
         Matcher matcher = pattern.matcher(photoResult);
 
-        return matcher.group(1);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return null;
     }
 }
