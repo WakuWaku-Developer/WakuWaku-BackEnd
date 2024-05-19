@@ -188,5 +188,6 @@ tasks.register('copyOasToSwagger', Copy) {
 
 	from layout.buildDirectory.dir("/api-spec/openapi3.yaml").get().asFile
 	into "src/main/resources/static/swagger-ui/"
+
 	dependsOn "openapi3"
 }
