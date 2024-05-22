@@ -17,11 +17,11 @@ public class GoogleApiClientImpl implements GoogleApiClient {
 
     @Override
     public GoogleToken fetchToken(MultiValueMap<String, String> params) {
-        return restTemplate.postForObject("${oauth.google.token-uri}", params, GoogleToken.class);
+        return restTemplate.postForObject("https://oauth2.googleapis.com/token", params, GoogleToken.class);
     }
 
     @Override
     public GoogleMemberResponse fetchMember(String accessToken) {
-        return restTemplate.getForObject("${oauth.google.resource-uri}?access_token=" + accessToken, GoogleMemberResponse.class);
+        return restTemplate.getForObject("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken, GoogleMemberResponse.class);
     }
 }

@@ -26,8 +26,8 @@ public class GoogleMemberClient implements OauthMemberClient {
     @Override
     public OauthMember fetch(String authCode) {
         GoogleToken tokenInfo = googleApiClient.fetchToken(tokenRequestParams(authCode));
-        GoogleMemberResponse naverMemberResponse = googleApiClient.fetchMember("Bearer " + tokenInfo.access_token());
-        return naverMemberResponse.toDomain();
+        GoogleMemberResponse googleMemberResponse = googleApiClient.fetchMember("Bearer " + tokenInfo.access_token());
+        return googleMemberResponse.toDomain();
     }
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
@@ -37,6 +37,8 @@ public class GoogleMemberClient implements OauthMemberClient {
         params.add("client_secret", googleOauthConfig.clientSecret());
         params.add("code", authCode);
         params.add("redirect_uri", googleOauthConfig.redirectUri());
+        params.add("token_uri", googleOauthConfig.tokenUri());
+        params.add("resource_uri", googleOauthConfig.resourceUri());
         return params;
     }
 }

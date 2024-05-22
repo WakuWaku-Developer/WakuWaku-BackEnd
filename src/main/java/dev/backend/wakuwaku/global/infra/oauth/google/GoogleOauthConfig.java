@@ -9,6 +9,8 @@ public record GoogleOauthConfig (
         String clientId,
         String clientSecret,
         String[] scope,
+        String tokenUri,
+        String resourceUri,
         String state
 ){
 }
