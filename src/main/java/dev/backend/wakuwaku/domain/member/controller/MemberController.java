@@ -73,6 +73,7 @@ public class MemberController {
     }
     */
 
+
 //    @GetMapping("/logout")
 //    public ResponseEntity<Void> logout(HttpSession session) {
 //        session.invalidate();
