@@ -6,7 +6,6 @@ import dev.backend.wakuwaku.domain.member.dto.response.GetMemberResponse;
 import dev.backend.wakuwaku.domain.member.dto.response.MemberIdResponse;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.service.MemberService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -74,9 +73,9 @@ public class MemberController {
     */
 
 
-    @GetMapping("/logout")
-    public ResponseEntity<Void> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok().build();
-    }
+//    @GetMapping("/logout")
+//    public ResponseEntity<Void> logout(HttpSession session) {
+//        session.invalidate();
+//        return ResponseEntity.ok().build();
+//    }
 }
