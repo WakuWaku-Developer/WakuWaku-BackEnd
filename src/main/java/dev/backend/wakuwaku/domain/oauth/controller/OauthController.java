@@ -46,8 +46,14 @@ public class OauthController {
     ResponseEntity<Long> login(
             @PathVariable(name = "oauthServerType") OauthServerType oauthServerType,
             @RequestParam(name = "code") String code) {
+
+
+        System.out.println("login 1>>>" + oauthServerType);
+        System.out.println("login 2>>>" + code);
         Long login = oauthService.login(oauthServerType, code);
         return ResponseEntity.ok(login);
     }
+
+
 
 }
