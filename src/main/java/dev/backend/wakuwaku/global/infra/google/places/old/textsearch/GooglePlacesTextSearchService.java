@@ -27,23 +27,48 @@ public class GooglePlacesTextSearchService{
     private String apiKey;
 
     public List<Result> textSearch(String searchWord) {
-        TextSearchResponse textSearchResponse = restClient.get()
+        TextSearchResponse responseByTextSearch = restClient.get()
                 .uri(textSearchURI(searchWord))
                 .retrieve()
                 .body(TextSearchResponse.class);
 
-        return resultsByTextSearch(textSearchResponse);
+        return resultsByTextSearch(responseByTextSearch);
     }
 
     // 나중에 사용 시 사용하는 메서드에서 이 메서드의 return 값이 null 인 경우를 처리하는 로직 구현
-    public TextSearchResponse textSearchByNextPageToken(TextSearchResponse textSearchResponse) {
-        return restClient.get()
-                .uri(nextPageTextSearchURI(textSearchResponse.getNext_page_token()))
+    public List<Result> textSearchByNextPageToken(String nextPageToken) {
+        TextSearchResponse responseByNextPageToken = restClient.get()
+                .uri(nextPageTextSearchURI(nextPageToken))
                 .retrieve()
                 .body(TextSearchResponse.class);
+
+        return resultsByTextSearch(responseByNextPageToken);
     }
 
     private List<Result> resultsByTextSearch(TextSearchResponse textSearchResponse) {
+//        int cnt = 0;
+//
+//        while (true) {
+//            if (textSearchResponse.getStatus().getStatusCode().equals("OK")) {
+//                results.addAll(textSearchResponse.getResults());
+//
+//                if (cnt == 2) {
+//                    break;
+//                }
+//
+//                try {
+//                    Thread.sleep(3000);
+//
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//                textSearchResponse = textSearchByNextPageToken(textSearchResponse.getNext_page_token());
+//            }
+//
+//            cnt++;
+//        }
+
         // textSearchResponse 또는 result가 null인 경우 빈 리스트 반환
         if (textSearchResponse == null || textSearchResponse.getResults() == null) {
             return Collections.emptyList();
