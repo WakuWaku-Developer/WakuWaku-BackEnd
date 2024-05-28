@@ -50,11 +50,15 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       # 다운로드한 종속성 캐싱을 포함하여 GiHub 작업에서 최적의 사용을 위해 Gradle을 구성한다.
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
         with:
-          arguments: check
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: SonarCloud scan
         env:
