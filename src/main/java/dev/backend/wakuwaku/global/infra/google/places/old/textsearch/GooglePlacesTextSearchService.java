@@ -46,29 +46,6 @@ public class GooglePlacesTextSearchService{
     }
 
     private List<Result> resultsByTextSearch(TextSearchResponse textSearchResponse) {
-//        int cnt = 0;
-//
-//        while (true) {
-//            if (textSearchResponse.getStatus().getStatusCode().equals("OK")) {
-//                results.addAll(textSearchResponse.getResults());
-//
-//                if (cnt == 2) {
-//                    break;
-//                }
-//
-//                try {
-//                    Thread.sleep(3000);
-//
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//                textSearchResponse = textSearchByNextPageToken(textSearchResponse.getNext_page_token());
-//            }
-//
-//            cnt++;
-//        }
-
         // textSearchResponse 또는 result가 null인 경우 빈 리스트 반환
         if (textSearchResponse == null || textSearchResponse.getResults() == null) {
             return Collections.emptyList();
