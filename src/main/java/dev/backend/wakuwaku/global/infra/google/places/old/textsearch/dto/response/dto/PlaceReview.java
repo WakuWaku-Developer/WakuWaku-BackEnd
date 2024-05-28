@@ -10,6 +10,7 @@ public class PlaceReview {
     Number time;
     String language;
     String original_language;
+    String profile_photo_url;
     String text;
     boolean translated;
 }

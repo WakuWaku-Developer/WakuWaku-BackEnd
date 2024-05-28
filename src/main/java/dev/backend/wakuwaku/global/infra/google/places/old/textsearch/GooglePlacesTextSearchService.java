@@ -36,7 +36,7 @@ public class GooglePlacesTextSearchService{
     }
 
     // 나중에 사용 시 사용하는 메서드에서 이 메서드의 return 값이 null 인 경우를 처리하는 로직 구현
-    public TextSearchResponse nextPageTextSearch(TextSearchResponse textSearchResponse) {
+    public TextSearchResponse textSearchByNextPageToken(TextSearchResponse textSearchResponse) {
         return restClient.get()
                 .uri(nextPageTextSearchURI(textSearchResponse.getNext_page_token()))
                 .retrieve()
