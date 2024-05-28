@@ -1,53 +1,55 @@
 package dev.backend.wakuwaku.global.infra.google.places.old.photo;
 
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.TextSearchResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
-import java.util.List;
-
-import static dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest.TEXT_SEARCH_URL;
+import static dev.backend.wakuwaku.global.infra.google.places.old.photo.dto.request.PhotoRequest.PHOTO_URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@SpringBootTest
+@RestClientTest(value = {GooglePlacesPhotoService.class})
 class GooglePlacesPhotoServiceTest {
     @Autowired
     private GooglePlacesPhotoService googlePlacesPhotoService;
 
+    @Autowired
+    private MockRestServiceServer mockServer;
+
     @Value("${google-places}")
     private String apiKey;
+
+    private static final String PHOTO_REFERENCE = "AUGGfZm5Sf_CjR-pokgGs4UwMib89F84SlbBx8rqZ9eZ1fTVlkonUdRXPBZUVPzrSlZz8Ato3iY6RKkE3gPos-2Bo5ffcv73RD0GZnrcVjPeuTbsBI1tR2fbhZA3Sk59fJ58OoyhnM7GAHKdHJdpCpDjo_aIghIugwriAA41BDRqLWdVA-5n";
+
+    @BeforeEach
+    void setUp() {
+        RestClient.Builder restClient = RestClient.builder();
+        mockServer = MockRestServiceServer.bindTo(restClient).build();
+    }
 
     @Test
     @DisplayName("실제 이미지 URL을 반환하는지 테스트")
     void getPhotosURLByTextSearch() {
         //given
-        String searchWord = "도쿄 맛집";
+        String response = "https://lh3.googleusercontent.com/places/ANXAkqFVKvKKJF9PvO5CRH_QqzNwhk3fVw7fet05L49Zt2OFwMvPzX1wwC2qdXs3x2zO4x08fFsJojhgvga3GYWbb16PRO471kMleWY=s1600-w800";
 
-        TextSearchResponse textSearchResponse = RestClient.create().get()
-                .uri(textSearchURI(searchWord))
-                .retrieve()
-                .body(TextSearchResponse.class);
-
-        List<Result> results = textSearchResponse.getResults();
+        mockServer.expect(requestTo(PHOTO_URL + PHOTO_REFERENCE + "&key=" + apiKey))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(response, MediaType.TEXT_PLAIN));
 
         // when
-        String photosURL = googlePlacesPhotoService.getPhotosURL(results.get(0).getPhotos().get(0).getPhoto_reference(), apiKey);
+        String photosURL = googlePlacesPhotoService.getPhotosURL(PHOTO_REFERENCE, apiKey);
 
         // then
         assertThat(photosURL).containsPattern("https.*s1600-w800");
-    }
-
-    private String textSearchURI(String searchWord) {
-        TextSearchRequest textSearchRequest = new TextSearchRequest(searchWord);
-
-        String newTextQuery = textSearchRequest.getTextQuery().replace(" ", "%20");
-
-        return TEXT_SEARCH_URL + newTextQuery + "&key=" + apiKey;
     }
 }
