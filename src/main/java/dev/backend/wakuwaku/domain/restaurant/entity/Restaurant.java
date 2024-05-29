@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,6 +36,7 @@ public class Restaurant extends BaseEntity {
 
     private Number rating;
 
+    @Builder
     public Restaurant(Result result) {
         this.placeId = result.getPlace_id();
         this.name = result.getName();
