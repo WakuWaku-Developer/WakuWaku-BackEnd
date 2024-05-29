@@ -8,9 +8,11 @@ import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClientComposite;
 import dev.backend.wakuwaku.domain.oauth.oauthcode.AuthCodeRequestUrlProviderComposite;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OauthService {
 
@@ -23,23 +25,30 @@ public class OauthService {
     }
 
     public Long login(OauthServerType oauthServerType, String authCode) {
-        OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
+        try {
+            OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
-        Member member = memberRepository.findByoauthServerId(oauthMember.getOauthId().oauthServerId())
-                .orElseGet(() -> {
-                    Member newMember = new Member();
-                    newMember.setOauthServerId(oauthMember.getOauthId().oauthServerId());
-                    newMember.setOauthServerType(oauthMember.getOauthId().oauthServerType());
-                    newMember.setOauthId(oauthMember.getOauthId());
-                    newMember.setEmail(oauthMember.getEmail());
-                    newMember.setBirthday(oauthMember.getBirthday());
-                    newMember.setNickname(oauthMember.getNickname());
-                    newMember.setProfileImageUrl(oauthMember.getProfileImageUrl());
-                    newMember.setRole(Role.USER);
-                    return newMember;
-                });
+            Member member = memberRepository.findByoauthServerId(oauthMember.getOauthId().oauthServerId())
+                    .orElseGet(() -> {
+                        Member newMember = new Member();
+                        newMember.setOauthServerId(oauthMember.getOauthId().oauthServerId());
+                        newMember.setOauthServerType(oauthMember.getOauthId().oauthServerType());
+                        newMember.setOauthId(oauthMember.getOauthId());
+                        newMember.setEmail(oauthMember.getEmail());
+                        newMember.setBirthday(oauthMember.getBirthday());
+                        newMember.setNickname(oauthMember.getNickname());
+                        newMember.setProfileImageUrl(oauthMember.getProfileImageUrl());
+                        newMember.setRole(Role.USER);
+                        return newMember;
+                    });
+            member = memberRepository.save(member);
+            return member.getId();
 
-        member = memberRepository.save(member);
-        return member.getId();
+
+        } catch (Exception e) {
+            // 예외 로그를 남기고 적절한 메시지를 반환
+            log.error("로그인 중 오류 발생: ", e);
+            throw new RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
+        }
     }
 }
