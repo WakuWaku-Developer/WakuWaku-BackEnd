@@ -65,19 +65,4 @@ class RestaurantRepositoryTest {
         assertThat(restaurant.getPhotos()).hasSize(1);
         assertThat(restaurant).isEqualTo(saveRestaurant);
     }
-
-    @DisplayName("동일한 Place Id를 가진 Restaurant 삭제")
-    @Test
-    void deleteByPlaceId() {
-        // given
-        String placeId = result.getPlace_id();
-
-        // when
-        restaurantRepository.deleteByPlaceId(placeId);
-
-        // then
-        Restaurant restaurant = restaurantRepository.findByPlaceId(placeId).orElse(null);
-
-        assertThat(restaurant).isNull();
-    }
 }

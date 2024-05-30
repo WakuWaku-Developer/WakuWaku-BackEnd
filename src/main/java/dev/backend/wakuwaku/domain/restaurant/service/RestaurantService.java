@@ -51,10 +51,6 @@ public class RestaurantService {
         return googlePlacesDetailsService.detailsSearch(placeId);
     }
 
-    public void deleteRestaurantByPlaceId(String placeId) {
-        restaurantRepository.deleteByPlaceId(placeId);
-    }
-
     private String duplicateWord(String word) {
         if (word.contains("일본")) {
             return word.replace("일본", "");
