@@ -41,6 +41,7 @@ class RestaurantServiceTest {
     private RestaurantService restaurantService;
 
     private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
+
     private static final String NAME = "우동신";
 
     private final List<PlacePhoto> photos = new ArrayList<>();
