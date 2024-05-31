@@ -31,6 +31,12 @@ jobs:
           touch ./application-API-KEY.yml
           echo "${{ secrets.APPLICATION_API_KEY_YML }}" > ./application-API-KEY.yml
 
+      - name: make Test application-API-KEY.yml
+        run: |
+          cd ./src/test/resources
+          touch ./application-API-KEY.yml
+          echo "${{ secrets.APPLICATION_API_KEY_YML }}" > ./application-API-KEY.yml
+
       # gradlew 파일에 실행 권한을 부여
       - name: Permission for gradlew
         run: chmod +x ./gradlew
@@ -44,20 +50,21 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       # 다운로드한 종속성 캐싱을 포함하여 GiHub 작업에서 최적의 사용을 위해 Gradle을 구성한다.
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
         with:
-          arguments: check
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: SonarCloud scan
+      - name: Build and SonarCloud scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --info --stacktrace
-
-      - name: Build with Gradle Wrapper
-        run: ./gradlew clean build
+        run: ./gradlew clean build sonar --info --stacktrace
 
   # Java 프로젝트의 종속성 그래프를 생성하고 이를 GitHub에 제출하여 Dependabot 경고를 활성화하는 데 사용
   # Dependabot은 프로젝트의 종속성에서 보안 취약점이 발견될 경우 자동으로 경고를 보내주는 도구

@@ -37,14 +37,27 @@ jobs:
           touch ./application-API-KEY.yml
           echo "${{ secrets.APPLICATION_API_KEY_YML }}" > ./application-API-KEY.yml
 
+      - name: make Test application-API-KEY.yml
+        run: |
+          cd ./src/test/resources
+          touch ./application-API-KEY.yml
+          echo "${{ secrets.APPLICATION_API_KEY_YML }}" > ./application-API-KEY.yml
+
       # gradlew 파일에 실행 권한을 부여
       - name: Permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
 
       # 다운로드한 종속성 캐싱을 포함하여 GiHub 작업에서 최적의 사용을 위해 Gradle을 구성한다.
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       # API 문서를 생성하고 해당 문서를 복사
       - name: Generate and Copy OpenAPI Documentation
