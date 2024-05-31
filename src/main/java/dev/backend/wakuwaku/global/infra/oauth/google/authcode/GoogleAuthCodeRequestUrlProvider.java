@@ -3,12 +3,10 @@ package dev.backend.wakuwaku.global.infra.oauth.google.authcode;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.oauthcode.AuthCodeRequestUrlProvider;
 import dev.backend.wakuwaku.global.infra.oauth.google.GoogleOauthConfig;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
-@RequiredArgsConstructor
 public class GoogleAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
 
     private final GoogleOauthConfig googleOauthConfig;
@@ -16,6 +14,10 @@ public class GoogleAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvi
     @Override
     public OauthServerType supportServer() {
         return OauthServerType.GOOGLE;
+    }
+
+    public GoogleAuthCodeRequestUrlProvider(GoogleOauthConfig googleOauthConfig) {
+        this.googleOauthConfig = googleOauthConfig;
     }
 
     @Override
@@ -31,5 +33,6 @@ public class GoogleAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvi
                 .queryParam("resource_uri", googleOauthConfig.resourceUri())
                 .build()
                 .toUriString();
+
     }
 }

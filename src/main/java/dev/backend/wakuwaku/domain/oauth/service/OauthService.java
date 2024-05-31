@@ -41,14 +41,15 @@ public class OauthService {
                         newMember.setRole(Role.USER);
                         return newMember;
                     });
+
+
             member = memberRepository.save(member);
             return member.getId();
 
-
         } catch (Exception e) {
-            // 예외 로그를 남기고 적절한 메시지를 반환
-            log.error("로그인 중 오류 발생: ", e);
+            log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
             throw new RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
         }
     }
+
 }

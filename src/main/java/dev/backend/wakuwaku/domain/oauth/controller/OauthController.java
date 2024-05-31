@@ -31,14 +31,12 @@ public class OauthController {
         if ("google".equals(oauthServerTypeStr)) {
             // 스코프 파라미터를 추가하기 전에 이전에 포함된 스코프 파라미터를 제거
             redirectUrl = redirectUrl.replaceAll("&scope=[^&]*", "");
-            redirectUrl += "&scope=profile%20email"; // 스페이스를 URL 인코딩하여 추가
+            redirectUrl += "&scope=profile%20email%20profile%20openid&access_type=offline";
+            // 스페이스를 URL 인코딩하여 추가
         }
 
         response.sendRedirect(redirectUrl);
 
-        System.out.println("1>>>" + oauthServerTypeStr);
-        System.out.println("2>>>" + redirectUrl);
-        System.out.println("3>>>" + oauthServerType);
         return ResponseEntity.ok().build();
     }
 
@@ -47,13 +45,7 @@ public class OauthController {
             @PathVariable(name = "oauthServerType") OauthServerType oauthServerType,
             @RequestParam(name = "code") String code) {
 
-
-        System.out.println("login 1>>>" + oauthServerType);
-        System.out.println("login 2>>>" + code);
         Long login = oauthService.login(oauthServerType, code);
         return ResponseEntity.ok(login);
     }
-
-
-
 }
