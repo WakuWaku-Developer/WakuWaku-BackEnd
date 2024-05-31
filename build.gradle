@@ -46,11 +46,12 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
 	jacoco {
-		destinationFile= layout.buildDirectory.file("jacoco/jacoco.exec").get().asFile
+		destinationFile= layout.buildDirectory.file('jacoco/jacoco.exec').get().asFile
 	}
 
-	finalizedBy 'jacocoTestReport'
+	finalizedBy jacocoTestReport
 }
 
 jacoco {
@@ -68,7 +69,9 @@ def jacocoExcludePatterns = [
 		"*.entity.*",
 		"*.*Entity*",
 		"*.annotation.*",
-		"*.constant.*"
+		"*.constant.*",
+		"*.newest.*",
+		"*.Result*"
 ]
 
 // JaCoCo 보고서 + SonarCloud 관련 제외 패턴
@@ -82,7 +85,9 @@ def sonarCloudExcludePatterns = [
 		"**/entity/**/*",
 		"**/*Entity*",
 		"**/annotation/**/*",
-		"**/constant/**/*"
+		"**/constant/**/*",
+		"**/newest/**/*",
+		"**/Result*"
 ]
 
 //테스트 커버리지 규칙 정의하고 검증
@@ -117,8 +122,6 @@ jacocoTestCoverageVerification {
 }
 
 jacocoTestReport {
-	dependsOn test
-
 	reports {
 		html.required.set(true)
 		xml.required.set(true)
@@ -134,9 +137,11 @@ jacocoTestReport {
 		)
 	}
 
-	finalizedBy 'jacocoTestCoverageVerification'
+	finalizedBy jacocoTestCoverageVerification
 }
 
+// 매번 jacocoTestReport task와 jacocoTestCoverageVerification task를 지정해 주려면 귀찮으니
+// 이 task들을 하나로 묶는  task
 tasks.register('testCoverage', Test) {
 	group 'verification'
 	description 'Runs the unit tests with coverage'
@@ -151,9 +156,11 @@ tasks.register('testCoverage', Test) {
 
 sonar {
 	properties {
-		property "sonar.projectKey", "AK-47-GrandMother_WakuWaku-Backend"
-		property "sonar.organization", "wakuwaku"
-		property "sonar.host.url", "https://sonarcloud.io"
+		// 분석 전에 프로젝트가 컴파일되도록 설정
+		property 'sonar.gradle.skipCompile', 'true'
+		property 'sonar.projectKey', 'AK-47-GrandMother_WakuWaku-Backend'
+		property 'sonar.organization', 'wakuwaku'
+		property 'sonar.host.url', 'https://sonarcloud.io'
 		property 'sonar.sources', 'src'
 		property 'sonar.language', 'java'
 		property 'sonar.sourceEncoding', 'UTF-8'
@@ -191,5 +198,6 @@ tasks.register('copyOasToSwagger', Copy) {
 
 	from layout.buildDirectory.dir("/api-spec/openapi3.yaml").get().asFile
 	into "src/main/resources/static/swagger-ui/"
+
 	dependsOn "openapi3"
 }
