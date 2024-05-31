@@ -31,7 +31,6 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -50,6 +49,7 @@ class RestaurantControllerTest {
     private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
 
     private static final String SEARCH_WORD = "도쿄 근처 맛집";
+
     private static final String NAME = "우동신";
 
     private final List<PlacePhoto> photos = new ArrayList<>();
@@ -131,7 +131,7 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("$[*].lat").exists())
                 .andExpect(jsonPath("$[*].lng").exists())
                 .andExpect(jsonPath("$[*].photoUrl").exists())
-                .andDo(document("get simple info",
+                .andDo(MockMvcRestDocumentationWrapper.document("get simple info",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Get Simple Info")
                                 .description("Get Simple Info By Search Word")
@@ -162,8 +162,7 @@ class RestaurantControllerTest {
 
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders
-                .get(BASE_URL + "/{placeId}" + "/details", PLACE_ID)
-                .accept(MediaType.APPLICATION_JSON)
+                    .get(BASE_URL + "/{placeId}" + "/details", PLACE_ID)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").exists())
