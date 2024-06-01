@@ -28,7 +28,7 @@ public class OauthService {
         try {
             OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
-            Member member = memberRepository.findByoauthServerId(oauthMember.getOauthId().oauthServerId())
+            Member member = memberRepository.findByEmail(oauthMember.getEmail())
                     .orElseGet(() -> {
                         Member newMember = new Member();
                         newMember.setOauthServerId(oauthMember.getOauthId().oauthServerId());

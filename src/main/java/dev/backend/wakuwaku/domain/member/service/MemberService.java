@@ -31,7 +31,7 @@ public class MemberService {
      */
 
     private void validateDuplicateMember(Member member) {
-        memberRepository.findByoauthServerId
+        memberRepository.findByEmail
                         (member.oauthServerId())
                 .ifPresent(m -> {
                     throw new IllegalStateException();
