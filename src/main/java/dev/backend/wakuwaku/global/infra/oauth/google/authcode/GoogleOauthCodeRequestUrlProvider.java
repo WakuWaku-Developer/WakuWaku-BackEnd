@@ -1,13 +1,13 @@
 package dev.backend.wakuwaku.global.infra.oauth.google.authcode;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
-import dev.backend.wakuwaku.domain.oauth.oauthcode.AuthCodeRequestUrlProvider;
+import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProvider;
 import dev.backend.wakuwaku.global.infra.oauth.google.GoogleOauthConfig;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
-public class GoogleAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
+public class GoogleOauthCodeRequestUrlProvider implements OauthCodeRequestUrlProvider {
 
     private final GoogleOauthConfig googleOauthConfig;
 
@@ -16,7 +16,7 @@ public class GoogleAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvi
         return OauthServerType.GOOGLE;
     }
 
-    public GoogleAuthCodeRequestUrlProvider(GoogleOauthConfig googleOauthConfig) {
+    public GoogleOauthCodeRequestUrlProvider(GoogleOauthConfig googleOauthConfig) {
         this.googleOauthConfig = googleOauthConfig;
     }
 

@@ -1,4 +1,4 @@
-package dev.backend.wakuwaku.domain.oauth.oauthcode;
+package dev.backend.wakuwaku.global.infra.oauth.oauthcode;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 
@@ -9,7 +9,7 @@ import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
  * 예를 들어 KakaoAuthCodeRequestUrlProvider는 OauthServerType으로 KAKAO를 반환할 것입니다.
  * provide()를 통해 URL을 생성하여 반환하며, 해당 주소로 Redirect 한다면 다음과 같은 화면이 나옵니다.
  */
-public interface AuthCodeRequestUrlProvider {
+public interface OauthCodeRequestUrlProvider {
 
     OauthServerType supportServer();
 

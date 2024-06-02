@@ -1,4 +1,4 @@
-package dev.backend.wakuwaku.domain.oauth.presentation;
+package dev.backend.wakuwaku.global.infra.oauth.presentation;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import org.springframework.core.convert.converter.Converter;

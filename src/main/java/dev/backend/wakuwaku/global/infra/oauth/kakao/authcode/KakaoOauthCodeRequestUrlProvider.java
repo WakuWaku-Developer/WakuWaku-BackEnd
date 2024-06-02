@@ -3,7 +3,7 @@ package dev.backend.wakuwaku.global.infra.oauth.kakao.authcode;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.global.infra.oauth.kakao.KakaoOauthConfig;
-import dev.backend.wakuwaku.domain.oauth.oauthcode.AuthCodeRequestUrlProvider;
+import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
+public class KakaoOauthCodeRequestUrlProvider implements OauthCodeRequestUrlProvider {
 
     private final KakaoOauthConfig kakaoOauthConfig;
 

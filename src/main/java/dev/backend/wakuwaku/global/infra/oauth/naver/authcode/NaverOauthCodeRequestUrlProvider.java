@@ -2,7 +2,7 @@ package dev.backend.wakuwaku.global.infra.oauth.naver.authcode;
 
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
-import dev.backend.wakuwaku.domain.oauth.oauthcode.AuthCodeRequestUrlProvider;
+import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProvider;
 import dev.backend.wakuwaku.global.infra.oauth.naver.NaverOauthConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
-public class NaverAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
+public class NaverOauthCodeRequestUrlProvider implements OauthCodeRequestUrlProvider {
 
     private final NaverOauthConfig naverOauthConfig;
 
