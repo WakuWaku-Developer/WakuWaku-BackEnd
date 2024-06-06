@@ -1,0 +1,18 @@
+package dev.backend.wakuwaku.global.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class WakuWakuException extends RuntimeException {
+    private final ExceptionStatus status;
+
+    public static final WakuWakuException INVALID_PARAMETER       = new WakuWakuException(ExceptionStatus.INVALID_PARAMETER);
+    public static final WakuWakuException INVALID_URL             = new WakuWakuException(ExceptionStatus.INVALID_URL);
+    public static final WakuWakuException INTERNAL_SERVER_ERROR   = new WakuWakuException(ExceptionStatus.INTERNAL_SERVER_ERROR);
+    public static final WakuWakuException NOT_EXISTED_FILE        = new WakuWakuException(ExceptionStatus.NOT_EXISTED_FILE);
+    public static final WakuWakuException DUPLICATED_EMAIL        = new WakuWakuException(ExceptionStatus.DUPLICATED_EMAIL);
+    public static final WakuWakuException NONE_USER               = new WakuWakuException(ExceptionStatus.NONE_USER);
+
+}
