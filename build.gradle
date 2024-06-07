@@ -71,7 +71,8 @@ def jacocoExcludePatterns = [
 		"*.annotation.*",
 		"*.constant.*",
 		"*.newest.*",
-		"*.Result*"
+		"*.Result*",
+		"*.BaseResponse*"
 ]
 
 // JaCoCo 보고서 + SonarCloud 관련 제외 패턴
@@ -87,7 +88,8 @@ def sonarCloudExcludePatterns = [
 		"**/annotation/**/*",
 		"**/constant/**/*",
 		"**/newest/**/*",
-		"**/Result*"
+		"**/Result*",
+		"**/BaseResponse*"
 ]
 
 //테스트 커버리지 규칙 정의하고 검증
