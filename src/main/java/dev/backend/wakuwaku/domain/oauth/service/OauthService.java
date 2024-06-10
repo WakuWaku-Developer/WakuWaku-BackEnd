@@ -32,21 +32,24 @@ public class OauthService {
             OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
             Member member = memberRepository.findByEmail(oauthMember.getEmail())
-                    .orElseGet(() -> {
-                        Member newMember = new Member();
-                        newMember.setOauthServerId(oauthMember.getOauthId().oauthServerId());
-                        newMember.setOauthServerType(oauthMember.getOauthId().oauthServerType());
-                        newMember.setOauthId(oauthMember.getOauthId());
-                        newMember.setEmail(oauthMember.getEmail());
-                        newMember.setBirthday(oauthMember.getBirthday());
-                        newMember.setNickname(oauthMember.getNickname());
-                        newMember.setProfileImageUrl(oauthMember.getProfileImageUrl());
-                        newMember.setRole(Role.USER);
-                        return newMember;
-                    });
+                    .orElse(null);
 
+            if (member == null) {
+                // 새로운 회원 생성
+                member = new Member();
+                member.setOauthServerId(oauthMember.getOauthId().oauthServerId());
+                member.setOauthServerType(oauthMember.getOauthId().oauthServerType());
+                member.setOauthId(oauthMember.getOauthId());
+                member.setEmail(oauthMember.getEmail());
+                member.setBirthday(oauthMember.getBirthday());
+                member.setNickname(oauthMember.getNickname());
+                member.setProfileImageUrl(oauthMember.getProfileImageUrl());
+                member.setRole(Role.USER);
 
-            member = memberRepository.save(member);
+                // 새로운 회원 저장
+                member = memberRepository.save(member);
+            }
+
             Map<String, Long> response = new HashMap<>();
             response.put("id", member.getId());
             return response;
@@ -56,4 +59,5 @@ public class OauthService {
             throw new RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
         }
     }
+
 }
