@@ -32,29 +32,12 @@ public class MemberService {
 
     private void validateDuplicateMember(Member member) {
         memberRepository.findByEmail
-                        (member.oauthServerId())
+                        (member.getEmail())
                 .ifPresent(m -> {
                     throw new IllegalStateException();
                 });
     }
 
-    /*
-    로그인
-     */
-    /*
-    public Long login(String memberId, String password) {
-        Member memberEntity = memberRepository.findByMemberId(memberId)
-                .orElseThrow(
-                        () -> new IllegalStateException()
-                );
-
-        if (!memberEntity.getMemberPassword().equals(password)) {
-            throw new IllegalStateException();
-        }
-
-        return memberEntity.getId();
-    }
-*/
 
     /*
     회원 리스트

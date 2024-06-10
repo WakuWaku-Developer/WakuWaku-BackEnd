@@ -15,6 +15,7 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -35,12 +36,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(controllers = MemberController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class MemberControllerTest {
 
     @MockBean
@@ -112,7 +113,7 @@ class MemberControllerTest {
         given(memberService.update(ArgumentMatchers.eq(1L), ArgumentMatchers.any(MemberUpdateRequest.class))).willReturn(1L);
 
         // when & then
-        mockMvc.perform(put(BASE_URL + "/{id}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(BASE_URL + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"nickname\": \"newNickname\", \"profileImageUrl\": \"http://example.com/new-profile.jpg\", \"birthday\": \"1991-01-01\" }"))
                 .andExpect(status().isOk())
@@ -135,6 +136,7 @@ class MemberControllerTest {
 
         then(memberService).should().update(ArgumentMatchers.eq(1L), ArgumentMatchers.any(MemberUpdateRequest.class));
     }
+
 
     @Test
     @DisplayName("회원 삭제 테스트")
