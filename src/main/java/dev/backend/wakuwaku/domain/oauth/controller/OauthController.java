@@ -8,10 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
-@RequiredArgsConstructor
-@RequestMapping("/oauth")
 @RestController
+@RequestMapping("/oauth")
+@RequiredArgsConstructor
 public class OauthController {
 
     private final OauthService oauthService;
@@ -41,11 +42,12 @@ public class OauthController {
     }
 
     @GetMapping("/login/{oauthServerType}")
-    ResponseEntity<Long> login(
+    ResponseEntity<Map<String, Long>> login(
             @PathVariable(name = "oauthServerType") OauthServerType oauthServerType,
             @RequestParam(name = "code") String code) {
 
-        Long login = oauthService.login(oauthServerType, code);
+        Map<String, Long> login = oauthService.login(oauthServerType, code);
         return ResponseEntity.ok(login);
     }
 }
+

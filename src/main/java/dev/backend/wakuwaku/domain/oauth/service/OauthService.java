@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class OauthService {
         return oauthCodeRequestUrlProviderComposite.provide(oauthServerType);
     }
 
-    public Long login(OauthServerType oauthServerType, String authCode) {
+    public Map<String, Long> login(OauthServerType oauthServerType, String authCode) {
         try {
             OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
@@ -44,12 +47,13 @@ public class OauthService {
 
 
             member = memberRepository.save(member);
-            return member.getId();
+            Map<String, Long> response = new HashMap<>();
+            response.put("id", member.getId());
+            return response;
 
         } catch (Exception e) {
             log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
             throw new RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
         }
     }
-
 }
