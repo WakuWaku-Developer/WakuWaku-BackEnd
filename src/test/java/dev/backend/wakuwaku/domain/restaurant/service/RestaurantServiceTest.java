@@ -2,6 +2,7 @@ package dev.backend.wakuwaku.domain.restaurant.service;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.old.Result;
 import dev.backend.wakuwaku.global.infra.google.places.old.details.GooglePlacesDetailsService;
 import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.GooglePlacesTextSearchService;
@@ -20,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static dev.backend.wakuwaku.global.exception.ExceptionStatus.INVALID_PARAMETER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -100,6 +103,7 @@ class RestaurantServiceTest {
         then(restaurantRepository).should(never()).save(duplicateRestaurant);
     }
 
+    @DisplayName("id 값으로 식당 조회")
     @Test
     void findById() {
         // given
@@ -115,6 +119,19 @@ class RestaurantServiceTest {
         then(restaurantRepository).should().findById(anyLong());
     }
 
+    @DisplayName("id가 유효하지 않다면 INVALID_PARAMETER 예외가 발생해야 한다.")
+    @Test
+    void failFindById() {
+        // when
+        thenThrownBy(
+                () -> restaurantService.findById(anyLong())
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(INVALID_PARAMETER);
+    }
+
+    @DisplayName("식당의 간단한 정보를 얻음")
     @Test
     void getSimpleRestaurants() {
         // given
@@ -141,6 +158,7 @@ class RestaurantServiceTest {
         then(googlePlacesTextSearchService).should().textSearch(anyString());
     }
 
+    @DisplayName("식당의 자세한 정보를 얻음")
     @Test
     void getDetailsRestaurant() {
         // given
