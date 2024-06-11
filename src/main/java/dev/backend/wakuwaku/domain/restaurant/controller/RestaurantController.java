@@ -5,8 +5,8 @@ import dev.backend.wakuwaku.domain.restaurant.dto.response.SimpleInfoRestaurantR
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
 import dev.backend.wakuwaku.global.infra.google.places.old.Result;
+import dev.backend.wakuwaku.global.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +18,19 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     @GetMapping
-    public ResponseEntity<List<SimpleInfoRestaurantResponse>> getSimpleInfoRestaurants(@RequestParam("search") String searchWord) {
+    public BaseResponse<List<SimpleInfoRestaurantResponse>> getSimpleInfoRestaurants(@RequestParam("search") String searchWord) {
 
         List<Restaurant> restaurants = restaurantService.getSimpleRestaurants(searchWord);
 
-        return ResponseEntity.ok().body(restaurants.stream()
+        return new BaseResponse<>(restaurants.stream()
                 .map(SimpleInfoRestaurantResponse::new)
                 .toList());
     }
 
     @GetMapping("/{placeId}/details")
-    public ResponseEntity<DetailsInfoRestaurantResponse> getDetailsInfoRestaurant(@PathVariable("placeId") String placeId) {
+    public BaseResponse<DetailsInfoRestaurantResponse> getDetailsInfoRestaurant(@PathVariable("placeId") String placeId) {
         Result detailsRestaurant = restaurantService.getDetailsRestaurant(placeId);
 
-        return ResponseEntity.ok().body(new DetailsInfoRestaurantResponse(detailsRestaurant));
+        return new BaseResponse<>(new DetailsInfoRestaurantResponse(detailsRestaurant));
     }
 }
