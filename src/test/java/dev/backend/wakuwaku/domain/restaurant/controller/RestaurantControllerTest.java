@@ -123,28 +123,32 @@ class RestaurantControllerTest {
                     .queryParam("search", SEARCH_WORD)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].placeId").exists())
-                .andExpect(jsonPath("$[*].name").exists())
-                .andExpect(jsonPath("$[*].rating").exists())
-                .andExpect(jsonPath("$[*].userRatingsTotal").exists())
-                .andExpect(jsonPath("$[*].lat").exists())
-                .andExpect(jsonPath("$[*].lng").exists())
-                .andExpect(jsonPath("$[*].photoUrl").exists())
+                .andExpect(jsonPath("data[*].placeId").exists())
+                .andExpect(jsonPath("data[*].name").exists())
+                .andExpect(jsonPath("data[*].rating").exists())
+                .andExpect(jsonPath("data[*].userRatingsTotal").exists())
+                .andExpect(jsonPath("data[*].lat").exists())
+                .andExpect(jsonPath("data[*].lng").exists())
+                .andExpect(jsonPath("data[*].photoUrl").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get simple info",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Get Simple Info")
-                                .description("Get Simple Info By Search Word")
+                                .summary("Get Simple Info By Search Word")
+                                .description("응답(data[]의 size) 개수가 최대 20개까지 가능함.")
                                 .queryParameters(
                                         parameterWithName("search").description("검색어")
                                 )
                                 .responseFields(
-                                        fieldWithPath("[].placeId").type(JsonFieldType.STRING).description("Details Info 에 활용할 식당의 Place Id"),
-                                        fieldWithPath("[].name").type(JsonFieldType.STRING).description("식당 이름"),
-                                        fieldWithPath("[].rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
-                                        fieldWithPath("[].userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당 총 리뷰 수"),
-                                        fieldWithPath("[].lat").type(JsonFieldType.NUMBER).description("위도"),
-                                        fieldWithPath("[].lng").type(JsonFieldType.NUMBER).description("경도"),
-                                        fieldWithPath("[].photoUrl").type(JsonFieldType.ARRAY).optional().description("식당 대표 사진 URL"))
+                                        fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 성공 시 반환되는 code 값"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 성공 시 반환되는 메시지"),
+                                        fieldWithPath("data[].placeId").type(JsonFieldType.STRING).description("Details Info 에 활용할 식당의 Place Id"),
+                                        fieldWithPath("data[].name").type(JsonFieldType.STRING).description("식당 이름"),
+                                        fieldWithPath("data[].rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
+                                        fieldWithPath("data[].userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당 총 리뷰 수"),
+                                        fieldWithPath("data[].lat").type(JsonFieldType.NUMBER).description("위도"),
+                                        fieldWithPath("data[].lng").type(JsonFieldType.NUMBER).description("경도"),
+                                        fieldWithPath("data[].photoUrl").type(JsonFieldType.ARRAY).optional().description("식당 대표 사진 URL"))
                                 .build()
                         )
                        )
@@ -164,27 +168,27 @@ class RestaurantControllerTest {
                     .get(BASE_URL + "/{placeId}" + "/details", PLACE_ID)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").exists())
-                .andExpect(jsonPath("$.editorialSummary").exists())
-                .andExpect(jsonPath("$..photos").exists())
-                .andExpect(jsonPath("$.dineIn").exists())
-                .andExpect(jsonPath("$.delivery").exists())
-                .andExpect(jsonPath("$.takeout").exists())
-                .andExpect(jsonPath("$.website").isEmpty())
-                .andExpect(jsonPath("$.formattedPhoneNumber").isEmpty())
-                .andExpect(jsonPath("$.formattedAddress").exists())
-                .andExpect(jsonPath("$.reservable").exists())
-                .andExpect(jsonPath("$.servesBreakfast").exists())
-                .andExpect(jsonPath("$.servesLunch").exists())
-                .andExpect(jsonPath("$.servesDinner").exists())
-                .andExpect(jsonPath("$.servesBeer").exists())
-                .andExpect(jsonPath("$.servesWine").exists())
-                .andExpect(jsonPath("$.servesVegetarianFood").exists())
-                .andExpect(jsonPath("$.userRatingsTotal").exists())
-                .andExpect(jsonPath("$.rating").exists())
-                .andExpect(jsonPath("$.review").exists())
-                .andExpect(jsonPath("$.openNow").exists())
-                .andExpect(jsonPath("$.weekdayText").exists())
+                .andExpect(jsonPath("data.name").exists())
+                .andExpect(jsonPath("data.editorialSummary").exists())
+                .andExpect(jsonPath("data.photos").exists())
+                .andExpect(jsonPath("data.dineIn").exists())
+                .andExpect(jsonPath("data.delivery").exists())
+                .andExpect(jsonPath("data.takeout").exists())
+                .andExpect(jsonPath("data.website").isEmpty())
+                .andExpect(jsonPath("data.formattedPhoneNumber").isEmpty())
+                .andExpect(jsonPath("data.formattedAddress").exists())
+                .andExpect(jsonPath("data.reservable").exists())
+                .andExpect(jsonPath("data.servesBreakfast").exists())
+                .andExpect(jsonPath("data.servesLunch").exists())
+                .andExpect(jsonPath("data.servesDinner").exists())
+                .andExpect(jsonPath("data.servesBeer").exists())
+                .andExpect(jsonPath("data.servesWine").exists())
+                .andExpect(jsonPath("data.servesVegetarianFood").exists())
+                .andExpect(jsonPath("data.userRatingsTotal").exists())
+                .andExpect(jsonPath("data.rating").exists())
+                .andExpect(jsonPath("data.review").exists())
+                .andExpect(jsonPath("data.openNow").exists())
+                .andExpect(jsonPath("data.weekdayText").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get details info",
                         resource(ResourceSnippetParameters.builder()
                                     .tag("Get Details Info")
@@ -193,32 +197,35 @@ class RestaurantControllerTest {
                                     parameterWithName("placeId").description("Details Info를 얻고 싶은 식당의 Place Id")
                                     )
                                     .responseFields(
-                                            fieldWithPath("name").type(JsonFieldType.STRING).description("식당 이름"),
-                                            fieldWithPath("editorialSummary").type(JsonFieldType.STRING).optional().description("식당에 대한 간단한 소개글"),
-                                            fieldWithPath("photos").type(JsonFieldType.ARRAY).optional().description("식당 사진 (최대 10개)"),
-                                            fieldWithPath("dineIn").type(JsonFieldType.BOOLEAN).optional().description("매장 내 식사 가능 여부"),
-                                            fieldWithPath("delivery").type(JsonFieldType.BOOLEAN).optional().description("배달 가능 여부"),
-                                            fieldWithPath("takeout").type(JsonFieldType.BOOLEAN).optional().description("포장 가능 여부"),
-                                            fieldWithPath("website").type(JsonFieldType.STRING).optional().description("해당 식당의 웹 사이트 주소"),
-                                            fieldWithPath("formattedPhoneNumber").type(JsonFieldType.STRING).optional().description("식당 전화번호"),
-                                            fieldWithPath("formattedAddress").type(JsonFieldType.STRING).description("식당 주소"),
-                                            fieldWithPath("reservable").type(JsonFieldType.BOOLEAN).optional().description("예약 가능 여부"),
-                                            fieldWithPath("servesBreakfast").type(JsonFieldType.BOOLEAN).optional().description("아침 식사 가능 여부"),
-                                            fieldWithPath("servesLunch").type(JsonFieldType.BOOLEAN).optional().description("점심 식사 가능 여부"),
-                                            fieldWithPath("servesDinner").type(JsonFieldType.BOOLEAN).optional().description("저녁 식사 가능 여부"),
-                                            fieldWithPath("servesBeer").type(JsonFieldType.BOOLEAN).optional().description("맥주 판매 여부"),
-                                            fieldWithPath("servesWine").type(JsonFieldType.BOOLEAN).optional().description("와인 판매 여부"),
-                                            fieldWithPath("servesVegetarianFood").type(JsonFieldType.BOOLEAN).optional().description("채식주의자를 위한 메뉴 유무"),
-                                            fieldWithPath("userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당의 총 리뷰 수"),
-                                            fieldWithPath("rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
-                                            fieldWithPath("review[].author_name").type(JsonFieldType.STRING).description("리뷰 작성자 이름"),
-                                            fieldWithPath("review[].rating").type(JsonFieldType.NUMBER).description("리뷰 작성자의 별점"),
-                                            fieldWithPath("review[].relative_time_description").type(JsonFieldType.STRING).description("현 시간으로부터 식당 리뷰 작성한 날짜"),
-                                            fieldWithPath("review[].profile_photo_url").type(JsonFieldType.STRING).description("리뷰 작성자의 프로필 사진 URL"),
-                                            fieldWithPath("review[].text").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                            fieldWithPath("review[].translated").type(JsonFieldType.BOOLEAN).description("리뷰가 구글 번역기에 의해 번역이 된 것인지 여부"),
-                                            fieldWithPath("openNow").type(JsonFieldType.BOOLEAN).optional().description("검색한 시점에서의 식당 오픈 여부"),
-                                            fieldWithPath("weekdayText").type(JsonFieldType.ARRAY).optional().description("요일 별 식당 운영 시간")
+                                            fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                            fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 성공 시 반환되는 code 값"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 성공 시 반환되는 메시지"),
+                                            fieldWithPath("data.name").type(JsonFieldType.STRING).description("식당 이름"),
+                                            fieldWithPath("data.editorialSummary").type(JsonFieldType.STRING).optional().description("식당에 대한 간단한 소개글"),
+                                            fieldWithPath("data.photos").type(JsonFieldType.ARRAY).optional().description("식당 사진 (최대 10개)"),
+                                            fieldWithPath("data.dineIn").type(JsonFieldType.BOOLEAN).optional().description("매장 내 식사 가능 여부"),
+                                            fieldWithPath("data.delivery").type(JsonFieldType.BOOLEAN).optional().description("배달 가능 여부"),
+                                            fieldWithPath("data.takeout").type(JsonFieldType.BOOLEAN).optional().description("포장 가능 여부"),
+                                            fieldWithPath("data.website").type(JsonFieldType.STRING).optional().description("해당 식당의 웹 사이트 주소"),
+                                            fieldWithPath("data.formattedPhoneNumber").type(JsonFieldType.STRING).optional().description("식당 전화번호"),
+                                            fieldWithPath("data.formattedAddress").type(JsonFieldType.STRING).description("식당 주소"),
+                                            fieldWithPath("data.reservable").type(JsonFieldType.BOOLEAN).optional().description("예약 가능 여부"),
+                                            fieldWithPath("data.servesBreakfast").type(JsonFieldType.BOOLEAN).optional().description("아침 식사 가능 여부"),
+                                            fieldWithPath("data.servesLunch").type(JsonFieldType.BOOLEAN).optional().description("점심 식사 가능 여부"),
+                                            fieldWithPath("data.servesDinner").type(JsonFieldType.BOOLEAN).optional().description("저녁 식사 가능 여부"),
+                                            fieldWithPath("data.servesBeer").type(JsonFieldType.BOOLEAN).optional().description("맥주 판매 여부"),
+                                            fieldWithPath("data.servesWine").type(JsonFieldType.BOOLEAN).optional().description("와인 판매 여부"),
+                                            fieldWithPath("data.servesVegetarianFood").type(JsonFieldType.BOOLEAN).optional().description("채식주의자를 위한 메뉴 유무"),
+                                            fieldWithPath("data.userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당의 총 리뷰 수"),
+                                            fieldWithPath("data.rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
+                                            fieldWithPath("data.review[].author_name").type(JsonFieldType.STRING).description("리뷰 작성자 이름"),
+                                            fieldWithPath("data.review[].rating").type(JsonFieldType.NUMBER).description("리뷰 작성자의 별점"),
+                                            fieldWithPath("data.review[].relative_time_description").type(JsonFieldType.STRING).description("현 시간으로부터 식당 리뷰 작성한 날짜"),
+                                            fieldWithPath("data.review[].profile_photo_url").type(JsonFieldType.STRING).description("리뷰 작성자의 프로필 사진 URL"),
+                                            fieldWithPath("data.review[].text").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                            fieldWithPath("data.review[].translated").type(JsonFieldType.BOOLEAN).description("리뷰가 구글 번역기에 의해 번역이 된 것인지 여부"),
+                                            fieldWithPath("data.openNow").type(JsonFieldType.BOOLEAN).optional().description("검색한 시점에서의 식당 오픈 여부"),
+                                            fieldWithPath("data.weekdayText").type(JsonFieldType.ARRAY).optional().description("요일 별 식당 운영 시간")
                                     )
                                     .build()
                         )

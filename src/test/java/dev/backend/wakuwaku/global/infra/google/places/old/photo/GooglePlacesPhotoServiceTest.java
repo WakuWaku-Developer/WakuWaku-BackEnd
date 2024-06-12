@@ -1,5 +1,7 @@
 package dev.backend.wakuwaku.global.infra.google.places.old.photo;
 
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.web.client.RestClient;
 
 import static dev.backend.wakuwaku.global.infra.google.places.old.photo.dto.request.PhotoRequest.PHOTO_URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -51,5 +54,20 @@ class GooglePlacesPhotoServiceTest {
 
         // then
         assertThat(photosURL).containsPattern("https.*s1600-w800");
+    }
+
+    @Test
+    @DisplayName("이미지 URL을 파싱하지 못하면 INVALID_PHOTO_REFERENCE 예외가 발생해야 한다.")
+    void failGetPhotosURLByTextSearch() {
+        //given
+        String failPhotoReference = "fail";
+
+        // when & then
+        thenThrownBy(
+                () -> googlePlacesPhotoService.getActualPhotoURL(failPhotoReference)
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.INVALID_PHOTO_REFERENCE);
     }
 }

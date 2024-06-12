@@ -1,6 +1,8 @@
 package dev.backend.wakuwaku.global.infra.google.places.old.details;
 
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.old.Result;
+import dev.backend.wakuwaku.global.infra.google.places.old.details.dto.response.DetailsResponse;
 import dev.backend.wakuwaku.global.infra.google.places.old.photo.GooglePlacesPhotoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,11 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
+import static dev.backend.wakuwaku.global.exception.ExceptionStatus.NOT_EXISTED_DETAILS_RESPONSE;
+import static dev.backend.wakuwaku.global.exception.ExceptionStatus.NOT_EXISTED_PLACE_ID;
 import static dev.backend.wakuwaku.global.infra.google.places.old.details.dto.request.DetailsRequest.DETAILS_FIELDS;
 import static dev.backend.wakuwaku.global.infra.google.places.old.details.dto.request.DetailsRequest.DETAILS_URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(value = {GooglePlacesDetailsService.class, GooglePlacesPhotoService.class})
@@ -61,5 +67,38 @@ class GooglePlacesDetailsServiceTest {
         assertThat(result.getCurrent_opening_hours()).isNotNull();
         assertThat(result.getFormatted_address()).isNotNull();
         assertThat(result.getReviews()).hasSizeLessThanOrEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("place id가 비어있으면 NOT_EXISTED_PLACE_ID 예외가 발생해야 한다.")
+    void failDetailsSearch() {
+        // given
+        mockServer
+                .expect(requestTo(DETAILS_URL + DETAILS_FIELDS + "&place_id=" + "&key=" + apiKey))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withBadRequest());
+
+        // when & then
+        thenThrownBy(
+                () -> googlePlacesDetailsService.detailsSearch("")
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(NOT_EXISTED_PLACE_ID);
+    }
+
+    @Test
+    @DisplayName("Google Places API 응답 데이터가 null이거나 Result가 null 이면 NOT_EXISTED_DETAILS_RESPONSE 예외가 발생해야 한다.")
+    void failGooglePlacesAPI() {
+        // given
+        DetailsResponse detailsResponse = new DetailsResponse();
+
+        // when & then
+        thenThrownBy(
+                () -> googlePlacesDetailsService.resultByDetailsSearch(detailsResponse)
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(NOT_EXISTED_DETAILS_RESPONSE);
     }
 }

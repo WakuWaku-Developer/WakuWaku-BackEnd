@@ -1,5 +1,7 @@
 package dev.backend.wakuwaku.global.infra.google.places.old.textsearch;
 
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.old.Result;
 import dev.backend.wakuwaku.global.infra.google.places.old.photo.GooglePlacesPhotoService;
 import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest;
@@ -19,8 +21,10 @@ import java.util.List;
 import static dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest.NEXT_PAGE_URL;
 import static dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest.TEXT_SEARCH_URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(value = {GooglePlacesTextSearchService.class, GooglePlacesPhotoService.class})
@@ -31,6 +35,9 @@ class GooglePlacesTextSearchServiceTest {
     @Autowired
     private MockRestServiceServer mockServer;
 
+    @Autowired
+    private RestClient.Builder restClient = RestClient.builder();
+
     @Value("${google-places}")
     private String apiKey;
 
@@ -38,7 +45,6 @@ class GooglePlacesTextSearchServiceTest {
 
     @BeforeEach
     void setUp() {
-        RestClient.Builder restClient = RestClient.builder();
         mockServer = MockRestServiceServer.bindTo(restClient).build();
     }
 
@@ -58,6 +64,8 @@ class GooglePlacesTextSearchServiceTest {
         List<Result> results = googlePlacesTextSearchService.textSearch(searchWord);
 
         // then
+        assertThat(results).isNotNull().hasSizeLessThanOrEqualTo(20);
+
         for (Result result : results) {
             assertThat(result.getName()).isNotNull();
             assertThat(result.getPlace_id()).isNotNull();
@@ -66,10 +74,43 @@ class GooglePlacesTextSearchServiceTest {
             assertThat(result.getGeometry().getLocation()).isNotNull();
             assertThat(result.getPhotos()).hasSizeLessThanOrEqualTo(1);
         }
+    }
 
-        assertThat(results.size()).isNotZero();
-        assertThat(results).hasSizeLessThanOrEqualTo(20);
+    @DisplayName("검색어 입력 없이 API 요청 시 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
+    @Test
+    void failTextSearchByNoSearchWord() {
+        // given
+        mockServer
+                .expect(requestTo(textSearchURI("")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withBadRequest());
 
+        // when
+        Throwable thrown = catchException(
+                () -> googlePlacesTextSearchService.textSearch("")
+        );
+
+
+        // then
+        assertThat(thrown)
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.INVALID_SEARCH_WORD);
+    }
+
+    @DisplayName("Next Page Token 값이 없거나 비었으면 NOT_EXISTED_NEXT_PAGE_TOKEN 예외가 발생한다.")
+    @Test
+    void failTextSearchByNoNextPageToken() {
+        // when
+        Throwable thrown = catchException(
+                () -> googlePlacesTextSearchService.textSearchByNextPageToken("")
+        );
+
+        // then
+        assertThat(thrown)
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.NOT_EXISTED_NEXT_PAGE_TOKEN);
     }
 
     @DisplayName("next page token 값을 활용한 요청 테스트")
@@ -102,8 +143,8 @@ class GooglePlacesTextSearchServiceTest {
     private String textSearchURI(String searchWord) {
         TextSearchRequest textSearchRequest = new TextSearchRequest(searchWord);
 
-        String newTextQuery = textSearchRequest.getTextQuery().replace(" ", "%20");
+        String newSearchWord = textSearchRequest.getTextQuery().replace(" ", "%20");
 
-        return TEXT_SEARCH_URL + newTextQuery + "&key=" + apiKey;
+        return TEXT_SEARCH_URL + newSearchWord + "&key=" + apiKey;
     }
 }
