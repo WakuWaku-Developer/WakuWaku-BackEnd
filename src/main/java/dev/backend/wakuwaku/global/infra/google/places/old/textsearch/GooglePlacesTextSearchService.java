@@ -13,7 +13,6 @@ import org.springframework.web.client.RestClient;
 import java.util.Collections;
 import java.util.List;
 
-import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_SEARCH_WORD;
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.NOT_EXISTED_NEXT_PAGE_TOKEN;
 import static dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest.NEXT_PAGE_URL;
 import static dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.request.TextSearchRequest.TEXT_SEARCH_URL;
@@ -29,10 +28,6 @@ public class GooglePlacesTextSearchService{
     private String apiKey;
 
     public List<Result> textSearch(String searchWord) {
-        if (searchWord == null || searchWord.isEmpty()) {
-            throw INVALID_SEARCH_WORD;
-        }
-
         TextSearchResponse responseByTextSearch = restClient.get()
                 .uri(textSearchURI(searchWord))
                 .retrieve()
