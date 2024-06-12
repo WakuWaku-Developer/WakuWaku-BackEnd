@@ -2,6 +2,7 @@ package dev.backend.wakuwaku.domain.restaurant.service;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.old.Result;
 import dev.backend.wakuwaku.global.infra.google.places.old.details.GooglePlacesDetailsService;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.JAPAN;
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.INVALID_PARAMETER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
@@ -135,15 +137,17 @@ class RestaurantServiceTest {
     @Test
     void getSimpleRestaurants() {
         // given
+        String searchWord = "테스트";
+
         List<Result> results = new ArrayList<>();
         results.add(result);
 
         Restaurant restaurant = new Restaurant(result);
 
-        given(googlePlacesTextSearchService.textSearch(anyString())).willReturn(results);
+        given(googlePlacesTextSearchService.textSearch(JAPAN + searchWord)).willReturn(results);
 
         // when
-        List<Restaurant> simpleRestaurants = restaurantService.getSimpleRestaurants(anyString());
+        List<Restaurant> simpleRestaurants = restaurantService.getSimpleRestaurants(searchWord);
 
         // then
         assertThat(simpleRestaurants).hasSize(1);
@@ -155,7 +159,55 @@ class RestaurantServiceTest {
         assertThat(simpleRestaurants.get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
         assertThat(simpleRestaurants.get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
 
-        then(googlePlacesTextSearchService).should().textSearch(anyString());
+        then(googlePlacesTextSearchService).should().textSearch(JAPAN + searchWord);
+    }
+
+    @DisplayName("검색어가 null 이면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
+    @Test
+    void failTextSearchByNullSearchWord() {
+        // when & then
+        thenThrownBy(
+                () -> restaurantService.getSimpleRestaurants(null)
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.INVALID_SEARCH_WORD);
+    }
+
+    @DisplayName("검색어를 입력하지 않으면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
+    @Test
+    void failTextSearchByNoSearchWord() {
+        // when & then
+        thenThrownBy(
+                () -> restaurantService.getSimpleRestaurants("")
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.INVALID_SEARCH_WORD);
+    }
+
+    @DisplayName("검색어가 공백이면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
+    @Test
+    void failTextSearchBySpaceSearchWord() {
+        // when & then
+        thenThrownBy(
+                () -> restaurantService.getSimpleRestaurants(" ")
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.INVALID_SEARCH_WORD);
+    }
+
+    @DisplayName("검색어가 탭이면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
+    @Test
+    void failTextSearchByTabSearchWord() {
+        // when & then
+        thenThrownBy(
+                () -> restaurantService.getSimpleRestaurants("  ")
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.INVALID_SEARCH_WORD);
     }
 
     @DisplayName("식당의 자세한 정보를 얻음")
