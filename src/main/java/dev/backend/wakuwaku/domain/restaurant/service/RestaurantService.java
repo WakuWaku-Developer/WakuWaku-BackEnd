@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.JAPAN;
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_PARAMETER;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,6 @@ public class RestaurantService {
     private final GooglePlacesDetailsService googlePlacesDetailsService;
     private final GooglePlacesTextSearchService googlePlacesTextSearchService;
 
-    // 찜하면 해당 식당의 simple info(=Restaurant)만 저장하고 싶은데, 이미 저장된 식당일 경우의 처리할 방법을 찾아야 함.
     public Restaurant save(Restaurant restaurant) {
         return restaurantRepository.findByPlaceId(restaurant.getPlaceId())
                 .orElseGet(
@@ -33,7 +33,7 @@ public class RestaurantService {
     public Restaurant findById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(
-                        IllegalStateException::new
+                        () -> INVALID_PARAMETER
                 );
     }
 

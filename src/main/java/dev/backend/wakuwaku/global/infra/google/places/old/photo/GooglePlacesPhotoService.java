@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_PHOTO_REFERENCE;
 import static dev.backend.wakuwaku.global.infra.google.places.old.photo.dto.request.PhotoRequest.PHOTO_URL;
 
 @Service
@@ -29,11 +30,7 @@ public class GooglePlacesPhotoService {
         return PHOTO_URL + photoReference + "&key=" + apiKey;
     }
 
-    private String getActualPhotoURL(String photoResult) {
-        if (photoResult == null) {
-            return null;
-        }
-
+    public String getActualPhotoURL(String photoResult) {
         // 정규 표현식 컴파일
         Pattern pattern = Pattern.compile("<A HREF=\"([^\"]+)\">");
         Matcher matcher = pattern.matcher(photoResult);
@@ -42,6 +39,6 @@ public class GooglePlacesPhotoService {
             return matcher.group(1);
         }
 
-        return null;
+        throw INVALID_PHOTO_REFERENCE;
     }
 }
