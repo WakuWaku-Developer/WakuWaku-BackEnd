@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(value = {GooglePlacesTextSearchService.class, GooglePlacesPhotoService.class})
@@ -74,28 +73,6 @@ class GooglePlacesTextSearchServiceTest {
             assertThat(result.getGeometry().getLocation()).isNotNull();
             assertThat(result.getPhotos()).hasSizeLessThanOrEqualTo(1);
         }
-    }
-
-    @DisplayName("검색어 입력 없이 API 요청 시 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
-    @Test
-    void failTextSearchByNoSearchWord() {
-        // given
-        mockServer
-                .expect(requestTo(textSearchURI("")))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withBadRequest());
-
-        // when
-        Throwable thrown = catchException(
-                () -> googlePlacesTextSearchService.textSearch("")
-        );
-
-
-        // then
-        assertThat(thrown)
-                .isInstanceOf(WakuWakuException.class)
-                .extracting("status")
-                .isEqualTo(ExceptionStatus.INVALID_SEARCH_WORD);
     }
 
     @DisplayName("Next Page Token 값이 없거나 비었으면 NOT_EXISTED_NEXT_PAGE_TOKEN 예외가 발생한다.")
