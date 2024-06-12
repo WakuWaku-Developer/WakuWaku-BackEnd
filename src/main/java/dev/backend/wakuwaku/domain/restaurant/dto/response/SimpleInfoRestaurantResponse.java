@@ -11,8 +11,7 @@ public class SimpleInfoRestaurantResponse {
     private final String name;
     private final Number rating;
     private final Number userRatingsTotal;
-    private final double lat;
-    private final double lng;
+    private final Location location;
     private final List<String> photoUrl;
 
     public SimpleInfoRestaurantResponse(Restaurant restaurant) {
@@ -20,8 +19,10 @@ public class SimpleInfoRestaurantResponse {
         this.name = restaurant.getName();
         this.rating = restaurant.getRating();
         this.userRatingsTotal = restaurant.getUserRatingsTotal();
-        this.lat = restaurant.getLat();
-        this.lng = restaurant.getLng();
+        this.location = Location.builder()
+                            .lat(restaurant.getLat())
+                            .lng(restaurant.getLng())
+                            .build();
         this.photoUrl = restaurant.getPhotos();
     }
 }
