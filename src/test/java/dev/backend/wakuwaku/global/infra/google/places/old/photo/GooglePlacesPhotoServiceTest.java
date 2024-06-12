@@ -28,6 +28,9 @@ class GooglePlacesPhotoServiceTest {
     @Autowired
     private MockRestServiceServer mockServer;
 
+    @Autowired
+    private RestClient.Builder restClient = RestClient.builder();
+
     @Value("${google-places}")
     private String apiKey;
 
@@ -35,7 +38,6 @@ class GooglePlacesPhotoServiceTest {
 
     @BeforeEach
     void setUp() {
-        RestClient.Builder restClient = RestClient.builder();
         mockServer = MockRestServiceServer.bindTo(restClient).build();
     }
 
