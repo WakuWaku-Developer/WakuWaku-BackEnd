@@ -1,8 +1,6 @@
 package dev.backend.wakuwaku.domain.member.entity;
 
-
 import dev.backend.wakuwaku.domain.StatusEntity;
-import dev.backend.wakuwaku.domain.oauth.dto.OauthId;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.dto.Role;
 import jakarta.persistence.*;
@@ -14,7 +12,7 @@ import static jakarta.persistence.EnumType.STRING;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor//(access = PROTECTED)
+@NoArgsConstructor
 @Table(
         name = "member_table",
         uniqueConstraints = {
@@ -27,20 +25,17 @@ import static jakarta.persistence.EnumType.STRING;
                 )
         }
 )
-
 public class Member extends StatusEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
-    @Column(nullable = false, name = "oauth_server_id", insertable = false, updatable = false)
+    @Column(nullable = false, name = "oauth_server_id")
     private String oauthServerId;
 
     @Enumerated(STRING)
-    @Column(nullable = false, name = "oauth_server", insertable = false, updatable = false)
+    @Column(nullable = false, name = "oauth_server")
     private OauthServerType oauthServerType;
 
     @Column
@@ -48,7 +43,6 @@ public class Member extends StatusEntity {
 
     @Column
     private String email;
-
 
     @Column(nullable = false, length = 50)
     private String nickname;
@@ -60,17 +54,6 @@ public class Member extends StatusEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
-    @Embedded
-    private OauthId oauthId;
-    public String oauthServerId() {
-        return oauthServerId;
-    }
-
-    public OauthServerType oauthServer() {
-        return oauthServerType;
-    }
-
     @Builder
     public Member(String oauthServerId, OauthServerType oauthServerType, String email,
                   String birthday, String nickname, String profileImageUrl, Role role) {
@@ -80,6 +63,6 @@ public class Member extends StatusEntity {
         this.birthday = birthday;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
-        this.role = Role.GUEST;
+        this.role = role;
     }
 }

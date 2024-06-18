@@ -39,7 +39,6 @@ public class OauthService {
                 member = new Member();
                 member.setOauthServerId(oauthMember.getOauthId().oauthServerId());
                 member.setOauthServerType(oauthMember.getOauthId().oauthServerType());
-                member.setOauthId(oauthMember.getOauthId());
                 member.setEmail(oauthMember.getEmail());
                 member.setBirthday(oauthMember.getBirthday());
                 member.setNickname(oauthMember.getNickname());
@@ -59,5 +58,4 @@ public class OauthService {
             throw new RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
         }
     }
-
 }
