@@ -13,6 +13,7 @@ import java.util.List;
 
 import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.JAPAN;
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_PARAMETER;
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_SEARCH_WORD;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,10 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getSimpleRestaurants(String searchWord) {
+        if (searchWord == null || searchWord.isEmpty() || searchWord.matches("^[ \t]*$")) {
+            throw INVALID_SEARCH_WORD;
+        }
+
         String newWord = duplicateWord(searchWord);
 
         List<Result> results = googlePlacesTextSearchService.textSearch(JAPAN + newWord);

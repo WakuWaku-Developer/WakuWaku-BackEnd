@@ -127,8 +127,8 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("data[*].name").exists())
                 .andExpect(jsonPath("data[*].rating").exists())
                 .andExpect(jsonPath("data[*].userRatingsTotal").exists())
-                .andExpect(jsonPath("data[*].lat").exists())
-                .andExpect(jsonPath("data[*].lng").exists())
+                .andExpect(jsonPath("data[*].location.lat").exists())
+                .andExpect(jsonPath("data[*].location.lng").exists())
                 .andExpect(jsonPath("data[*].photoUrl").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get simple info",
                         resource(ResourceSnippetParameters.builder()
@@ -139,15 +139,14 @@ class RestaurantControllerTest {
                                         parameterWithName("search").description("검색어")
                                 )
                                 .responseFields(
-                                        fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 성공 시 반환되는 code 값"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 성공 시 반환되는 메시지"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 시 반환되는 code 값"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 시 반환되는 메시지"),
                                         fieldWithPath("data[].placeId").type(JsonFieldType.STRING).description("Details Info 에 활용할 식당의 Place Id"),
                                         fieldWithPath("data[].name").type(JsonFieldType.STRING).description("식당 이름"),
                                         fieldWithPath("data[].rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
                                         fieldWithPath("data[].userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당 총 리뷰 수"),
-                                        fieldWithPath("data[].lat").type(JsonFieldType.NUMBER).description("위도"),
-                                        fieldWithPath("data[].lng").type(JsonFieldType.NUMBER).description("경도"),
+                                        fieldWithPath("data[].location.lat").type(JsonFieldType.NUMBER).description("위도"),
+                                        fieldWithPath("data[].location.lng").type(JsonFieldType.NUMBER).description("경도"),
                                         fieldWithPath("data[].photoUrl").type(JsonFieldType.ARRAY).optional().description("식당 대표 사진 URL"))
                                 .build()
                         )
@@ -197,9 +196,8 @@ class RestaurantControllerTest {
                                     parameterWithName("placeId").description("Details Info를 얻고 싶은 식당의 Place Id")
                                     )
                                     .responseFields(
-                                            fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
-                                            fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 성공 시 반환되는 code 값"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 성공 시 반환되는 메시지"),
+                                            fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 시 반환되는 code 값"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 시 반환되는 메시지"),
                                             fieldWithPath("data.name").type(JsonFieldType.STRING).description("식당 이름"),
                                             fieldWithPath("data.editorialSummary").type(JsonFieldType.STRING).optional().description("식당에 대한 간단한 소개글"),
                                             fieldWithPath("data.photos").type(JsonFieldType.ARRAY).optional().description("식당 사진 (최대 10개)"),
