@@ -1,15 +1,15 @@
 package dev.backend.wakuwaku.domain.restaurant.dto.response;
 
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.PlacePhoto;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.PlaceReview;
-import lombok.Data;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
+@NoArgsConstructor
 public class DetailsInfoRestaurantResponse {
-
     private String name;
 
     private String editorialSummary;
@@ -46,35 +46,37 @@ public class DetailsInfoRestaurantResponse {
 
     private Number rating;
 
-    private List<PlaceReview> review;
+    private List<ReviewResponse> reviews;
 
     private boolean openNow;
 
     private List<String> weekdayText;
 
-    public DetailsInfoRestaurantResponse(Result result) {
-        this.name = result.getName();
-        this.editorialSummary = result.getEditorial_summary().getOverview();
-        this.photos = result.getPhotos().stream()
-                .map(PlacePhoto::getPhoto_reference)
+    public DetailsInfoRestaurantResponse(Places places) {
+        this.name = places.getDisplayName().getText();
+        this.editorialSummary = places.getEditorialSummary().getText();
+        this.photos = places.getPhotos().stream()
+                .map(Photo::getPhotoUrl)
                 .toList();
-        this.dineIn = result.isDine_in();
-        this.delivery = result.isDelivery();
-        this.takeout = result.isTakeout();
-        this.website = result.getWebsite();
-        this.formattedPhoneNumber = result.getFormatted_phone_number();
-        this.formattedAddress = result.getFormatted_address();
-        this.reservable = result.isReservable();
-        this.servesBreakfast = result.isServes_breakfast();
-        this.servesLunch = result.isServes_lunch();
-        this.servesDinner = result.isServes_dinner();
-        this.servesBeer = result.isServes_beer();
-        this.servesWine = result.isServes_wine();
-        this.servesVegetarianFood = result.isServes_vegetarianFood();
-        this.userRatingsTotal = result.getUser_ratings_total();
-        this.rating = result.getRating();
-        this.review = result.getReviews();
-        this.openNow = result.getCurrent_opening_hours().isOpen_now();
-        this.weekdayText = result.getCurrent_opening_hours().getWeekday_text();
+        this.dineIn = places.isDineIn();
+        this.delivery = places.isDelivery();
+        this.takeout = places.isTakeout();
+        this.website = places.getWebsiteUri();
+        this.formattedPhoneNumber = places.getNationalPhoneNumber();
+        this.formattedAddress = places.getFormattedAddress();
+        this.reservable = places.isReservable();
+        this.servesBreakfast = places.isServesBreakfast();
+        this.servesLunch = places.isServesLunch();
+        this.servesDinner = places.isServesDinner();
+        this.servesBeer = places.isServesBeer();
+        this.servesWine = places.isServesWine();
+        this.servesVegetarianFood = places.isServesVegetarianFood();
+        this.userRatingsTotal = places.getUserRatingCount();
+        this.rating = places.getRating();
+        this.reviews = places.getReviews().stream()
+                .map(ReviewResponse::new)
+                .toList();
+        this.openNow = places.getCurrentOpeningHours().isOpenNow();
+        this.weekdayText = places.getCurrentOpeningHours().getWeekdayDescriptions();
     }
 }

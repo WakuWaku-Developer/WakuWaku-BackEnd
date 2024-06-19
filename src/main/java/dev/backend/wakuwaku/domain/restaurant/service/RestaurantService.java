@@ -52,8 +52,8 @@ public class RestaurantService {
                 .toList();
     }
 
-    public Result getDetailsRestaurant(String placeId) {
-        return googlePlacesDetailsService.detailsSearch(placeId);
+    public Places getDetailsRestaurant(String placeId) {
+        return googlePlacesDetailsService.getRestaurantByDetailsSearch(placeId);
     }
 
     private String duplicateWord(String word) {
