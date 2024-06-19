@@ -310,3 +310,6 @@ gradle-app.setting
 application-API-KEY.yml
 application-dev.yml
 application-prod.yml
+
+**/src/main/**/old/
+**/src/test/**/old/
