@@ -4,8 +4,9 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.*;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.*;
+import dev.backend.wakuwaku.global.infra.google.places.dto.openinghours.CurrentOpeningHours;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,15 +48,15 @@ class RestaurantControllerTest {
 
     private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
 
-    private static final String SEARCH_WORD = "도쿄 근처 맛집";
+    private static final String SEARCH_WORD = "도쿄 맛집";
 
     private static final String NAME = "우동신";
 
-    private final List<PlacePhoto> photos = new ArrayList<>();
+    private final List<Photo> photos = new ArrayList<>();
 
-    private final List<PlaceReview> placeReviews = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
 
-    private Result result;
+    private Places places;
 
     @BeforeEach
     void setUp (final WebApplicationContext context,
@@ -66,46 +67,60 @@ class RestaurantControllerTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
 
-        LatLngLiteral latLngLiteral = new LatLngLiteral(35.6864899, 139.6969979);
+        dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName name = new dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName(NAME);
 
-        PlacePhoto placePhoto = new PlacePhoto("https://lh3.googleusercontent.com/places/ANXAkqFVKvKKJF9PvO5CRH_QqzNwhk3fVw7fet05L49Zt2OFwMvPzX1wwC2qdXs3x2zO4x08fFsJojhgvga3GYWbb16PRO471kMleWY=s1600-w800");
-        photos.add(placePhoto);
+        Location location = new Location(35.686489, 139.697001);
 
-        Geometry geometry = new Geometry(latLngLiteral);
+        List<String> weekdayDescriptions = new ArrayList<>();
+        weekdayDescriptions.add("월요일:오전11:00~오후10:00,화요일:오전11:00~오후10:00,수요일:오전11:00~오후10:00,목요일:오전11:00~오후10:00,금요일:오전11:00~오후10:00,토요일:오전11:00~오후10:00,일요일:오전11:00~오후10:00");
 
-        List<String> weekdayText = new ArrayList<>();
-        weekdayText.add("월요일:오전11:00~오후10:00,화요일:오전11:00~오후10:00,수요일:오전11:00~오후10:00,목요일:오전11:00~오후10:00,금요일:오전11:00~오후10:00,토요일:오전11:00~오후10:00,일요일:오전11:00~오후10:00");
+        CurrentOpeningHours currentOpeningHours = new CurrentOpeningHours(true, weekdayDescriptions);
 
-        PlaceOpeningHours placeOpeningHours = new PlaceOpeningHours(true, weekdayText);
+        Photo photo = Photo.builder()
+                .photoUrl("https://lh3.googleusercontent.com/places/ANXAkqG2xQHKla3ebHNhRNrgMFi4WB6hGbR6LZTd2ig0PK5qTwkIvk0EP1fzPQ8UXmAt3FcU1Gz0XjYYCQJvFJQQVhAMss2GtKenoAI=s4800-w1440-h810")
+                .build();
 
-        PlaceEditorialSummary placeEditorialSummary = new PlaceEditorialSummary("다양한 반주와 함께 바삭한 튀김과 수제 우동을 맛 볼 수 있는 아담한 식당입니다.");
+        photos.add(photo);
 
-        PlaceReview placeReview = new PlaceReview("촉촉한볼따구", 3, "3주 전", "https://lh3.googleusercontent.com/a-/ALV-UjVoB_ILlpMn32pQwKbd5R99vuCX8mSb5T4rUzTRBBRts8CQolD9=s128-c0x00000000-cc-rp-mo", "붓카게 우동과 자루소바 주문\\n직원 매우 친절함.의외로 튀김 맛있다\\n우동 자체는 꽤 맛있긴 하지만 이게 3시간을 기다릴 맛인가?이 가격 값을 하는가? 하면 별점 3점인 맛\\n웨이팅이 아예 없고 근처에 있다면 갈만한 집이긴 한데 절대 기다려서 먹을 맛 아님!!!!\\n면발이 탱글하다는데 개인적으로 오사카에서 먹은 다른 우동 집이 오백만배 탱글하고 맛있었음\\n손님도 로컬 거의 없고 대부분 외국인임\\n우연히 내가 그 근처를 지나가고 있는데 웨이팅이 없다? 할 때만 가십쇼", false);
-        placeReviews.add(placeReview);
+        LocalizedText editorialSummary = new LocalizedText("다양한 반주와 함께 바삭한 튀김과 수제 우동을 맛 볼 수 있는 아담한 식당입니다.");
 
-        result = Result.builder()
-                .place_id(PLACE_ID)
-                .name(NAME)
+        LocalizedText reviewText = new LocalizedText("붓카게 우동과 자루소바 주문\\n직원 매우 친절함.의외로 튀김 맛있다\\n우동 자체는 꽤 맛있긴 하지만 이게 3시간을 기다릴 맛인가?이 가격 값을 하는가? 하면 별점 3점인 맛\\n웨이팅이 아예 없고 근처에 있다면 갈만한 집이긴 한데 절대 기다려서 먹을 맛 아님!!!!\\n면발이 탱글하다는데 개인적으로 오사카에서 먹은 다른 우동 집이 오백만배 탱글하고 맛있었음\\n손님도 로컬 거의 없고 대부분 외국인임\\n우연히 내가 그 근처를 지나가고 있는데 웨이팅이 없다? 할 때만 가십쇼");
+
+        AuthorAttribution authorAttribution = new AuthorAttribution("촉촉한볼따구", "https://lh3.googleusercontent.com/a-/ALV-UjVoB_ILlpMn32pQwKbd5R99vuCX8mSb5T4rUzTRBBRts8CQolD9=s128-c0x00000000-cc-rp-mo");
+
+        Review review = Review.builder()
+                .relativePublishTimeDescription("3주 전")
+                .rating(3)
+                .text(reviewText)
+                .authorAttribution(authorAttribution)
+                .build();
+
+        reviews.add(review);
+
+        places = Places.builder()
+                .id(PLACE_ID)
+                .displayName(name)
                 .rating(4.1)
-                .user_ratings_total(3929)
-                .geometry(geometry)
+                .location(location)
+                .currentOpeningHours(currentOpeningHours)
                 .photos(photos)
-                .current_opening_hours(placeOpeningHours)
-                .delivery(true)
-                .dine_in(true)
+                .dineIn(true)
+                .takeout(false)
+                .delivery(false)
+                .editorialSummary(editorialSummary)
+                .reviews(reviews)
+                .nationalPhoneNumber(null)
+                .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
+                .websiteUri("http://www.udonshin.com/")
+                .userRatingCount(3965)
                 .reservable(true)
-                .serves_beer(true)
-                .serves_dinner(true)
-                .serves_lunch(true)
-                .takeout(true)
-                .serves_breakfast(true)
-                .serves_wine(true)
-                .serves_vegetarianFood(true)
-                .editorial_summary(placeEditorialSummary)
-                .formatted_address("일본〒151-0053Tokyo,ShibuyaCity,Yoyogi,2-chōme−20−１６相馬ビル１F")
-                .formatted_phone_number(null)
-                .website(null)
-                .reviews(placeReviews).build();
+                .servesBreakfast(false)
+                .servesLunch(true)
+                .servesDinner(true)
+                .servesBeer(true)
+                .servesWine(false)
+                .servesVegetarianFood(false)
+                .build();
     }
 
     @Test
@@ -113,7 +128,7 @@ class RestaurantControllerTest {
     void getSimpleInfoRestaurants() throws Exception {
         // given
         List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(new Restaurant(result));
+        restaurants.add(new Restaurant(places));
 
         given(restaurantService.getSimpleRestaurants(anyString())).willReturn(restaurants);
 
@@ -127,8 +142,8 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("data[*].name").exists())
                 .andExpect(jsonPath("data[*].rating").exists())
                 .andExpect(jsonPath("data[*].userRatingsTotal").exists())
-                .andExpect(jsonPath("data[*].location.lat").exists())
-                .andExpect(jsonPath("data[*].location.lng").exists())
+                .andExpect(jsonPath("data[*].location.latitude").exists())
+                .andExpect(jsonPath("data[*].location.longitude").exists())
                 .andExpect(jsonPath("data[*].photoUrl").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get simple info",
                         resource(ResourceSnippetParameters.builder()
@@ -145,8 +160,8 @@ class RestaurantControllerTest {
                                         fieldWithPath("data[].name").type(JsonFieldType.STRING).description("식당 이름"),
                                         fieldWithPath("data[].rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
                                         fieldWithPath("data[].userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당 총 리뷰 수"),
-                                        fieldWithPath("data[].location.lat").type(JsonFieldType.NUMBER).description("위도"),
-                                        fieldWithPath("data[].location.lng").type(JsonFieldType.NUMBER).description("경도"),
+                                        fieldWithPath("data[].location.latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                        fieldWithPath("data[].location.longitude").type(JsonFieldType.NUMBER).description("경도"),
                                         fieldWithPath("data[].photoUrl").type(JsonFieldType.ARRAY).optional().description("식당 대표 사진 URL"))
                                 .build()
                         )
@@ -160,7 +175,7 @@ class RestaurantControllerTest {
     @DisplayName("Details Info 조회. 즉, 사용자가 검색하여 얻는 데이터 중 하나의 데이터의 세부적인 정보를 반환")
     void getDetailsInfoRestaurant() throws Exception {
         // given
-        given(restaurantService.getDetailsRestaurant(PLACE_ID)).willReturn(result);
+        given(restaurantService.getDetailsRestaurant(PLACE_ID)).willReturn(places);
 
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders
@@ -173,7 +188,7 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("data.dineIn").exists())
                 .andExpect(jsonPath("data.delivery").exists())
                 .andExpect(jsonPath("data.takeout").exists())
-                .andExpect(jsonPath("data.website").isEmpty())
+                .andExpect(jsonPath("data.website").exists())
                 .andExpect(jsonPath("data.formattedPhoneNumber").isEmpty())
                 .andExpect(jsonPath("data.formattedAddress").exists())
                 .andExpect(jsonPath("data.reservable").exists())
@@ -185,7 +200,7 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("data.servesVegetarianFood").exists())
                 .andExpect(jsonPath("data.userRatingsTotal").exists())
                 .andExpect(jsonPath("data.rating").exists())
-                .andExpect(jsonPath("data.review").exists())
+                .andExpect(jsonPath("data.reviews").exists())
                 .andExpect(jsonPath("data.openNow").exists())
                 .andExpect(jsonPath("data.weekdayText").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get details info",
@@ -216,12 +231,11 @@ class RestaurantControllerTest {
                                             fieldWithPath("data.servesVegetarianFood").type(JsonFieldType.BOOLEAN).optional().description("채식주의자를 위한 메뉴 유무"),
                                             fieldWithPath("data.userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당의 총 리뷰 수"),
                                             fieldWithPath("data.rating").type(JsonFieldType.NUMBER).optional().description("식당 별점"),
-                                            fieldWithPath("data.review[].author_name").type(JsonFieldType.STRING).description("리뷰 작성자 이름"),
-                                            fieldWithPath("data.review[].rating").type(JsonFieldType.NUMBER).description("리뷰 작성자의 별점"),
-                                            fieldWithPath("data.review[].relative_time_description").type(JsonFieldType.STRING).description("현 시간으로부터 식당 리뷰 작성한 날짜"),
-                                            fieldWithPath("data.review[].profile_photo_url").type(JsonFieldType.STRING).description("리뷰 작성자의 프로필 사진 URL"),
-                                            fieldWithPath("data.review[].text").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                            fieldWithPath("data.review[].translated").type(JsonFieldType.BOOLEAN).description("리뷰가 구글 번역기에 의해 번역이 된 것인지 여부"),
+                                            fieldWithPath("data.reviews[].authorName").type(JsonFieldType.STRING).description("리뷰 작성자 이름"),
+                                            fieldWithPath("data.reviews[].rating").type(JsonFieldType.NUMBER).description("리뷰 작성자의 별점"),
+                                            fieldWithPath("data.reviews[].relativePublishTimeDescription").type(JsonFieldType.STRING).description("현 시간으로부터 식당 리뷰 작성한 날짜"),
+                                            fieldWithPath("data.reviews[].authorProfileUrl").type(JsonFieldType.STRING).description("리뷰 작성자의 프로필 사진 URL"),
+                                            fieldWithPath("data.reviews[].text").type(JsonFieldType.STRING).description("리뷰 내용"),
                                             fieldWithPath("data.openNow").type(JsonFieldType.BOOLEAN).optional().description("검색한 시점에서의 식당 오픈 여부"),
                                             fieldWithPath("data.weekdayText").type(JsonFieldType.ARRAY).optional().description("요일 별 식당 운영 시간")
                                     )

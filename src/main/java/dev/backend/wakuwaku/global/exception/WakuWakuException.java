@@ -17,8 +17,8 @@ public class WakuWakuException extends RuntimeException {
     public static final WakuWakuException NONE_USER                     = new WakuWakuException(ExceptionStatus.NONE_USER);
     public static final WakuWakuException INVALID_SEARCH_WORD           = new WakuWakuException(ExceptionStatus.INVALID_SEARCH_WORD);
     public static final WakuWakuException NOT_EXISTED_NEXT_PAGE_TOKEN   = new WakuWakuException(ExceptionStatus.NOT_EXISTED_NEXT_PAGE_TOKEN);
-    public static final WakuWakuException INVALID_PHOTO_REFERENCE       = new WakuWakuException(ExceptionStatus.INVALID_PHOTO_REFERENCE);
     public static final WakuWakuException NOT_EXISTED_PLACE_ID          = new WakuWakuException(ExceptionStatus.NOT_EXISTED_PLACE_ID);
     public static final WakuWakuException NOT_EXISTED_DETAILS_RESPONSE  = new WakuWakuException(ExceptionStatus.NOT_EXISTED_DETAILS_RESPONSE);
+    public static final WakuWakuException NONE_PHOTO_URL                = new WakuWakuException(ExceptionStatus.NONE_PHOTO_URL);
 
 }

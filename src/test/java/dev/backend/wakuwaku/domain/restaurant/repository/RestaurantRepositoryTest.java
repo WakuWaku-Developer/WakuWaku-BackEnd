@@ -1,10 +1,9 @@
 package dev.backend.wakuwaku.domain.restaurant.repository;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.Geometry;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.LatLngLiteral;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.PlacePhoto;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Location;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,36 +20,45 @@ class RestaurantRepositoryTest {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
-    private Result result;
+    private Places places;
 
-    private final List<PlacePhoto> photos = new ArrayList<>();
+    private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
+
+    private static final String NAME = "우동신";
+
+    private final List<Photo> photos = new ArrayList<>();
 
     private Restaurant saveRestaurant;
 
     @BeforeEach
     void setUp() {
-        LatLngLiteral latLngLiteral = new LatLngLiteral(35.6864899, 139.6969979);
-        PlacePhoto placePhoto = new PlacePhoto("https://lh3.googleusercontent.com/places/ANXAkqFVKvKKJF9PvO5CRH_QqzNwhk3fVw7fet05L49Zt2OFwMvPzX1wwC2qdXs3x2zO4x08fFsJojhgvga3GYWbb16PRO471kMleWY=s1600-w800");
+        dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName name = new dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName(NAME);
 
-        Geometry geometry = new Geometry(latLngLiteral);
-        photos.add(placePhoto);
+        Location location = new Location(35.686489, 139.697001);
 
-        result = Result.builder()
-                .place_id("ChIJAQCl79GMGGARZheneHqgIUs")
-                .name("우동신")
+        Photo photo = Photo.builder()
+                .photoUrl("https://lh3.googleusercontent.com/places/ANXAkqG2xQHKla3ebHNhRNrgMFi4WB6hGbR6LZTd2ig0PK5qTwkIvk0EP1fzPQ8UXmAt3FcU1Gz0XjYYCQJvFJQQVhAMss2GtKenoAI=s4800-w1440-h810")
+                .build();
+
+        photos.add(photo);
+
+        places = Places.builder()
+                .id(PLACE_ID)
+                .displayName(name)
                 .rating(4.1)
-                .user_ratings_total(3929)
-                .geometry(geometry)
-                .photos(photos).build();
+                .userRatingCount(3929)
+                .location(location)
+                .photos(photos)
+                .build();
 
-        saveRestaurant = restaurantRepository.save(new Restaurant(result));
+        saveRestaurant = restaurantRepository.save(new Restaurant(places));
     }
 
     @DisplayName("동일한 Place Id를 가진 Restaurant 조회")
     @Test
     void findByPlaceId() {
         // given
-        String placeId = result.getPlace_id();
+        String placeId = places.getId();
 
         // when
         Restaurant restaurant = restaurantRepository.findByPlaceId(placeId).orElse(null);

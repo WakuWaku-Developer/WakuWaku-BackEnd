@@ -39,6 +39,8 @@ dependencies {
 
 	testImplementation('com.epages:restdocs-api-spec-mockmvc:0.18.2') //2.2
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+	implementation 'com.google.code.gson:gson'
 }
 
 tasks.named('test') {
@@ -67,7 +69,7 @@ def jacocoExcludePatterns = [
 		"*.*Entity*",
 		"*.annotation.*",
 		"*.constant.*",
-		"*.newest.*",
+		"*.old.*",
 		"*.Result*",
 		"*.BaseResponse*"
 ]
@@ -84,7 +86,7 @@ def sonarCloudExcludePatterns = [
 		"**/*Entity*",
 		"**/annotation/**/*",
 		"**/constant/**/*",
-		"**/newest/**/*",
+		"**/old/**/*",
 		"**/Result*",
 		"**/BaseResponse*"
 ]

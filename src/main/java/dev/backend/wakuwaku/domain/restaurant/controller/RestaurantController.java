@@ -4,7 +4,7 @@ import dev.backend.wakuwaku.domain.restaurant.dto.response.DetailsInfoRestaurant
 import dev.backend.wakuwaku.domain.restaurant.dto.response.SimpleInfoRestaurantResponse;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
 import dev.backend.wakuwaku.global.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +29,8 @@ public class RestaurantController {
 
     @GetMapping("/{placeId}/details")
     public BaseResponse<DetailsInfoRestaurantResponse> getDetailsInfoRestaurant(@PathVariable("placeId") String placeId) {
-        Result detailsRestaurant = restaurantService.getDetailsRestaurant(placeId);
+        Places places = restaurantService.getDetailsRestaurant(placeId);
 
-        return new BaseResponse<>(new DetailsInfoRestaurantResponse(detailsRestaurant));
+        return new BaseResponse<>(new DetailsInfoRestaurantResponse(places));
     }
 }

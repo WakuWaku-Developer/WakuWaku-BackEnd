@@ -1,8 +1,8 @@
 package dev.backend.wakuwaku.domain.restaurant.entity;
 
 import dev.backend.wakuwaku.domain.BaseEntity;
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.PlacePhoto;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,20 +32,20 @@ public class Restaurant extends BaseEntity {
 
     private List<String> photos = new ArrayList<>();
 
-    private Number userRatingsTotal;
+    private int userRatingsTotal;
 
-    private Number rating;
+    private double rating;
 
     @Builder
-    public Restaurant(Result result) {
-        this.placeId = result.getPlace_id();
-        this.name = result.getName();
-        this.lat = result.getGeometry().getLocation().getLat();
-        this.lng = result.getGeometry().getLocation().getLng();
-        this.photos = result.getPhotos().stream()
-                .map(PlacePhoto::getPhoto_reference)
+    public Restaurant(Places places) {
+        this.placeId = places.getId();
+        this.name = places.getDisplayName().getText();
+        this.lat = places.getLocation().getLatitude();
+        this.lng = places.getLocation().getLongitude();
+        this.photos = places.getPhotos().stream()
+                .map(Photo::getPhotoUrl)
                 .toList();
-        this.userRatingsTotal = result.getUser_ratings_total();
-        this.rating = result.getRating();
+        this.userRatingsTotal = places.getUserRatingCount();
+        this.rating = places.getRating();
     }
 }
