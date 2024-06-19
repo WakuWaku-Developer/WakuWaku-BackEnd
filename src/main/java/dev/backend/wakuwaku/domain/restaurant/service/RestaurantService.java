@@ -2,9 +2,9 @@ package dev.backend.wakuwaku.domain.restaurant.service;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.details.GooglePlacesDetailsService;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.GooglePlacesTextSearchService;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.details.GooglePlacesDetailsService;
+import dev.backend.wakuwaku.global.infra.google.places.textsearch.GooglePlacesTextSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +20,8 @@ import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_SE
 @Transactional
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
-    private final GooglePlacesDetailsService googlePlacesDetailsService;
     private final GooglePlacesTextSearchService googlePlacesTextSearchService;
+    private final GooglePlacesDetailsService googlePlacesDetailsService;
 
     public Restaurant save(Restaurant restaurant) {
         return restaurantRepository.findByPlaceId(restaurant.getPlaceId())
@@ -45,9 +45,9 @@ public class RestaurantService {
 
         String newWord = duplicateWord(searchWord);
 
-        List<Result> results = googlePlacesTextSearchService.textSearch(JAPAN + newWord);
+        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN + newWord);
 
-        return results.stream()
+        return places.stream()
                 .map(Restaurant::new)
                 .toList();
     }
