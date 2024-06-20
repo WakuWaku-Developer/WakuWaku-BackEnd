@@ -4,12 +4,11 @@ import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
-import dev.backend.wakuwaku.global.infra.google.places.old.Result;
-import dev.backend.wakuwaku.global.infra.google.places.old.details.GooglePlacesDetailsService;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.GooglePlacesTextSearchService;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.Geometry;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.LatLngLiteral;
-import dev.backend.wakuwaku.global.infra.google.places.old.textsearch.dto.response.dto.PlacePhoto;
+import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.details.GooglePlacesDetailsService;
+import dev.backend.wakuwaku.global.infra.google.places.dto.*;
+import dev.backend.wakuwaku.global.infra.google.places.dto.openinghours.CurrentOpeningHours;
+import dev.backend.wakuwaku.global.infra.google.places.textsearch.GooglePlacesTextSearchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,33 +48,75 @@ class RestaurantServiceTest {
 
     private static final String NAME = "우동신";
 
-    private final List<PlacePhoto> photos = new ArrayList<>();
+    private final List<Photo> photos = new ArrayList<>();
 
-    private Result result;
+    private final List<Review> reviews = new ArrayList<>();
+
+    private Places places;
 
     @BeforeEach
     void setUp() {
-        LatLngLiteral latLngLiteral = new LatLngLiteral(35.6864899, 139.6969979);
-        PlacePhoto placePhoto = new PlacePhoto("https://lh3.googleusercontent.com/places/ANXAkqFVKvKKJF9PvO5CRH_QqzNwhk3fVw7fet05L49Zt2OFwMvPzX1wwC2qdXs3x2zO4x08fFsJojhgvga3GYWbb16PRO471kMleWY=s1600-w800");
+        dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName name = new dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName(NAME);
 
-        Geometry geometry = new Geometry(latLngLiteral);
+        Location location = new Location(35.686489, 139.697001);
 
-        photos.add(placePhoto);
+        List<String> weekdayDescriptions = new ArrayList<>();
+        weekdayDescriptions.add("월요일:오전11:00~오후10:00,화요일:오전11:00~오후10:00,수요일:오전11:00~오후10:00,목요일:오전11:00~오후10:00,금요일:오전11:00~오후10:00,토요일:오전11:00~오후10:00,일요일:오전11:00~오후10:00");
 
-        result = Result.builder()
-                .place_id(PLACE_ID)
-                .name(NAME)
+        CurrentOpeningHours currentOpeningHours = new CurrentOpeningHours(true, weekdayDescriptions);
+
+        Photo photo = Photo.builder()
+                .photoUrl("https://lh3.googleusercontent.com/places/ANXAkqG2xQHKla3ebHNhRNrgMFi4WB6hGbR6LZTd2ig0PK5qTwkIvk0EP1fzPQ8UXmAt3FcU1Gz0XjYYCQJvFJQQVhAMss2GtKenoAI=s4800-w1440-h810")
+                .build();
+
+        photos.add(photo);
+
+        LocalizedText editorialSummary = new LocalizedText("다양한 반주와 함께 바삭한 튀김과 수제 우동을 맛 볼 수 있는 아담한 식당입니다.");
+
+        LocalizedText reviewText = new LocalizedText("붓카게 우동과 자루소바 주문\\n직원 매우 친절함.의외로 튀김 맛있다\\n우동 자체는 꽤 맛있긴 하지만 이게 3시간을 기다릴 맛인가?이 가격 값을 하는가? 하면 별점 3점인 맛\\n웨이팅이 아예 없고 근처에 있다면 갈만한 집이긴 한데 절대 기다려서 먹을 맛 아님!!!!\\n면발이 탱글하다는데 개인적으로 오사카에서 먹은 다른 우동 집이 오백만배 탱글하고 맛있었음\\n손님도 로컬 거의 없고 대부분 외국인임\\n우연히 내가 그 근처를 지나가고 있는데 웨이팅이 없다? 할 때만 가십쇼");
+
+        AuthorAttribution authorAttribution = new AuthorAttribution("촉촉한볼따구", "https://lh3.googleusercontent.com/a-/ALV-UjVoB_ILlpMn32pQwKbd5R99vuCX8mSb5T4rUzTRBBRts8CQolD9=s128-c0x00000000-cc-rp-mo");
+
+        Review review = Review.builder()
+                .relativePublishTimeDescription("3주 전")
+                .rating(3)
+                .text(reviewText)
+                .authorAttribution(authorAttribution)
+                .build();
+
+        reviews.add(review);
+
+        places = Places.builder()
+                .id(PLACE_ID)
+                .displayName(name)
                 .rating(4.1)
-                .user_ratings_total(3929)
-                .geometry(geometry)
-                .photos(photos).build();
+                .location(location)
+                .currentOpeningHours(currentOpeningHours)
+                .photos(photos)
+                .dineIn(true)
+                .takeout(false)
+                .delivery(false)
+                .editorialSummary(editorialSummary)
+                .reviews(reviews)
+                .nationalPhoneNumber(null)
+                .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
+                .websiteUri("http://www.udonshin.com/")
+                .userRatingCount(3965)
+                .reservable(true)
+                .servesBreakfast(false)
+                .servesLunch(true)
+                .servesDinner(true)
+                .servesBeer(true)
+                .servesWine(false)
+                .servesVegetarianFood(false)
+                .build();
     }
 
     @Test
     @DisplayName("저장할 식당이 없다면 식당 저장 성공")
     void saveSuccess() {
         // given
-        Restaurant restaurant = new Restaurant(result);
+        Restaurant restaurant = new Restaurant(places);
 
         given(restaurantRepository.findByPlaceId(anyString())).willReturn(Optional.empty());
         given(restaurantRepository.save(any(Restaurant.class))).willReturn(restaurant);
@@ -92,8 +133,8 @@ class RestaurantServiceTest {
     @DisplayName("요청한 Place Id가 있다면 식당 저장 X")
     void saveFailed() {
         // given
-        Restaurant restaurant = new Restaurant(result);
-        Restaurant duplicateRestaurant = new Restaurant(result);
+        Restaurant restaurant = new Restaurant(places);
+        Restaurant duplicateRestaurant = new Restaurant(places);
 
         given(restaurantRepository.findByPlaceId(PLACE_ID)).willReturn(Optional.of(restaurant));
 
@@ -109,7 +150,7 @@ class RestaurantServiceTest {
     @Test
     void findById() {
         // given
-        Restaurant restaurant = new Restaurant(result);
+        Restaurant restaurant = new Restaurant(places);
 
         given(restaurantRepository.findById(anyLong())).willReturn(Optional.of(restaurant));
 
@@ -139,12 +180,12 @@ class RestaurantServiceTest {
         // given
         String searchWord = "테스트";
 
-        List<Result> results = new ArrayList<>();
-        results.add(result);
+        List<Places> placesList = new ArrayList<>();
+        placesList.add(places);
 
-        Restaurant restaurant = new Restaurant(result);
+        Restaurant restaurant = new Restaurant(places);
 
-        given(googlePlacesTextSearchService.textSearch(JAPAN + searchWord)).willReturn(results);
+        given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN + searchWord)).willReturn(placesList);
 
         // when
         List<Restaurant> simpleRestaurants = restaurantService.getSimpleRestaurants(searchWord);
@@ -159,7 +200,7 @@ class RestaurantServiceTest {
         assertThat(simpleRestaurants.get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
         assertThat(simpleRestaurants.get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
 
-        then(googlePlacesTextSearchService).should().textSearch(JAPAN + searchWord);
+        then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN + searchWord);
     }
 
     @DisplayName("검색어가 null 이면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
@@ -214,12 +255,12 @@ class RestaurantServiceTest {
     @Test
     void getDetailsRestaurant() {
         // given
-        given(googlePlacesDetailsService.detailsSearch(PLACE_ID)).willReturn(result);
+        given(googlePlacesDetailsService.getRestaurantByDetailsSearch(PLACE_ID)).willReturn(places);
 
         // when
-        Result details = restaurantService.getDetailsRestaurant(PLACE_ID);
+        Places detailsRestaurant = restaurantService.getDetailsRestaurant(PLACE_ID);
 
         // then
-        assertThat(details).isEqualTo(result);
+        assertThat(detailsRestaurant).isEqualTo(places);
     }
 }
