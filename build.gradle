@@ -42,6 +42,8 @@ dependencies {
 
 	// oauth
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	implementation 'com.google.code.gson:gson'
 }
 
 tasks.named('test') {
@@ -70,7 +72,7 @@ def jacocoExcludePatterns = [
 		"*.*Entity*",
 		"*.annotation.*",
 		"*.constant.*",
-		"*.newest.*",
+		"*.old.*",
 		"*.Result*",
 		"*.BaseResponse*"
 ]
@@ -87,7 +89,7 @@ def sonarCloudExcludePatterns = [
 		"**/*Entity*",
 		"**/annotation/**/*",
 		"**/constant/**/*",
-		"**/newest/**/*",
+		"**/old/**/*",
 		"**/Result*",
 		"**/BaseResponse*"
 ]
