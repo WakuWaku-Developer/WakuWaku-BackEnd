@@ -33,10 +33,9 @@ public class NaverMemberClient implements OauthMemberClient {
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", naverOauthConfig.clientId());
-        params.add("client_secret", naverOauthConfig.clientSecret());
+        params.add("client_id", naverOauthConfig.getClientId());
+        params.add("client_secret", naverOauthConfig.getClientSecret());
         params.add("code", authCode);
-        params.add("state", naverOauthConfig.state());
         return params;
     }
 }

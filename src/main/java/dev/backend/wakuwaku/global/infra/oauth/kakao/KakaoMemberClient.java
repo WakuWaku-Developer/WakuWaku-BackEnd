@@ -44,10 +44,10 @@ public class KakaoMemberClient implements OauthMemberClient {
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", kakaoOauthConfig.clientId());
-        params.add("redirect_uri", kakaoOauthConfig.redirectUri());
+        params.add("client_id", kakaoOauthConfig.getClientId());
+        params.add("redirect_uri", kakaoOauthConfig.getRedirectUri());
         params.add("code", authCode);
-        params.add("client_secret", kakaoOauthConfig.clientSecret());
+        params.add("client_secret", kakaoOauthConfig.getClientSecret());
         return params;
     }
 }

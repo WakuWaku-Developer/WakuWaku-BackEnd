@@ -28,9 +28,9 @@ public class KakaoOauthCodeRequestUrlProvider implements OauthCodeRequestUrlProv
         return UriComponentsBuilder
                 .fromUriString("https://kauth.kakao.com/oauth/authorize")
                 .queryParam("response_type", "code")
-                .queryParam("client_id", kakaoOauthConfig.clientId())
-                .queryParam("redirect_uri", kakaoOauthConfig.redirectUri())
-                .queryParam("scope", String.join(",", kakaoOauthConfig.scope()))
+                .queryParam("client_id", kakaoOauthConfig.getClientId())
+                .queryParam("redirect_uri", kakaoOauthConfig.getRedirectUri())
+                .queryParam("scope", String.join(",", kakaoOauthConfig.getScope()))
                 .toUriString();
     }
 }

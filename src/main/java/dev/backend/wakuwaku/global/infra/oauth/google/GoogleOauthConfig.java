@@ -1,16 +1,30 @@
 package dev.backend.wakuwaku.global.infra.oauth.google;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix = "oauth.google")
-public record GoogleOauthConfig (
+@Configuration
+@Getter
+public class GoogleOauthConfig{
 
-        String redirectUri,
-        String clientId,
-        String clientSecret,
-        String[] scope,
-        String tokenUri,
-        String resourceUri,
-        String state
-){
+        @Value("${oauth.google.redirect-uri}")
+        String redirectUri;
+
+        @Value("${oauth.google.client-id}")
+        String clientId;
+
+        @Value("${oauth.google.client-secret}")
+        String clientSecret;
+
+        @Value("${oauth.google.scope}")
+        String[] scope;
+
+        @Value("${oauth.google.token-uri}")
+        String tokenUri;
+
+        @Value("${oauth.google.resource-uri}")
+        String resourceUri;
+
+        //state
 }

@@ -24,9 +24,9 @@ public class NaverOauthCodeRequestUrlProvider implements OauthCodeRequestUrlProv
         return UriComponentsBuilder
                 .fromUriString("https://nid.naver.com/oauth2.0/authorize")
                 .queryParam("response_type", "code")
-                .queryParam("client_id", naverOauthConfig.clientId())
-                .queryParam("redirect_uri", naverOauthConfig.redirectUri())
-                .queryParam("state", "samplestate") // 이건 나중에 따로 찾아보고 설정해서 쓰면 됨
+                .queryParam("client_id", naverOauthConfig.getClientId())
+                .queryParam("redirect_uri", naverOauthConfig.getRedirectUri())
+                //.queryParam("state", "samplestate") // 이건 나중에 따로 찾아보고 설정해서 쓰면 됨
                 // XSS 공격 방지용 인코딩
                 .build()
                 .toUriString();

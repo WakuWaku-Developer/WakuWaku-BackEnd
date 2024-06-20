@@ -25,14 +25,12 @@ public class GoogleOauthCodeRequestUrlProvider implements OauthCodeRequestUrlPro
         return UriComponentsBuilder
                 .fromUriString("https://accounts.google.com/o/oauth2/auth")
                 .queryParam("response_type", "code")
-                .queryParam("client_id", googleOauthConfig.clientId())
-                .queryParam("redirect_uri", googleOauthConfig.redirectUri())
-                .queryParam("scope", String.join(" ", googleOauthConfig.scope()))
-                .queryParam("state", googleOauthConfig.state())
-                .queryParam("token_uri", googleOauthConfig.tokenUri())
-                .queryParam("resource_uri", googleOauthConfig.resourceUri())
+                .queryParam("client_id", googleOauthConfig.getClientId())
+                .queryParam("redirect_uri", googleOauthConfig.getRedirectUri())
+                .queryParam("scope", String.join(" ", googleOauthConfig.getScope()))
+                .queryParam("token_uri", googleOauthConfig.getTokenUri())
+                .queryParam("resource_uri", googleOauthConfig.getResourceUri())
                 .build()
                 .toUriString();
-
     }
 }

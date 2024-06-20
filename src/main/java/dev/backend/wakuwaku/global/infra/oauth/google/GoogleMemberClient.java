@@ -33,14 +33,14 @@ public class GoogleMemberClient implements OauthMemberClient {
     }
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", googleOauthConfig.clientId());
-        params.add("client_secret", googleOauthConfig.clientSecret());
-        params.add("code", authCode);
-        params.add("redirect_uri", googleOauthConfig.redirectUri());
-        params.add("token_uri", googleOauthConfig.tokenUri());
-        params.add("resource_uri", googleOauthConfig.resourceUri());
-        return params;
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "authorization_code");
+            params.add("client_id", googleOauthConfig.getClientId());
+            params.add("client_secret", googleOauthConfig.getClientSecret());
+            params.add("code", authCode);
+            params.add("redirect_uri", googleOauthConfig.getRedirectUri());
+            params.add("token_uri", googleOauthConfig.getTokenUri());
+            params.add("resource_uri", googleOauthConfig.getResourceUri());
+            return params;
     }
 }
