@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.response;
 
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import lombok.Getter;
 
 import java.util.List;

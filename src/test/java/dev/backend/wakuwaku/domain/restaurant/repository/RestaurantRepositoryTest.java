@@ -1,7 +1,7 @@
 package dev.backend.wakuwaku.domain.restaurant.repository;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Location;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import org.junit.jupiter.api.BeforeEach;

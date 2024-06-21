@@ -4,7 +4,7 @@ import dev.backend.wakuwaku.domain.restaurant.dto.response.DetailsInfoRestaurant
 import dev.backend.wakuwaku.domain.restaurant.dto.response.SimpleInfoRestaurantResponse;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

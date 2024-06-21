@@ -1,10 +1,5 @@
-package dev.backend.wakuwaku.global.infra.google.places;
+package dev.backend.wakuwaku.global.infra.google.places.dto;
 
-import dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Location;
-import dev.backend.wakuwaku.global.infra.google.places.dto.LocalizedText;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Review;
 import dev.backend.wakuwaku.global.infra.google.places.dto.openinghours.CurrentOpeningHours;
 import lombok.Builder;
 import lombok.Getter;

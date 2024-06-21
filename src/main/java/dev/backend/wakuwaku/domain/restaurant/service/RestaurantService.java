@@ -2,7 +2,7 @@ package dev.backend.wakuwaku.domain.restaurant.service;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.details.GooglePlacesDetailsService;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.GooglePlacesTextSearchService;
 import lombok.RequiredArgsConstructor;
