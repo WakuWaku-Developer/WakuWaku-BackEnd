@@ -268,11 +268,20 @@ class RestaurantServiceTest {
         // given
         String japanWithSpace = "일본 도쿄 맛집";
 
+        String withoutJapanWithSpace = null;
+        String withoutJapan = null;
+
         // when
-        String removeJapanWithSpace = duplicateWord(japanWithSpace);
+        if (japanWithSpace.contains(JAPAN_WITH_SPACE)) {
+            withoutJapanWithSpace = japanWithSpace.replace(JAPAN_WITH_SPACE, "").trim();
+        }
+
+        if (japanWithSpace.contains(JAPAN)) {
+            withoutJapan = japanWithSpace.replace(JAPAN, "").trim();
+        }
 
         // then
-        assertThat(removeJapanWithSpace).isEqualTo("도쿄 맛집");
+        assertThat(withoutJapanWithSpace).isEqualTo("도쿄 맛집");
     }
 
     @DisplayName("검색어에 '일본'이 존재하면 '일본' 을 제거한 검색어를 반환")
@@ -282,10 +291,20 @@ class RestaurantServiceTest {
         String japanWithSpace = "일본도쿄 맛집";
 
         // when
-        String removeJapanWithSpace = duplicateWord(japanWithSpace);
+        String withoutJapanWithSpace = null;
+        String withoutJapan = null;
+
+        // when
+        if (japanWithSpace.contains(JAPAN_WITH_SPACE)) {
+            withoutJapanWithSpace = japanWithSpace.replace(JAPAN_WITH_SPACE, "").trim();
+        }
+
+        if (japanWithSpace.contains(JAPAN)) {
+            withoutJapan = japanWithSpace.replace(JAPAN, "").trim();
+        }
 
         // then
-        assertThat(removeJapanWithSpace).isEqualTo("도쿄 맛집");
+        assertThat(withoutJapan).isEqualTo("도쿄 맛집");
     }
 
     @DisplayName("검색어에 '맛집'이 존재하지 않으면 ' 맛집'을 마지막에 추가한 검색어를 반환")
@@ -295,29 +314,11 @@ class RestaurantServiceTest {
         String japanWithSpace = "도쿄";
 
         // when
-        String checkSearchWord = checkSearchWord(japanWithSpace);
+        if (!japanWithSpace.contains(RESTAURANT)) {
+            japanWithSpace += " " + RESTAURANT;
+        }
 
         // then
-        assertThat(checkSearchWord).isEqualTo("도쿄 맛집");
-    }
-
-    private String duplicateWord(String searchWord) {
-        if (searchWord.contains(JAPAN_WITH_SPACE)) {
-            return searchWord.replace(JAPAN_WITH_SPACE, "");
-        }
-
-        if (searchWord.contains(JAPAN)) {
-            return searchWord.replace(JAPAN, "");
-        }
-
-        return searchWord;
-    }
-
-    private String checkSearchWord(String searchWord) {
-        if (!searchWord.contains(RESTAURANT)) {
-            searchWord += " " + RESTAURANT;
-        }
-
-        return searchWord;
+        assertThat(japanWithSpace.trim()).isEqualTo("도쿄 맛집");
     }
 }
