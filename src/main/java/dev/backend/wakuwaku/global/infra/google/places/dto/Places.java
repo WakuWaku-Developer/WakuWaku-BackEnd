@@ -1,6 +1,5 @@
 package dev.backend.wakuwaku.global.infra.google.places.dto;
 
-import dev.backend.wakuwaku.global.infra.google.places.dto.openinghours.CurrentOpeningHours;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

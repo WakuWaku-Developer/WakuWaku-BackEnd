@@ -4,10 +4,8 @@ import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.details.GooglePlacesDetailsService;
 import dev.backend.wakuwaku.global.infra.google.places.dto.*;
-import dev.backend.wakuwaku.global.infra.google.places.dto.openinghours.CurrentOpeningHours;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.GooglePlacesTextSearchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.JAPAN;
+import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.*;
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.INVALID_PARAMETER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
@@ -178,14 +176,14 @@ class RestaurantServiceTest {
     @Test
     void getSimpleRestaurants() {
         // given
-        String searchWord = "테스트";
+        String searchWord = "맛집 검색어";
 
         List<Places> placesList = new ArrayList<>();
         placesList.add(places);
 
         Restaurant restaurant = new Restaurant(places);
 
-        given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN + searchWord)).willReturn(placesList);
+        given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord)).willReturn(placesList);
 
         // when
         List<Restaurant> simpleRestaurants = restaurantService.getSimpleRestaurants(searchWord);
@@ -200,7 +198,7 @@ class RestaurantServiceTest {
         assertThat(simpleRestaurants.get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
         assertThat(simpleRestaurants.get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
 
-        then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN + searchWord);
+        then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord);
     }
 
     @DisplayName("검색어가 null 이면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
@@ -262,5 +260,65 @@ class RestaurantServiceTest {
 
         // then
         assertThat(detailsRestaurant).isEqualTo(places);
+    }
+
+    @DisplayName("검색어에 '일본 '이 존재하면 '일본 '을 제거한 검색어를 반환")
+    @Test
+    void removeJapanWithSpace() {
+        // given
+        String japanWithSpace = "일본 도쿄 맛집";
+
+        String withoutJapanWithSpace = null;
+        String withoutJapan = null;
+
+        // when
+        if (japanWithSpace.contains(JAPAN_WITH_SPACE)) {
+            withoutJapanWithSpace = japanWithSpace.replace(JAPAN_WITH_SPACE, "").trim();
+        }
+
+        if (japanWithSpace.contains(JAPAN)) {
+            withoutJapan = japanWithSpace.replace(JAPAN, "").trim();
+        }
+
+        // then
+        assertThat(withoutJapanWithSpace).isEqualTo("도쿄 맛집");
+    }
+
+    @DisplayName("검색어에 '일본'이 존재하면 '일본' 을 제거한 검색어를 반환")
+    @Test
+    void removeJapan() {
+        // given
+        String japanWithSpace = "일본도쿄 맛집";
+
+        // when
+        String withoutJapanWithSpace = null;
+        String withoutJapan = null;
+
+        // when
+        if (japanWithSpace.contains(JAPAN_WITH_SPACE)) {
+            withoutJapanWithSpace = japanWithSpace.replace(JAPAN_WITH_SPACE, "").trim();
+        }
+
+        if (japanWithSpace.contains(JAPAN)) {
+            withoutJapan = japanWithSpace.replace(JAPAN, "").trim();
+        }
+
+        // then
+        assertThat(withoutJapan).isEqualTo("도쿄 맛집");
+    }
+
+    @DisplayName("검색어에 '맛집'이 존재하지 않으면 ' 맛집'을 마지막에 추가한 검색어를 반환")
+    @Test
+    void addRestaurant() {
+        // given
+        String japanWithSpace = "도쿄";
+
+        // when
+        if (!japanWithSpace.contains(RESTAURANT)) {
+            japanWithSpace += " " + RESTAURANT;
+        }
+
+        // then
+        assertThat(japanWithSpace.trim()).isEqualTo("도쿄 맛집");
     }
 }

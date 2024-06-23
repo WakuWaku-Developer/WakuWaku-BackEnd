@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.JAPAN;
+import static dev.backend.wakuwaku.domain.restaurant.service.constant.SearchWordConstant.*;
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_PARAMETER;
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_SEARCH_WORD;
 
@@ -43,9 +43,11 @@ public class RestaurantService {
             throw INVALID_SEARCH_WORD;
         }
 
-        String newWord = duplicateWord(searchWord);
+        String removeDuplicateWord = duplicateWord(searchWord);
 
-        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN + newWord);
+        String realSearchWord = checkSearchWord(removeDuplicateWord);
+
+        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + realSearchWord);
 
         return places.stream()
                 .map(Restaurant::new)
@@ -56,11 +58,23 @@ public class RestaurantService {
         return googlePlacesDetailsService.getRestaurantByDetailsSearch(placeId);
     }
 
-    private String duplicateWord(String word) {
-        if (word.contains("일본")) {
-            return word.replace("일본", "");
+    private String duplicateWord(String searchWord) {
+        if (searchWord.contains(JAPAN_WITH_SPACE)) {
+            return searchWord.replace(JAPAN_WITH_SPACE, "").trim();
         }
 
-        return word;
+        if (searchWord.contains(JAPAN)) {
+            return searchWord.replace(JAPAN, "").trim();
+        }
+
+        return searchWord;
+    }
+
+    private String checkSearchWord(String searchWord) {
+        if (!searchWord.contains(RESTAURANT)) {
+            searchWord += " " + RESTAURANT;
+        }
+
+        return searchWord.trim();
     }
 }

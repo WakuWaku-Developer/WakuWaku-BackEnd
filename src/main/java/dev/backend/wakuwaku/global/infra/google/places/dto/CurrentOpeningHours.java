@@ -1,4 +1,4 @@
-package dev.backend.wakuwaku.global.infra.google.places.dto.openinghours;
+package dev.backend.wakuwaku.global.infra.google.places.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
