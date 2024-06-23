@@ -1,7 +1,7 @@
 package dev.backend.wakuwaku.domain.restaurant.entity;
 
 import dev.backend.wakuwaku.domain.BaseEntity;
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.global.infra.google.places.details;
 
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
 import org.springframework.beans.factory.annotation.Autowired;

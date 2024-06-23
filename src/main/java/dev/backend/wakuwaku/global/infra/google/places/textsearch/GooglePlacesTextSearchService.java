@@ -1,7 +1,7 @@
 package dev.backend.wakuwaku.global.infra.google.places.textsearch;
 
 import com.google.gson.Gson;
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.NextPageRequest;

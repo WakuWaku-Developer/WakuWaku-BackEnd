@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.restaurant.dto.response;
 
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
