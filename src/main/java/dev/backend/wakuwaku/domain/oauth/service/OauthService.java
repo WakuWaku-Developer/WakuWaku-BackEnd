@@ -38,14 +38,15 @@ public class OauthService {
 
             if (member == null) {
                 // 새로운 회원 생성
-                member = new Member();
-                member.setOauthServerId(oauthMember.getOauthId().oauthServerId());
-                member.setOauthServerType(oauthMember.getOauthId().oauthServerType());
-                member.setEmail(oauthMember.getEmail());
-                member.setBirthday(oauthMember.getBirthday());
-                member.setNickname(oauthMember.getNickname());
-                member.setProfileImageUrl(oauthMember.getProfileImageUrl());
-                member.setRole(Role.USER);
+                Member.builder()
+                        .oauthServerId(oauthMember.getOauthId().oauthServerId())
+                        .oauthServerType(oauthMember.getOauthId().oauthServerType())
+                        .email(oauthMember.getEmail())
+                        .birthday(oauthMember.getBirthday())
+                        .nickname(oauthMember.getNickname())
+                        .profileImageUrl(oauthMember.getProfileImageUrl())
+                        .role(Role.USER)
+                        .build();
 
                 // 새로운 회원 저장
                 member = memberRepository.save(member);
