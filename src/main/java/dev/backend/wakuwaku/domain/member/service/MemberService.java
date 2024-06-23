@@ -35,7 +35,7 @@ public class MemberService {
         memberRepository.findByEmail
                         (member.getEmail())
                 .ifPresent(m -> {
-                    new RuntimeException(ExceptionStatus.DUPLICATED_EMAIL.getMessage());
+                    throw new RuntimeException(ExceptionStatus.DUPLICATED_EMAIL.getMessage());
                 });
     }
 

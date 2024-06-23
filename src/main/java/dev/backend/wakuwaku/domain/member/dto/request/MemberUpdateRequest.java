@@ -27,7 +27,7 @@ public class MemberUpdateRequest {
         this.profileImageUrl = profileImageUrl;
     }
     public void setBirthday(String birthday) {
-        this.profileImageUrl = birthday;
+        this.birthday = birthday;
     }
 
     public Member toMemberEntity() {
