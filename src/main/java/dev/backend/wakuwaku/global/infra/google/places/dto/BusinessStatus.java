@@ -1,4 +1,4 @@
-package dev.backend.wakuwaku.global.infra.google.places;
+package dev.backend.wakuwaku.global.infra.google.places.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

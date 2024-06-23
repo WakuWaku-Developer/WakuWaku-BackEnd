@@ -2,7 +2,7 @@ package dev.backend.wakuwaku.global.infra.google.places.details;
 
 import com.google.gson.Gson;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
-import dev.backend.wakuwaku.global.infra.google.places.Places;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
