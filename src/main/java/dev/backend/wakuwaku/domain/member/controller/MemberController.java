@@ -12,7 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("wakuwaku/v1/members")
@@ -48,7 +49,7 @@ public class MemberController {
 
         return ResponseEntity.ok().body(memberList.stream()
                 .map(GetMemberResponse::new)
-                .collect(Collectors.toList()));
+                .collect(toList()));
     }
 
 }
