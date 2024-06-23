@@ -60,11 +60,11 @@ public class RestaurantService {
 
     private String duplicateWord(String searchWord) {
         if (searchWord.contains(JAPAN_WITH_SPACE)) {
-            return searchWord.replace(JAPAN_WITH_SPACE, "");
+            return searchWord.replace(JAPAN_WITH_SPACE, "").trim();
         }
 
         if (searchWord.contains(JAPAN)) {
-            return searchWord.replace(JAPAN, "");
+            return searchWord.replace(JAPAN, "").trim();
         }
 
         return searchWord;
@@ -75,6 +75,6 @@ public class RestaurantService {
             searchWord += " " + RESTAURANT;
         }
 
-        return searchWord;
+        return searchWord.trim();
     }
 }
