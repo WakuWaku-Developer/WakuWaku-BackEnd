@@ -22,19 +22,6 @@ public class MemberController {
     private final MemberService memberService;
 
 
-    /*
-    기능: 회원가입
-    ※ @Valid: 유효성 검사 거쳐야 함 / @RequestBody: 요청 body 데이터 자바 객체로 변환
-     */
-    /*
-    @PostMapping("/save")
-    public ResponseEntity<MemberIdResponse> register(@RequestBody MemberRegisterRequest registerRequest) {
-        Long id = memberService.register(registerRequest.toMemberEntity());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MemberIdResponse(id));
-    }
- */
-
     @GetMapping("/{id}")
     public ResponseEntity<GetMemberResponse> findById(@PathVariable("id") Long id) {
         Member memberEntity = memberService.findById(id);
@@ -63,19 +50,5 @@ public class MemberController {
                 .map(GetMemberResponse::new)
                 .collect(Collectors.toList()));
     }
-/*
-    @PostMapping("/login")
-    public ResponseEntity<MemberIdResponse> login(@RequestBody MemberLoginRequest memberLoginRequest) {
-        Long id = memberService.login(memberLoginRequest.getMemberId(), memberLoginRequest.getMemberPassword());
 
-        return ResponseEntity.ok().body(new MemberIdResponse(id));
-    }
-    */
-
-
-//    @GetMapping("/logout")
-//    public ResponseEntity<Void> logout(HttpSession session) {
-//        session.invalidate();
-//        return ResponseEntity.ok().build();
-//    }
 }

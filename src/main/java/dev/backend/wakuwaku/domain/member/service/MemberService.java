@@ -3,6 +3,7 @@ package dev.backend.wakuwaku.domain.member.service;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public class MemberService {
         memberRepository.findByEmail
                         (member.getEmail())
                 .ifPresent(m -> {
-                    throw new IllegalStateException();
+                    new RuntimeException(ExceptionStatus.DUPLICATED_EMAIL.getMessage());
                 });
     }
 
@@ -52,7 +53,7 @@ public class MemberService {
     public Member findById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(
-                        () -> new IllegalStateException()
+                        () ->  new RuntimeException(ExceptionStatus.NONE_USER.getMessage())
                 );
     }
 
@@ -62,7 +63,7 @@ public class MemberService {
     public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(
-                        () -> new IllegalStateException()
+                        () ->  new RuntimeException(ExceptionStatus.NONE_USER.getMessage())
                 );
 
         member.setNickname(memberUpdateRequest.getNickname());
@@ -71,7 +72,6 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        // id;
         return member.getId();
     }
 

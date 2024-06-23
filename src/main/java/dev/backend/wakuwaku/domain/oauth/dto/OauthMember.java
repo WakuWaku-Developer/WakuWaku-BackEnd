@@ -6,14 +6,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.*;
 
-import static lombok.AccessLevel.PROTECTED;
-
 //@Entity
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor
 @Table(name = "oauth_member",
         uniqueConstraints = {
                 @UniqueConstraint(

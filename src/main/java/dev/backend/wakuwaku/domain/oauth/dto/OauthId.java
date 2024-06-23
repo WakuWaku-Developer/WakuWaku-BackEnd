@@ -8,11 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
 
 @Embeddable
 @AllArgsConstructor
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor
 public class OauthId {
 
     @Column(nullable = false, name = "oauth_server_id")

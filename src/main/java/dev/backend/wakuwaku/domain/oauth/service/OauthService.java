@@ -3,8 +3,9 @@ package dev.backend.wakuwaku.domain.oauth.service;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthMember;
-import dev.backend.wakuwaku.domain.oauth.dto.Role;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
+import dev.backend.wakuwaku.domain.oauth.dto.Role;
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClientComposite;
 import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProviderComposite;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 @Service
 @Slf4j
@@ -55,7 +57,7 @@ public class OauthService {
 
         } catch (Exception e) {
             log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
-            throw new RuntimeException("로그인 중 오류가 발생했습니다. 다시 시도해 주세요.");
+            throw new RuntimeException(ExceptionStatus.FALIED_TO_LOGIN.getMessage(), e);
         }
     }
 }

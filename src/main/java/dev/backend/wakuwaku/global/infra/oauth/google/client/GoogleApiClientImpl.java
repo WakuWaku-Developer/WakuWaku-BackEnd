@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.global.infra.oauth.google.client;
 
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.infra.oauth.google.dto.GoogleMemberResponse;
 import dev.backend.wakuwaku.global.infra.oauth.google.dto.GoogleToken;
 import org.springframework.http.HttpEntity;
@@ -24,7 +25,8 @@ public class GoogleApiClientImpl implements GoogleApiClient {
         this.restTemplate = restTemplate;
     }
 
-    private static final String GOOGLE_API_TOKEN_URL = "https://oauth2.googleapis.com/token";
+    public static final String GOOGLE_API_TOKEN_URL = "https://oauth2.googleapis.com/token";
+
 
     @Override
     public GoogleToken fetchToken(MultiValueMap<String, String> params) {
@@ -55,8 +57,7 @@ public class GoogleApiClientImpl implements GoogleApiClient {
             logger.error("HTTP Client 오류: {}", e.getResponseBodyAsString(), e);
             throw e;
         } catch (Exception e) {
-            logger.error("Error fetching Google member info", e);
-            throw new RuntimeException("Error fetching Google member info", e);
+            throw new  RuntimeException(ExceptionStatus.NOT_EXISTED_MEMBER_INFO.getMessage());
         }
     }
 
