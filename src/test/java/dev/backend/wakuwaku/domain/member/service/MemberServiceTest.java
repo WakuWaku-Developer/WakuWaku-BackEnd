@@ -3,6 +3,7 @@ package dev.backend.wakuwaku.domain.member.service;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
+import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -84,7 +85,8 @@ class MemberServiceTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.findById(1L))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage(ExceptionStatus.NONE_USER.getMessage());
     }
 
     @Test
@@ -114,8 +116,9 @@ class MemberServiceTest {
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
 
         // when, then
-        assertThatThrownBy(() -> memberService.update(1L, updateRequest))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> memberService.findById(1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage(ExceptionStatus.NONE_USER.getMessage());
         then(memberRepository).should().findById(anyLong());
         then(memberRepository).should(never()).save(any());
     }
