@@ -3,12 +3,14 @@ package dev.backend.wakuwaku.domain.member.service;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
-import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.DUPLICATED_EMAIL;
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.NONE_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class MemberService {
         memberRepository.findByEmail
                         (member.getEmail())
                 .ifPresent(m -> {
-                    throw new RuntimeException(ExceptionStatus.DUPLICATED_EMAIL.getMessage());
+                    throw DUPLICATED_EMAIL;
                 });
     }
 
@@ -53,7 +55,7 @@ public class MemberService {
     public Member findById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(
-                        () ->  new RuntimeException(ExceptionStatus.NONE_USER.getMessage())
+                        () ->  NONE_USER
                 );
     }
 
@@ -63,7 +65,7 @@ public class MemberService {
     public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(
-                        () ->  new RuntimeException(ExceptionStatus.NONE_USER.getMessage())
+                        () ->  NONE_USER
                 );
 
         member.setNickname(memberUpdateRequest.getNickname());

@@ -4,6 +4,7 @@ import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,8 +86,9 @@ class MemberServiceTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.findById(1L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage(ExceptionStatus.NONE_USER.getMessage());
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.NONE_USER);
     }
 
     @Test
@@ -95,6 +97,7 @@ class MemberServiceTest {
         // given
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
+        given(memberRepository.save(member)).willReturn(member); // 이 부분 수정
 
         // when
         Long updatedMemberId = memberService.update(1L, updateRequest);
@@ -109,6 +112,22 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("회원 정보 수정 - 존재하지 않는 회원")
+    void updateNonExistingMember() {
+        // given
+        MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
+        given(memberRepository.findById(1L)).willReturn(Optional.empty());
+
+        // when / then
+        assertThatThrownBy(() -> memberService.update(1L, updateRequest))
+                .isInstanceOf(WakuWakuException.class)
+                .hasFieldOrPropertyWithValue("status", ExceptionStatus.NONE_USER);
+
+        then(memberRepository).should().findById(1L);
+        then(memberRepository).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
     @DisplayName("존재하지 않는 ID로 회원 정보 수정할 때 예외 발생")
     void updateNonExistingId() {
         // given
@@ -117,8 +136,9 @@ class MemberServiceTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.findById(1L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage(ExceptionStatus.NONE_USER.getMessage());
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.NONE_USER);
         then(memberRepository).should().findById(anyLong());
         then(memberRepository).should(never()).save(any());
     }

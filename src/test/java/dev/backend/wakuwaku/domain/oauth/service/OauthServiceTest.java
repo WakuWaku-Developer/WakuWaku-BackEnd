@@ -6,6 +6,7 @@ import dev.backend.wakuwaku.domain.oauth.dto.OauthId;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthMember;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClientComposite;
 import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProviderComposite;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,7 +117,7 @@ class OauthServiceTest {
 
         // When / Then
         assertThatThrownBy(() -> oauthService.login(oauthServerType, AUTH_CODE))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining(ExceptionStatus.FALIED_TO_LOGIN.getMessage());
+                .isInstanceOf(WakuWakuException.class)
+                .hasFieldOrPropertyWithValue("status", ExceptionStatus.FALIED_TO_LOGIN);
     }
 }
