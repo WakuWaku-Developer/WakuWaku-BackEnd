@@ -29,7 +29,6 @@ public class OauthCodeRequestUrlProviderCompositeTest {
 
     @BeforeEach
     void setUp() {
-        // Create a set of OauthCodeRequestUrlProvider instances
         Set<OauthCodeRequestUrlProvider> providers = Set.of(
                 googleProvider,
                 naverProvider,
@@ -48,7 +47,6 @@ public class OauthCodeRequestUrlProviderCompositeTest {
         lenient().when(kakaoProvider.supportServer()).thenReturn(OauthServerType.KAKAO);
         lenient().when(kakaoProvider.provide()).thenReturn("https://kauth.kakao.com/oauth/authorize");
 
-        // Instantiate the composite with the set of providers
         composite = new OauthCodeRequestUrlProviderComposite(providers);
     }
 
