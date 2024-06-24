@@ -42,7 +42,7 @@ class OauthServiceTest {
     @InjectMocks
     private OauthService oauthService;
 
-    private static final String AUTH_CODE = "dummy_auth_code";
+    private static final String AUTH_CODE = "test_auth_code";
     private static final String EMAIL = "test@example.com";
     private static final String NICKNAME = "TestUser";
     private static final String PROFILE_IMAGE_URL = "https://example.com/profile.jpg";
@@ -57,9 +57,13 @@ class OauthServiceTest {
     void loginSuccess() {
         // Given
         OauthServerType oauthServerType = OauthServerType.KAKAO;
-        OauthId oauthId = new OauthId("dummy_oauth_server_id", oauthServerType);
+        OauthId oauthId = new OauthId("test_oauth_server_id", oauthServerType);
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
         Member existingMember = new Member();
+        existingMember.setEmail(EMAIL);
+        existingMember.setNickname(NICKNAME);
+        existingMember.setProfileImageUrl(PROFILE_IMAGE_URL);
+        existingMember.setBirthday(BIRTHDAY);
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
         given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.empty());
@@ -73,6 +77,7 @@ class OauthServiceTest {
         assertThat(response).containsKeys("id");
         then(memberRepository).should().save(any(Member.class));
     }
+
 
 
     @Test
