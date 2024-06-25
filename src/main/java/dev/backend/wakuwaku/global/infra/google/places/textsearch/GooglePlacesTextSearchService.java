@@ -84,7 +84,7 @@ public class GooglePlacesTextSearchService {
         for (Places place : places) {
             List<Photo> photos = place.getPhotos();
 
-            if (photos == null || photos.isEmpty()) {
+            if (photos == null || photos.isEmpty() || place.getPlusCode() == null || place.getPlusCode().getCompoundCode() == null || place.getPlusCode().getCompoundCode().contains(INVALID_RESTAURANT_LOCATION)) {
                 continue;
             }
 
@@ -115,7 +115,7 @@ public class GooglePlacesTextSearchService {
     }
 
     private String getTextSearchRequestBody(String searchWord) {
-        TextSearchRequest textSearchRequest = new TextSearchRequest(searchWord, TEXT_SEARCH_LANGUAGE_CODE);
+        TextSearchRequest textSearchRequest = new TextSearchRequest(searchWord);
 
         Gson gson = new Gson();
 
@@ -123,7 +123,7 @@ public class GooglePlacesTextSearchService {
     }
 
     private String getNextPageRequestBody(String searchWord, String nextPageToken) {
-        NextPageRequest newestTextSearchRequest = new NextPageRequest(searchWord, TEXT_SEARCH_LANGUAGE_CODE, nextPageToken);
+        NextPageRequest newestTextSearchRequest = new NextPageRequest(searchWord, nextPageToken);
 
         Gson gson = new Gson();
 
