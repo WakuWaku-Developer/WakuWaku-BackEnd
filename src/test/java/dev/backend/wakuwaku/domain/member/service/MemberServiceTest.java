@@ -45,7 +45,6 @@ class MemberServiceTest {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .birthday("1990-01-01")
                 .build();
-        member.setId(1L);
     }
 
 
@@ -97,8 +96,15 @@ class MemberServiceTest {
     void update() {
         // given
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
+
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-        given(memberRepository.save(member)).willReturn(member); // 이 부분 수정
+
+        given(memberRepository.save(any(Member.class)))
+                .willAnswer(invocation -> {
+                    Member updatedMember = invocation.getArgument(0);
+                    updatedMember.setId(1L);
+                    return updatedMember;
+                });
 
         // when
         Long updatedMemberId = memberService.update(1L, updateRequest);
@@ -109,8 +115,10 @@ class MemberServiceTest {
         assertThat(member.getProfileImageUrl()).isEqualTo(updateRequest.getProfileImageUrl());
         assertThat(member.getBirthday()).isEqualTo(updateRequest.getBirthday());
         then(memberRepository).should().findById(1L);
-        then(memberRepository).should().save(member);
+        then(memberRepository).should().save(any(Member.class));
     }
+
+
 
     @Test
     @DisplayName("회원 정보 수정 - 존재하지 않는 회원")

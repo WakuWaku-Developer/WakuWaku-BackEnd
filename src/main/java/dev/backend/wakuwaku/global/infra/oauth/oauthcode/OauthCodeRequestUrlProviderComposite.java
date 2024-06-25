@@ -1,7 +1,7 @@
 package dev.backend.wakuwaku.global.infra.oauth.oauthcode;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
-import dev.backend.wakuwaku.global.exception.ExceptionStatus;
+import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -30,6 +30,6 @@ public class OauthCodeRequestUrlProviderComposite {
 
     private OauthCodeRequestUrlProvider getProvider(OauthServerType oauthServerType) {
         return Optional.ofNullable(mapping.get(oauthServerType))
-                .orElseThrow(() -> new RuntimeException(ExceptionStatus.NOT_EXISTED_SOCIAL_TYPE.getMessage()));
+                .orElseThrow(() -> WakuWakuException.NOT_EXISTED_SOCIAL_TYPE);
     }
 }

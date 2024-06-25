@@ -45,8 +45,8 @@ public class OauthService {
             } else {
                 // 새로운 회원 생성
                 member = Member.builder()
-                        .oauthServerId(oauthMember.getOauthId().oauthServerId())
-                        .oauthServerType(oauthMember.getOauthId().oauthServerType())
+                        .oauthServerId(oauthMember.getOauthId().getOauthServerId())
+                        .oauthServerType(oauthMember.getOauthId().getOauthServerType())
                         .email(oauthMember.getEmail())
                         .birthday(oauthMember.getBirthday())
                         .nickname(oauthMember.getNickname())

@@ -51,8 +51,8 @@ class NaverMemberClientTest {
         OauthMember oauthMember = naverMemberClient.fetch("authCode");
 
         // 사용자 정보 맞는지 확인
-        assertEquals(OauthServerType.NAVER, oauthMember.getOauthId().oauthServerType());
-        assertEquals("naver123", oauthMember.getOauthId().oauthServerId());
+        assertEquals(OauthServerType.NAVER, oauthMember.getOauthId().getOauthServerType());
+        assertEquals("naver123", oauthMember.getOauthId().getOauthServerId());
         assertEquals("testUser", oauthMember.getNickname());
         assertEquals("http://example.com/profile.jpg", oauthMember.getProfileImageUrl());
         assertEquals("test@example.com", oauthMember.getEmail());

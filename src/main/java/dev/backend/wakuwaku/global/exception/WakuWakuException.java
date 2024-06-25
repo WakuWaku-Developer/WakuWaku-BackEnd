@@ -23,4 +23,6 @@ public class WakuWakuException extends RuntimeException {
 
     public static final WakuWakuException FAILED_TO_LOGIN                = new WakuWakuException(ExceptionStatus.FALIED_TO_LOGIN);
 
+    public static final WakuWakuException NOT_EXISTED_SOCIAL_TYPE                = new WakuWakuException(ExceptionStatus.NOT_EXISTED_SOCIAL_TYPE);
+
 }

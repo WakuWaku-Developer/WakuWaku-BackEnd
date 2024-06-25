@@ -21,11 +21,11 @@ public class OauthId {
     @Column(nullable = false, name = "oauth_server")
     private OauthServerType oauthServerType;
 
-    public String oauthServerId() {
+    public String getOauthServerId() {
         return oauthServerId;
     }
 
-    public OauthServerType oauthServerType() {
+    public OauthServerType getOauthServerType() {
         return oauthServerType;
     }
 }

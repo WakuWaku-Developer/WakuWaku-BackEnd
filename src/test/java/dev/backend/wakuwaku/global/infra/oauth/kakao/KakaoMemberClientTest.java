@@ -57,8 +57,8 @@ class KakaoMemberClientTest {
         OauthMember oauthMember = kakaoMemberClient.fetch("authCode");
 
         // 사용자 정보 맞는지 확인
-        assertEquals(OauthServerType.KAKAO, oauthMember.getOauthId().oauthServerType());
-        assertEquals("123", oauthMember.getOauthId().oauthServerId());
+        assertEquals(OauthServerType.KAKAO, oauthMember.getOauthId().getOauthServerType());
+        assertEquals("123", oauthMember.getOauthId().getOauthServerId());
         assertEquals("testUser", oauthMember.getNickname());
         assertEquals("http://example.com/profile.jpg", oauthMember.getProfileImageUrl());
         assertEquals("test@example.com", oauthMember.getEmail());

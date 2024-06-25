@@ -63,7 +63,7 @@ public class GoogleMemberClientTest {
 
         // THEN
         assertNotNull(result);
-        assertEquals("dummyId", result.getOauthId().oauthServerId());
+        assertEquals("dummyId", result.getOauthId().getOauthServerId());
         assertEquals("dummy@example.com", result.getEmail());
         assertEquals("John Doe", result.getNickname());
         assertEquals("https://example.com/avatar.jpg", result.getProfileImageUrl());

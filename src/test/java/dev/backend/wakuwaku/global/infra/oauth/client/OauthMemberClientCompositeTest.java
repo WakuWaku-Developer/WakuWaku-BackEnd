@@ -73,7 +73,7 @@ class OauthMemberClientCompositeTest {
         OauthMember oauthMember = clientComposite.fetch(oauthServerType, mockAuthCode);
 
         // Then
-        assertEquals("12345", oauthMember.getOauthId().oauthServerId());
+        assertEquals("12345", oauthMember.getOauthId().getOauthServerId());
         assertEquals("test@gmail.com", oauthMember.getEmail());
         assertEquals("John Doe", oauthMember.getNickname());
         assertEquals("https://example.com/picture", oauthMember.getProfileImageUrl());
