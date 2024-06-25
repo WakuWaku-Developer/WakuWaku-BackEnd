@@ -139,8 +139,11 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 삭제 테스트")
     void delete() throws Exception {
+        // given
+        Long memberId = 1L;
+
         // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/{id}", 1L))
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/{id}", memberId))
                 .andExpect(status().isOk())
                 .andDo(MockMvcRestDocumentationWrapper.document("delete-member",
                         resource(ResourceSnippetParameters.builder()
@@ -151,8 +154,9 @@ class MemberControllerTest {
                         )
                 ));
 
-        then(memberService).should().deleteById(1L);
+        then(memberService).should().deactivateById(memberId);
     }
+
 
     @Test
     @DisplayName("회원 목록 조회 테스트")

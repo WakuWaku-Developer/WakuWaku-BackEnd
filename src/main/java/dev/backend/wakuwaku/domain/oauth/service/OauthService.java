@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OauthService extends RuntimeException{
+public class OauthService {
 
     private final OauthCodeRequestUrlProviderComposite oauthCodeRequestUrlProviderComposite;
     private final OauthMemberClientComposite oauthMemberClientComposite;
@@ -32,21 +33,29 @@ public class OauthService extends RuntimeException{
         try {
             OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
-            Member member = memberRepository.findByEmail(oauthMember.getEmail())
-                    .orElseGet(() -> {
-                        // 새로운 회원 생성
-                        Member newMember = Member.builder()
-                                .oauthServerId(oauthMember.getOauthId().oauthServerId())
-                                .oauthServerType(oauthMember.getOauthId().oauthServerType())
-                                .email(oauthMember.getEmail())
-                                .birthday(oauthMember.getBirthday())
-                                .nickname(oauthMember.getNickname())
-                                .profileImageUrl(oauthMember.getProfileImageUrl())
-                                .role(Role.USER)
-                                .build();
-                        // 새로운 회원 저장
-                        return memberRepository.save(newMember);
-                    });
+            Optional<Member> optionalMember = memberRepository.findByEmail(oauthMember.getEmail());
+
+            Member member;
+            if (optionalMember.isPresent()) {
+                member = optionalMember.get();
+                if (member.getCheckStatus().equals("N")) {
+                    member.setCheckStatus("Y");
+                    memberRepository.save(member);
+                }
+            } else {
+                // 새로운 회원 생성
+                member = Member.builder()
+                        .oauthServerId(oauthMember.getOauthId().oauthServerId())
+                        .oauthServerType(oauthMember.getOauthId().oauthServerType())
+                        .email(oauthMember.getEmail())
+                        .birthday(oauthMember.getBirthday())
+                        .nickname(oauthMember.getNickname())
+                        .profileImageUrl(oauthMember.getProfileImageUrl())
+                        .role(Role.USER)
+                        .build();
+                // 새로운 회원 저장
+                memberRepository.save(member);
+            }
 
             Map<String, Long> response = new HashMap<>();
             response.put("id", member.getId());

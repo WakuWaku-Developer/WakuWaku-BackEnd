@@ -18,29 +18,14 @@ import static dev.backend.wakuwaku.global.exception.WakuWakuException.NONE_USER;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    /*
-    회원가입
-     */
-    /*
-    public Long register(Member memberEntity) {
-        // 중복 검사 로직
-        validateDuplicateMember(memberEntity);
-        memberRepository.save(memberEntity);
-
-        return memberEntity.getId();
-    }
-
-
-     */
-
     private void validateDuplicateMember(Member member) {
-        memberRepository.findByEmail
-                        (member.getEmail())
+        memberRepository.findByEmail(member.getEmail())
                 .ifPresent(m -> {
-                    throw DUPLICATED_EMAIL;
+                    if (!m.getCheckStatus().equals("N")) {
+                        throw DUPLICATED_EMAIL;
+                    }
                 });
     }
-
 
     /*
     회원 리스트
@@ -55,7 +40,7 @@ public class MemberService {
     public Member findById(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(
-                        () ->  NONE_USER
+                        () -> NONE_USER
                 );
     }
 
@@ -65,12 +50,12 @@ public class MemberService {
     public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(
-                        () ->  NONE_USER
+                        () -> NONE_USER
                 );
 
-        member.setNickname(memberUpdateRequest.getNickname());
-        member.setProfileImageUrl(memberUpdateRequest.getProfileImageUrl());
-        member.setBirthday(memberUpdateRequest.getBirthday());
+        member.updateNickname(memberUpdateRequest.getNickname());
+        member.updateProfileImageUrl(memberUpdateRequest.getProfileImageUrl());
+        member.updateBirthday(memberUpdateRequest.getBirthday());
 
         memberRepository.save(member);
 
@@ -80,7 +65,9 @@ public class MemberService {
     /*
     회원 탈퇴
      */
-    public void deleteById(Long id) {
-        memberRepository.deleteById(id);
+    public void deactivateById(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> NONE_USER);
+        member.deactivate();
+        memberRepository.save(member);
     }
 }

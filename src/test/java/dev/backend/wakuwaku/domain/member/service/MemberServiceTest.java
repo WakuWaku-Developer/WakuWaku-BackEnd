@@ -5,6 +5,7 @@ import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -144,12 +145,23 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원 삭제")
-    void deleteById() {
+    @DisplayName("회원 비활성화")
+    void deactivateById() {
+        // given
+        Long memberId = 1L;
+        Member member = new Member();
+        member.setId(memberId);
+        member.setCheckStatus("Y");
+
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+
         // when
-        memberService.deleteById(1L);
+        memberService.deactivateById(memberId);
 
         // then
-        then(memberRepository).should().deleteById(1L);
+        then(memberRepository).should().findById(memberId);
+        Assertions.assertEquals("N", member.getCheckStatus());
+        then(memberRepository).should().save(member);
     }
+
 }

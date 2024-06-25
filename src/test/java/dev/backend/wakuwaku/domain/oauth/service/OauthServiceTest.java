@@ -26,7 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class OauthServiceTest {
@@ -90,6 +89,7 @@ class OauthServiceTest {
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
         Member existingMember = new Member();
         existingMember.setId(1L); // 기존 회원 정보에 ID를 설정하여 가정
+        existingMember.setCheckStatus("N"); // 기존 회원의 상태를 "N"으로 설정하여 탈퇴한 상태를 가정
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
         given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.of(existingMember)); // 기존 회원을 반환하도록 변경
@@ -101,8 +101,10 @@ class OauthServiceTest {
         assertThat(response).isNotNull();
         assertThat(response).containsKeys("id");
         assertThat(response.get("id")).isEqualTo(existingMember.getId()); // 기존 회원의 ID가 반환되는지 확인
-        then(memberRepository).should(never()).save(any(Member.class)); // 회원 저장이 호출되지 않는지 확인
+        assertThat(existingMember.getCheckStatus()).isEqualTo("Y"); // 회원의 상태가 "Y"로 변경되었는지 확인
+        then(memberRepository).should().save(existingMember); // 상태 변경 후 저장이 호출되었는지 확인
     }
+
 
 
 

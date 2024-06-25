@@ -38,7 +38,7 @@ public class MemberController {
     }
     @DeleteMapping("/{id}") // 삭제
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        memberService.deleteById(id);
+        memberService.deactivateById(id);
 
         return ResponseEntity.ok().build();
     }
