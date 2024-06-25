@@ -56,6 +56,8 @@ public class Places {
 
     private BusinessStatus businessStatus;
 
+    private PlusCode plusCode;
+
     @Builder
     public Places(String id, double rating, DisplayName displayName, Location location, CurrentOpeningHours currentOpeningHours, List<Photo> photos, boolean dineIn, boolean takeout, boolean delivery, LocalizedText editorialSummary, List<Review> reviews, String nationalPhoneNumber, String formattedAddress, String websiteUri, int userRatingCount, boolean reservable, boolean servesBreakfast, boolean servesLunch, boolean servesDinner, boolean servesBeer, boolean servesWine, boolean servesVegetarianFood) {
         this.id = id;

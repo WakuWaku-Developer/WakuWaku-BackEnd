@@ -7,6 +7,7 @@ public class TextSearchConstant {
     public static final String TEXT_SEARCH_RESPONSE_FIELDS =
             "places.displayName.text,places.location,places.rating,places.id" +
                     ",places.photos.name,places.photos.widthPx,places.photos.heightPx,places.photos.authorAttributions.displayName,places.photos.authorAttributions.photoUri" +
-                    ",places.userRatingCount,places.businessStatus,nextPageToken";
-    public static final String TEXT_SEARCH_LANGUAGE_CODE = "ko";
+                    ",places.userRatingCount,places.businessStatus,nextPageToken" +
+                    ",places.plusCode.compoundCode";
+    public static final String INVALID_RESTAURANT_LOCATION = "대한민국";
 }
