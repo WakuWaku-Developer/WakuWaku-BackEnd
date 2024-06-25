@@ -2,8 +2,8 @@ package dev.backend.wakuwaku.domain.restaurant.service;
 
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.details.GooglePlacesDetailsService;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.GooglePlacesTextSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,11 +43,7 @@ public class RestaurantService {
             throw INVALID_SEARCH_WORD;
         }
 
-        String removeDuplicateWord = duplicateWord(searchWord);
-
-        String realSearchWord = checkSearchWord(removeDuplicateWord);
-
-        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + realSearchWord);
+        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord.trim() + FRONT_OF_RESTAURANT + RESTAURANT, 0);
 
         return places.stream()
                 .map(Restaurant::new)
@@ -56,25 +52,5 @@ public class RestaurantService {
 
     public Places getDetailsRestaurant(String placeId) {
         return googlePlacesDetailsService.getRestaurantByDetailsSearch(placeId);
-    }
-
-    private String duplicateWord(String searchWord) {
-        if (searchWord.contains(JAPAN_WITH_SPACE)) {
-            return searchWord.replace(JAPAN_WITH_SPACE, "").trim();
-        }
-
-        if (searchWord.contains(JAPAN)) {
-            return searchWord.replace(JAPAN, "").trim();
-        }
-
-        return searchWord;
-    }
-
-    private String checkSearchWord(String searchWord) {
-        if (!searchWord.contains(RESTAURANT)) {
-            searchWord += " " + RESTAURANT;
-        }
-
-        return searchWord.trim();
     }
 }
