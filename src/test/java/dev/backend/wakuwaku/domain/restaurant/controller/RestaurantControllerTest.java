@@ -46,7 +46,7 @@ class RestaurantControllerTest {
 
     private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
 
-    private static final String SEARCH_WORD = "도쿄 맛집";
+    private static final String SEARCH_WORD = "도쿄";
 
     private static final String NAME = "우동신";
 
@@ -149,7 +149,7 @@ class RestaurantControllerTest {
                                 .summary("Get Simple Info By Search Word")
                                 .description("응답(data[]의 size) 개수가 최대 20개까지 가능함.")
                                 .queryParameters(
-                                        parameterWithName("search").description("검색어")
+                                        parameterWithName("search").description("검색어 (장소명 혹은 지역명만 입력)")
                                 )
                                 .responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 시 반환되는 code 값"),
