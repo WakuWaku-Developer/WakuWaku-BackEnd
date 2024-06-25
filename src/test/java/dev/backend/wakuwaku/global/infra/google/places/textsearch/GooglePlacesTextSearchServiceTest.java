@@ -3,8 +3,8 @@ package dev.backend.wakuwaku.global.infra.google.places.textsearch;
 import com.google.gson.Gson;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.NextPageRequest;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.TextSearchRequest;
@@ -23,7 +23,8 @@ import java.util.List;
 import static dev.backend.wakuwaku.global.infra.google.places.textsearch.constant.TextSearchConstant.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -64,7 +65,7 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(responseByTextSearch, MediaType.APPLICATION_JSON));
 
         // when
-        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(SEARCH_WORD);
+        List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(SEARCH_WORD, 0);
 
         // then
         mockServer.verify();
@@ -99,7 +100,7 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(responseByNextPageToken, MediaType.APPLICATION_JSON));
 
         // when
-        List<Places> places = googlePlacesTextSearchService.getRestaurantByNextPageToken(SEARCH_WORD, NEXT_PAGE_TOKEN);
+        List<Places> places = googlePlacesTextSearchService.getRestaurantByNextPageToken(SEARCH_WORD, NEXT_PAGE_TOKEN, 0);
 
         // then
         mockServer.verify();
@@ -122,7 +123,7 @@ class GooglePlacesTextSearchServiceTest {
     void failTextSearchByNoNextPageToken() {
         // when
         Throwable thrown = catchException(
-                () -> googlePlacesTextSearchService.getRestaurantByNextPageToken(SEARCH_WORD, "")
+                () -> googlePlacesTextSearchService.getRestaurantByNextPageToken(SEARCH_WORD, "", 0)
         );
 
         // then

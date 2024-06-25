@@ -1,8 +1,8 @@
 package dev.backend.wakuwaku.global.infra.google.places.textsearch;
 
 import com.google.gson.Gson;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
+import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.NextPageRequest;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.TextSearchRequest;
@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,13 +29,12 @@ public class GooglePlacesTextSearchService {
     @Value("${google-places}")
     private String apiKey;
 
-
     public GooglePlacesTextSearchService(RestClient.Builder restClientBuilder, @Autowired GooglePlacesPhotoService googlePlacesPhotoService) {
         this.restClient = restClientBuilder.build();
         this.googlePlacesPhotoService = googlePlacesPhotoService;
     }
 
-    public List<Places> getRestaurantsByTextSearch(String searchWord) {
+    public List<Places> getRestaurantsByTextSearch(String searchWord, int cnt) {
         TextSearchResponse textSearchResponse = restClient.post()
                 .uri(TEXT_SEARCH_URL)
                 .header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS)
@@ -44,12 +44,14 @@ public class GooglePlacesTextSearchService {
                 .retrieve()
                 .body(TextSearchResponse.class);
 
-        return getPlaces(textSearchResponse);
+        cnt += 1;
+
+        return getPlaces(textSearchResponse, searchWord, cnt);
     }
 
     // pageToken 을 얻은 searchWord 와 같은 searchWord 로 검색해야만 제대로 동작함. (그렇지 않으면 에러 발생)
     // pageToken 만 가지고는 API 요청할 수 없음. (에러 발생)
-    public List<Places> getRestaurantByNextPageToken(String searchWord, String pageToken) {
+    public List<Places> getRestaurantByNextPageToken(String searchWord, String pageToken, int cnt) {
         if (pageToken == null || pageToken.isEmpty()) {
             throw NOT_EXISTED_NEXT_PAGE_TOKEN;
         }
@@ -63,19 +65,21 @@ public class GooglePlacesTextSearchService {
                 .retrieve()
                 .body(TextSearchResponse.class);
 
-        return getPlaces(textSearchResponse);
+        return getPlaces(textSearchResponse, searchWord, cnt);
     }
 
-    private List<Places> getPlaces(TextSearchResponse textSearchResponse) {
+    private List<Places> getPlaces(TextSearchResponse textSearchResponse, String searchWord, int cnt) {
         if (textSearchResponse == null || textSearchResponse.getPlaces() == null || textSearchResponse.getPlaces().isEmpty()) {
             return Collections.emptyList();
         }
 
-        return getUsablePlaces(textSearchResponse);
+        return getUsablePlaces(textSearchResponse, searchWord, cnt);
     }
 
-    private List<Places> getUsablePlaces(TextSearchResponse textSearchResponse) {
+    private List<Places> getUsablePlaces(TextSearchResponse textSearchResponse, String searchWord, int cnt) {
         List<Places> places = textSearchResponse.getPlaces();
+
+        List<Places> actualPlaces = new ArrayList<>();
 
         for (Places place : places) {
             List<Photo> photos = place.getPhotos();
@@ -95,9 +99,19 @@ public class GooglePlacesTextSearchService {
             // size() 가 1인 리스트를 반환
             photos.clear();
             photos.add(photo);
+
+            actualPlaces.add(place);
         }
 
-        return places;
+        if (isResultEnough(actualPlaces)) {
+            if (cnt > 3) {
+                return actualPlaces;
+            }
+
+            return getRestaurantsByTextSearch(searchWord, cnt);
+        }
+
+        return actualPlaces;
     }
 
     private String getTextSearchRequestBody(String searchWord) {
@@ -114,5 +128,9 @@ public class GooglePlacesTextSearchService {
         Gson gson = new Gson();
 
         return gson.toJson(newestTextSearchRequest);
+    }
+
+    private boolean isResultEnough(List<Places> places) {
+        return places.isEmpty();
     }
 }
