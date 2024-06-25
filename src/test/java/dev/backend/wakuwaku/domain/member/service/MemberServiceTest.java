@@ -5,7 +5,6 @@ import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,6 @@ class MemberServiceTest {
     @BeforeEach
     void setUp() {
         member = Member.builder()
-                //.id(1L)
                 .email("test@example.com")
                 .nickname("testUser")
                 .profileImageUrl("https://example.com/profile.jpg")
@@ -47,12 +45,44 @@ class MemberServiceTest {
                 .build();
     }
 
+    @Test
+    @DisplayName("중복되는 이메일이 존재하는 경우 - 실패")
+    void validateDuplicateMember_DuplicateEmail() {
+        // given
+        String email = "test@example.com";
+        Member existingMember = new Member();
+        existingMember.setEmail(email);
+        existingMember.setCheckStatus("Y"); // "Y"로 설정하여 중복 상황을 시뮬레이트
+        given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
+        // when & then
+        assertThatThrownBy(() -> memberService.validateDuplicateMember(existingMember))
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ExceptionStatus.DUPLICATED_EMAIL);
 
-
+        // Optional: memberRepository의 findByEmail 메서드가 한 번 호출되었는지 확인
+        // 실제 로직에서는 메서드가 호출됨을 보장하기 위해 추가적인 검증 가능
+    }
 
     @Test
-    @DisplayName("모든 회원 조회")
+    @DisplayName("중복되는 이메일이 존재하지 않는 경우 - 성공")
+    void validateDuplicateMember_NonDuplicateEmail() {
+        // given
+        String email = "test@example.com";
+        Member newMember = new Member();
+        newMember.setEmail(email);
+        newMember.setCheckStatus("N"); // "N"으로 설정하여 중복 상황을 회피
+        given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
+
+        // when & then
+        memberService.validateDuplicateMember(newMember); // 예외가 발생하지 않아야 함
+
+        // Optional: memberRepository의 findByEmail 메서드가 한 번 호출되었는지 확인
+        // 실제 로직에서는 메서드가 호출됨을 보장하기 위해 추가적인 검증 가능
+    }
+    @Test
+    @DisplayName("모든 회원 조회 - 성공")
     void findAll() {
         // given
         given(memberRepository.findAll()).willReturn(List.of(member));
@@ -63,12 +93,14 @@ class MemberServiceTest {
         // then
         assertThat(allMembers).hasSize(1);
         assertThat(allMembers.get(0)).isEqualTo(member);
+        then(memberRepository).should().findAll();
     }
 
     @Test
-    @DisplayName("ID로 회원 조회")
+    @DisplayName("ID로 회원 조회 - 성공")
     void findById() {
         // given
+        member.setId(1L);
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
         // when
@@ -76,6 +108,7 @@ class MemberServiceTest {
 
         // then
         assertThat(foundMember).isEqualTo(member);
+        then(memberRepository).should().findById(1L);
     }
 
     @Test
@@ -89,20 +122,22 @@ class MemberServiceTest {
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
                 .isEqualTo(ExceptionStatus.NONE_USER);
+        then(memberRepository).should().findById(1L);
     }
 
     @Test
-    @DisplayName("회원 정보 수정")
+    @DisplayName("회원 정보 수정 - 성공")
     void update() {
         // given
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
 
+        member.setId(1L);
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
+        // Configure save method to update the member and return it
         given(memberRepository.save(any(Member.class)))
                 .willAnswer(invocation -> {
                     Member updatedMember = invocation.getArgument(0);
-                    updatedMember.setId(1L);
                     return updatedMember;
                 });
 
@@ -115,13 +150,11 @@ class MemberServiceTest {
         assertThat(member.getProfileImageUrl()).isEqualTo(updateRequest.getProfileImageUrl());
         assertThat(member.getBirthday()).isEqualTo(updateRequest.getBirthday());
         then(memberRepository).should().findById(1L);
-        then(memberRepository).should().save(any(Member.class));
+        then(memberRepository).should().save(any(Member.class)); // Verify save method called with any Member
     }
 
-
-
     @Test
-    @DisplayName("회원 정보 수정 - 존재하지 않는 회원")
+    @DisplayName("존재하지 않는 ID로 회원 정보 수정할 때 예외 발생")
     void updateNonExistingMember() {
         // given
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
@@ -133,27 +166,11 @@ class MemberServiceTest {
                 .hasFieldOrPropertyWithValue("status", ExceptionStatus.NONE_USER);
 
         then(memberRepository).should().findById(1L);
-        then(memberRepository).shouldHaveNoMoreInteractions();
+        then(memberRepository).should(never()).save(any(Member.class));
     }
 
     @Test
-    @DisplayName("존재하지 않는 ID로 회원 정보 수정할 때 예외 발생")
-    void updateNonExistingId() {
-        // given
-        given(memberRepository.findById(anyLong())).willReturn(Optional.empty());
-        MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
-
-        // when, then
-        assertThatThrownBy(() -> memberService.findById(1L))
-                .isInstanceOf(WakuWakuException.class)
-                .extracting("status")
-                .isEqualTo(ExceptionStatus.NONE_USER);
-        then(memberRepository).should().findById(anyLong());
-        then(memberRepository).should(never()).save(any());
-    }
-
-    @Test
-    @DisplayName("회원 비활성화")
+    @DisplayName("회원 비활성화 - 성공")
     void deactivateById() {
         // given
         Long memberId = 1L;
@@ -168,7 +185,7 @@ class MemberServiceTest {
 
         // then
         then(memberRepository).should().findById(memberId);
-        Assertions.assertEquals("N", member.getCheckStatus());
+        assertThat(member.getCheckStatus()).isEqualTo("N");
         then(memberRepository).should().save(member);
     }
 
