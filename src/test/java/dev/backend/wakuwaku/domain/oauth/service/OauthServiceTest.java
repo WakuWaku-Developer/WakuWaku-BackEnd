@@ -60,10 +60,10 @@ class OauthServiceTest {
         OauthId oauthId = new OauthId("test_oauth_server_id", oauthServerType);
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
         Member existingMember = new Member();
-        existingMember.setEmail(EMAIL);
-        existingMember.setNickname(NICKNAME);
-        existingMember.setProfileImageUrl(PROFILE_IMAGE_URL);
-        existingMember.setBirthday(BIRTHDAY);
+        existingMember.createEmail(EMAIL);
+        existingMember.createNickname(NICKNAME);
+        existingMember.createProfileImageUrl(PROFILE_IMAGE_URL);
+        existingMember.createtBirthday(BIRTHDAY);
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
         given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.empty());
@@ -88,8 +88,8 @@ class OauthServiceTest {
         OauthId oauthId = new OauthId("dummy_oauth_server_id", oauthServerType);
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
         Member existingMember = new Member();
-        existingMember.setId(1L); // 기존 회원 정보에 ID를 설정하여 가정
-        existingMember.setCheckStatus("N"); // 기존 회원의 상태를 "N"으로 설정하여 탈퇴한 상태를 가정
+        existingMember.createId(1L); // 기존 회원 정보에 ID를 설정하여 가정
+        existingMember.createCheckstatus("N"); // 기존 회원의 상태를 "N"으로 설정하여 탈퇴한 상태를 가정
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
         given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.of(existingMember)); // 기존 회원을 반환하도록 변경

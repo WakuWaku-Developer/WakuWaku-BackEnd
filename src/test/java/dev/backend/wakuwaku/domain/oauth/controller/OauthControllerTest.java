@@ -95,7 +95,7 @@ class OauthControllerTest {
         mockMvc.perform(RestDocumentationRequestBuilders.get("/oauth/login/{oauthServerType}", OauthServerType.GOOGLE)
                         .queryParam("code", code))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(memberId))
+                .andExpect(jsonPath("$.data.id").value(memberId))  // 경로 수정
                 .andDo(MockMvcRestDocumentationWrapper.document("oauth-login",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("OAuth")
@@ -107,7 +107,9 @@ class OauthControllerTest {
                                         parameterWithName("code").description("인증 코드")
                                 )
                                 .responseFields(
-                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("회원 ID")
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID")  // 경로 수정
                                 )
                                 .build()
                         )
@@ -115,6 +117,7 @@ class OauthControllerTest {
 
         then(oauthService).should().login(OauthServerType.GOOGLE, code);
     }
+
 
 
 }

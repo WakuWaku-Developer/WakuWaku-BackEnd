@@ -51,8 +51,8 @@ class MemberServiceTest {
         // given
         String email = "test@example.com";
         Member existingMember = new Member();
-        existingMember.setEmail(email);
-        existingMember.setCheckStatus("Y"); // "Y"로 설정하여 중복 상황을 시뮬레이트
+        existingMember.createEmail(email);
+        existingMember.createCheckstatus("Y"); // "Y"로 설정하여 중복 상황을 시뮬레이트
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
         // when & then
@@ -71,8 +71,8 @@ class MemberServiceTest {
         // given
         String email = "test@example.com";
         Member newMember = new Member();
-        newMember.setEmail(email);
-        newMember.setCheckStatus("N"); // "N"으로 설정하여 중복 상황을 회피
+        newMember.createEmail(email);
+        newMember.createCheckstatus("N"); // "N"으로 설정하여 중복 상황을 회피
         given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
 
         // when & then
@@ -100,7 +100,7 @@ class MemberServiceTest {
     @DisplayName("ID로 회원 조회 - 성공")
     void findById() {
         // given
-        member.setId(1L);
+        member.createId(1L);
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
         // when
@@ -131,7 +131,7 @@ class MemberServiceTest {
         // given
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
 
-        member.setId(1L);
+        member.createId(1L);
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
         // Configure save method to update the member and return it
@@ -175,8 +175,8 @@ class MemberServiceTest {
         // given
         Long memberId = 1L;
         Member member = new Member();
-        member.setId(memberId);
-        member.setCheckStatus("Y");
+        member.createId(memberId);
+        member.createCheckstatus("Y");
 
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
