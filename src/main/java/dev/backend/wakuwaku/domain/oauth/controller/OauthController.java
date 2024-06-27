@@ -2,9 +2,9 @@ package dev.backend.wakuwaku.domain.oauth.controller;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.service.OauthService;
+import dev.backend.wakuwaku.global.response.BaseResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -18,14 +18,14 @@ public class OauthController {
     private final OauthService oauthService;
 
     @GetMapping("/{oauthServerType}")
-    ResponseEntity<Void> redirectAuthCodeRequestUrl(
+    BaseResponse<Void> redirectAuthCodeRequestUrl(
             @PathVariable(name = "oauthServerType") String oauthServerTypeStr,
             HttpServletResponse response
     ) throws IOException {
 
         OauthServerType oauthServerType = OauthServerType.fromName(oauthServerTypeStr);
         if (oauthServerType == null) {
-            return ResponseEntity.notFound().build();
+            return new BaseResponse<>();
         }
 
         String redirectUrl = oauthService.getAuthCodeRequestUrl(oauthServerType);
@@ -38,16 +38,16 @@ public class OauthController {
 
         response.sendRedirect(redirectUrl);
 
-        return ResponseEntity.ok().build();
+        return new BaseResponse<>();
     }
 
     @GetMapping("/login/{oauthServerType}")
-    ResponseEntity<Map<String, Long>> login(
+    BaseResponse<Map<String, Long>> login(
             @PathVariable(name = "oauthServerType") OauthServerType oauthServerType,
             @RequestParam(name = "code") String code) {
 
         Map<String, Long> login = oauthService.login(oauthServerType, code);
-        return ResponseEntity.ok(login);
+        return new BaseResponse<>(login);
     }
 }
 
