@@ -80,21 +80,25 @@ class MemberControllerTest {
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/{id}", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(member.getEmail()))
-                .andExpect(jsonPath("$.nickname").value(member.getNickname()))
+                .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
+                .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
+                .andExpect(jsonPath("$.data.email").value(member.getEmail()))
+                .andExpect(jsonPath("$.data.nickname").value(member.getNickname()))
                 .andDo(MockMvcRestDocumentationWrapper.document("get-member-by-id",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Member")
                                 .description("회원 ID로 회원 정보를 조회합니다.")
                                 .pathParameters(parameterWithName("id").description("회원 ID"))
                                 .responseFields(
-                                        fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
-                                        fieldWithPath("oauthServerId").type(JsonFieldType.STRING).description("OAuth 서버 ID"),
-                                        fieldWithPath("oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입"),
-                                        fieldWithPath("birthday").type(JsonFieldType.STRING).description("회원 생일"),
-                                        fieldWithPath("profileImageUrl").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                                        fieldWithPath("role").type(JsonFieldType.STRING).description("회원 역할")
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                        fieldWithPath("data.oauthServerId").type(JsonFieldType.STRING).description("OAuth 서버 ID"),
+                                        fieldWithPath("data.oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입"),
+                                        fieldWithPath("data.birthday").type(JsonFieldType.STRING).description("회원 생일"),
+                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
+                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                        fieldWithPath("data.role").type(JsonFieldType.STRING).description("회원 역할")
                                 )
                                 .build()
                         )
@@ -115,7 +119,9 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"nickname\": \"newNickname\", \"profileImageUrl\": \"http://example.com/new-profile.jpg\", \"birthday\": \"1991-01-01\" }"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
+                .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
+                .andExpect(jsonPath("$.data.id").value(1L))
                 .andDo(MockMvcRestDocumentationWrapper.document("update-member",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Member")
@@ -127,14 +133,15 @@ class MemberControllerTest {
                                         fieldWithPath("birthday").type(JsonFieldType.STRING).description("새로운 생일")
                                 )
                                 .responseFields(
-                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("회원 ID")
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID")
                                 ).build()
                         )
                 ));
 
         then(memberService).should().update(ArgumentMatchers.eq(1L), ArgumentMatchers.any(MemberUpdateRequest.class));
     }
-
 
     @Test
     @DisplayName("회원 삭제 테스트")
@@ -145,6 +152,8 @@ class MemberControllerTest {
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/{id}", memberId))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
+                .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
                 .andDo(MockMvcRestDocumentationWrapper.document("delete-member",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Member")
@@ -157,7 +166,6 @@ class MemberControllerTest {
         then(memberService).should().deactivateById(memberId);
     }
 
-
     @Test
     @DisplayName("회원 목록 조회 테스트")
     void findAll() throws Exception {
@@ -169,20 +177,24 @@ class MemberControllerTest {
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].email").value(member.getEmail()))
-                .andExpect(jsonPath("$[0].nickname").value(member.getNickname()))
+                .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
+                .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
+                .andExpect(jsonPath("$.data[0].email").value(member.getEmail()))
+                .andExpect(jsonPath("$.data[0].nickname").value(member.getNickname()))
                 .andDo(MockMvcRestDocumentationWrapper.document("get-member-list",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Member")
                                 .description("회원 목록을 조회합니다.")
                                 .responseFields(
-                                        fieldWithPath("[].email").type(JsonFieldType.STRING).description("회원 이메일"),
-                                        fieldWithPath("[].oauthServerId").type(JsonFieldType.STRING).description("OAuth 서버 ID"),
-                                        fieldWithPath("[].oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입"),
-                                        fieldWithPath("[].birthday").type(JsonFieldType.STRING).description("회원 생일"),
-                                        fieldWithPath("[].profileImageUrl").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
-                                        fieldWithPath("[].nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                                        fieldWithPath("[].role").type(JsonFieldType.STRING).description("회원 역할")
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data[].email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                        fieldWithPath("data[].oauthServerId").type(JsonFieldType.STRING).description("OAuth 서버 ID"),
+                                        fieldWithPath("data[].oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입"),
+                                        fieldWithPath("data[].birthday").type(JsonFieldType.STRING).description("회원 생일"),
+                                        fieldWithPath("data[].profileImageUrl").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
+                                        fieldWithPath("data[].nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                        fieldWithPath("data[].role").type(JsonFieldType.STRING).description("회원 역할")
                                 ).build()
                         )
                 ));
