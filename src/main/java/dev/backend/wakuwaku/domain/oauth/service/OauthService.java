@@ -32,45 +32,41 @@ public class OauthService {
     }
 
     public Map<String, Long> login(OauthServerType oauthServerType, String authCode) {
-        OauthMember oauthMember;
         try {
-            oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-        } catch (Exception e) {
-            log.error("OAuth 멤버 정보 가져오기 중 오류 발생: {}", e.getMessage(), e);
-            throw WakuWakuException.FAILED_TO_LOGIN;
-        }
+            OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
-        Optional<Member> optionalMember;
-        try {
-            optionalMember = memberRepository.findByEmail(oauthMember.getEmail());
-        } catch (Exception e) {
-            log.error("회원 정보 조회 중 오류 발생: {}", e.getMessage(), e);
-            throw WakuWakuException.FAILED_TO_LOGIN;
-        }
+            Optional<Member> optionalMember = memberRepository.findByEmail(oauthMember.getEmail());
 
-        Member member = optionalMember.orElseGet(() -> Member.builder()
-                .oauthServerId(oauthMember.getOauthId().getOauthServerId())
-                .oauthServerType(oauthMember.getOauthId().getOauthServerType())
-                .email(oauthMember.getEmail())
-                .birthday(oauthMember.getBirthday())
-                .nickname(oauthMember.getNickname())
-                .profileImageUrl(oauthMember.getProfileImageUrl())
-                .role(Role.USER)
-                .build());
-
-        if (!optionalMember.isPresent() || "N".equals(member.getCheckStatus())) {
-            member.setCheckStatus("Y");
-            try {
+            Member member;
+            if (optionalMember.isPresent()) {
+                member = optionalMember.get();
+                if (member.getCheckStatus().equals("N")) {
+                    member.setCheckStatus("Y");
+                    memberRepository.save(member);
+                }
+            } else {
+                // 새로운 회원 생성
+                member = Member.builder()
+                        .oauthServerId(oauthMember.getOauthId().getOauthServerId())
+                        .oauthServerType(oauthMember.getOauthId().getOauthServerType())
+                        .email(oauthMember.getEmail())
+                        .birthday(oauthMember.getBirthday())
+                        .nickname(oauthMember.getNickname())
+                        .profileImageUrl(oauthMember.getProfileImageUrl())
+                        .role(Role.USER)
+                        .build();
+                // 새로운 회원 저장
                 memberRepository.save(member);
-            } catch (Exception e) {
-                log.error("회원 정보 저장 중 오류 발생: {}", e.getMessage(), e);
-                throw WakuWakuException.FAILED_TO_LOGIN;
             }
-        }
 
-        Map<String, Long> response = new HashMap<>();
-        response.put("id", member.getId());
-        return response;
+            Map<String, Long> response = new HashMap<>();
+            response.put("id", member.getId());
+            return response;
+
+        } catch (Exception e) {
+            log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
+            throw WakuWakuException.FAILED_TO_LOGIN;
+        }
     }
 
 }

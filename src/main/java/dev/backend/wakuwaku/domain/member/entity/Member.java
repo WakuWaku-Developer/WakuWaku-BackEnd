@@ -10,7 +10,6 @@ import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(
