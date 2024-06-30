@@ -76,6 +76,7 @@ public class Member extends StatusEntity {
     public void updateBirthday(String birthday) {
         this.birthday = birthday;
     }
+    public void updateCheckstatus(String checkStatus) {this.checkStatus = checkStatus;  }
 
     public void deactivate() {
         this.checkStatus = "N";
@@ -104,4 +105,5 @@ public class Member extends StatusEntity {
     public void createId(Long id) {
         this.id = id;
     }
+
 }

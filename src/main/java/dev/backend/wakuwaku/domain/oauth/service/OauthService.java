@@ -41,8 +41,7 @@ public class OauthService {
             if (optionalMember.isPresent()) {
                 member = optionalMember.get();
                 if (member.getCheckStatus().equals("N")) {
-                    member.setCheckStatus("Y");
-                    memberRepository.save(member);
+                    member.updateCheckstatus("Y");
                 }
             } else {
                 // 새로운 회원 생성
@@ -55,10 +54,9 @@ public class OauthService {
                         .profileImageUrl(oauthMember.getProfileImageUrl())
                         .role(Role.USER)
                         .build();
-                // 새로운 회원 저장
-                memberRepository.save(member);
             }
 
+            memberRepository.save(member);
             Map<String, Long> response = new HashMap<>();
             response.put("id", member.getId());
             return response;
