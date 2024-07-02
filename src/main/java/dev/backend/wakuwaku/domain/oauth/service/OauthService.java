@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -32,41 +31,35 @@ public class OauthService {
     }
 
     public Map<String, Long> login(OauthServerType oauthServerType, String authCode) {
+        OauthMember oauthMember;
         try {
-            OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-
-            Optional<Member> optionalMember = memberRepository.findByEmail(oauthMember.getEmail());
-
-            Member member;
-            if (optionalMember.isPresent()) {
-                member = optionalMember.get();
-                if (member.getCheckStatus().equals("N")) {
-                    member.setCheckStatus("Y");
-                    memberRepository.save(member);
-                }
-            } else {
-                // 새로운 회원 생성
-                member = Member.builder()
-                        .oauthServerId(oauthMember.getOauthId().getOauthServerId())
-                        .oauthServerType(oauthMember.getOauthId().getOauthServerType())
-                        .email(oauthMember.getEmail())
-                        .birthday(oauthMember.getBirthday())
-                        .nickname(oauthMember.getNickname())
-                        .profileImageUrl(oauthMember.getProfileImageUrl())
-                        .role(Role.USER)
-                        .build();
-                // 새로운 회원 저장
-                memberRepository.save(member);
-            }
-
-            Map<String, Long> response = new HashMap<>();
-            response.put("id", member.getId());
-            return response;
-
+            oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
         } catch (Exception e) {
-            log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
+            log.error("Failed to fetch OAuth member: {}", e.getMessage(), e);
             throw WakuWakuException.FAILED_TO_LOGIN;
         }
-    }
 
+        Member member = memberRepository.findByEmail(oauthMember.getEmail())
+                .orElseGet(
+                        () -> memberRepository.save(
+                                Member.builder()
+                                        .oauthServerId(oauthMember.getOauthId().getOauthServerId())
+                                        .oauthServerType(oauthMember.getOauthId().getOauthServerType())
+                                        .email(oauthMember.getEmail())
+                                        .birthday(oauthMember.getBirthday())
+                                        .nickname(oauthMember.getNickname())
+                                        .profileImageUrl(oauthMember.getProfileImageUrl())
+                                        .role(Role.USER)
+                                        .build()
+                        )
+                );
+
+        if ("N".equals(member.getCheckStatus())) {
+            member.updateCheckstatus("Y");
+        }
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("id", member.getId());
+        return response;
+    }
 }
