@@ -59,15 +59,18 @@ class OauthServiceTest {
         OauthServerType oauthServerType = OauthServerType.KAKAO;
         OauthId oauthId = new OauthId("test_oauth_server_id", oauthServerType);
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
-        Member existingMember = new Member();
-        existingMember.createEmail(EMAIL);
-        existingMember.createNickname(NICKNAME);
-        existingMember.createProfileImageUrl(PROFILE_IMAGE_URL);
-        existingMember.createtBirthday(BIRTHDAY);
+        Member newMember = Member.builder()
+                .oauthServerId(oauthId.getOauthServerId())
+                .oauthServerType(oauthId.getOauthServerType())
+                .email(EMAIL)
+                .birthday(BIRTHDAY)
+                .nickname(NICKNAME)
+                .profileImageUrl(PROFILE_IMAGE_URL)
+                .build();
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
         given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.empty());
-        given(memberRepository.save(any(Member.class))).willReturn(existingMember);
+        given(memberRepository.save(any(Member.class))).willReturn(newMember);
 
         // When
         Map<String, Long> response = oauthService.login(oauthServerType, AUTH_CODE);
@@ -78,8 +81,6 @@ class OauthServiceTest {
         then(memberRepository).should().save(any(Member.class));
     }
 
-
-
     @Test
     @DisplayName("이미 존재하는 회원인 경우 기존 회원 정보 반환")
     void loginExistingMember() {
@@ -87,12 +88,18 @@ class OauthServiceTest {
         OauthServerType oauthServerType = OauthServerType.KAKAO;
         OauthId oauthId = new OauthId("dummy_oauth_server_id", oauthServerType);
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
-        Member existingMember = new Member();
-        existingMember.createId(1L); // 기존 회원 정보에 ID를 설정하여 가정
-        existingMember.createCheckstatus("N"); // 기존 회원의 상태를 "N"으로 설정하여 탈퇴한 상태를 가정
+        Member existingMember = Member.builder()
+                .email(EMAIL)
+                .nickname(NICKNAME)
+                .profileImageUrl(PROFILE_IMAGE_URL)
+                .birthday(BIRTHDAY)
+                .build();
+
+        existingMember.createId(1L);
+        existingMember.createCheckstatus("N");
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
-        given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.of(existingMember)); // 기존 회원을 반환하도록 변경
+        given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.of(existingMember));
 
         // When
         Map<String, Long> response = oauthService.login(oauthServerType, AUTH_CODE);
@@ -100,14 +107,10 @@ class OauthServiceTest {
         // Then
         assertThat(response).isNotNull();
         assertThat(response).containsKeys("id");
-        assertThat(response.get("id")).isEqualTo(existingMember.getId()); // 기존 회원의 ID가 반환되는지 확인
-        assertThat(existingMember.getCheckStatus()).isEqualTo("Y"); // 회원의 상태가 "Y"로 변경되었는지 확인
-        then(memberRepository).should().save(existingMember); // 상태 변경 후 저장이 호출되었는지 확인
+        assertThat(response.get("id")).isEqualTo(existingMember.getId());
+        assertThat(existingMember.getCheckStatus()).isEqualTo("Y");
+        then(memberRepository).should().findByEmail(EMAIL);
     }
-
-
-
-
 
     @Test
     @DisplayName("로그인 실패 시 예외 발생")
