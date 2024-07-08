@@ -46,7 +46,7 @@ public class Member extends StatusEntity {
     @Column(nullable = false, length = 50)
     private String nickname;
 
-    @Column(length = 200)
+    @Column
     private String profileImageUrl;
 
     @Column(nullable = false)
