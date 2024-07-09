@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.restaurant.service;
 
+import dev.backend.wakuwaku.domain.restaurant.dto.response.Restaurants;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
@@ -186,17 +187,17 @@ class RestaurantServiceTest {
         given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0)).willReturn(placesList);
 
         // when
-        List<Restaurant> simpleRestaurants = restaurantService.getSimpleRestaurants(searchWord);
+        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord);
 
         // then
-        assertThat(simpleRestaurants).hasSize(1);
-        assertThat(simpleRestaurants.get(0).getPlaceId()).isEqualTo(restaurant.getPlaceId());
-        assertThat(simpleRestaurants.get(0).getName()).isEqualTo(restaurant.getName());
-        assertThat(simpleRestaurants.get(0).getLat()).isEqualTo(restaurant.getLat());
-        assertThat(simpleRestaurants.get(0).getLng()).isEqualTo(restaurant.getLng());
-        assertThat(simpleRestaurants.get(0).getRating()).isEqualTo(restaurant.getRating());
-        assertThat(simpleRestaurants.get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
-        assertThat(simpleRestaurants.get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
+        assertThat(restaurants.getRestaurants()).hasSize(1);
+        assertThat(restaurants.getRestaurants().get(0).getPlaceId()).isEqualTo(restaurant.getPlaceId());
+        assertThat(restaurants.getRestaurants().get(0).getName()).isEqualTo(restaurant.getName());
+        assertThat(restaurants.getRestaurants().get(0).getLat()).isEqualTo(restaurant.getLat());
+        assertThat(restaurants.getRestaurants().get(0).getLng()).isEqualTo(restaurant.getLng());
+        assertThat(restaurants.getRestaurants().get(0).getRating()).isEqualTo(restaurant.getRating());
+        assertThat(restaurants.getRestaurants().get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
+        assertThat(restaurants.getRestaurants().get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
 
         then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0);
     }
