@@ -2,6 +2,7 @@ package dev.backend.wakuwaku.domain.restaurant.controller;
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import dev.backend.wakuwaku.domain.restaurant.dto.response.Restaurants;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
 import dev.backend.wakuwaku.global.infra.google.places.dto.*;
@@ -125,8 +126,10 @@ class RestaurantControllerTest {
     @DisplayName("Simple Info 조회. 즉, 사용자가 검색하여 얻는 데이터를 반환")
     void getSimpleInfoRestaurants() throws Exception {
         // given
-        List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(new Restaurant(places));
+        List<Restaurant> restaurantList = new ArrayList<>();
+        restaurantList.add(new Restaurant(places));
+
+        Restaurants restaurants = new Restaurants(restaurantList);
 
         given(restaurantService.getSimpleRestaurants(anyString())).willReturn(restaurants);
 
