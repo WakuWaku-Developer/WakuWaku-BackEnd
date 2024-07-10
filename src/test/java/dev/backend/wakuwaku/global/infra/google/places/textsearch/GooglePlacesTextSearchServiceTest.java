@@ -118,19 +118,14 @@ class GooglePlacesTextSearchServiceTest {
 
     }
 
-    @DisplayName("Next Page Token 값이 없거나 비었으면 NOT_EXISTED_NEXT_PAGE_TOKEN 예외가 발생한다.")
+    @DisplayName("Next Page Token 값이 없거나 비었으면 빈 리스트를 반환한다.")
     @Test
-    void failTextSearchByNoNextPageToken() {
+    void returnEmptyListTextSearchByNoNextPageToken() {
         // when
-        Throwable thrown = catchException(
-                () -> googlePlacesTextSearchService.getRestaurantByNextPageToken(SEARCH_WORD, "", 0)
-        );
+        List<Places> restaurantByNextPageToken = googlePlacesTextSearchService.getRestaurantByNextPageToken(SEARCH_WORD, "", 0);
 
         // then
-        assertThat(thrown)
-                .isInstanceOf(WakuWakuException.class)
-                .extracting("status")
-                .isEqualTo(ExceptionStatus.NOT_EXISTED_NEXT_PAGE_TOKEN);
+        assertThat(restaurantByNextPageToken).isEmpty();
     }
 
     private String getTextSearchRequestBody(String searchWord) {

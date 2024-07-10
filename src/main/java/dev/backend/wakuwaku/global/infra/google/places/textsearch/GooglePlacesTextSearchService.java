@@ -102,11 +102,7 @@ public class GooglePlacesTextSearchService {
             actualPlaces.add(place);
         }
 
-        if (isResultEnough(actualPlaces)) {
-            if (cnt > 3) {
-                return actualPlaces;
-            }
-
+        if (isResultEnough(actualPlaces) && cnt <= 3) {
             return getRestaurantsByTextSearch(searchWord, cnt);
         }
 
