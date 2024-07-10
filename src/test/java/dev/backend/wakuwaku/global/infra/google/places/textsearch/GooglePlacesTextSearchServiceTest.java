@@ -1,8 +1,6 @@
 package dev.backend.wakuwaku.global.infra.google.places.textsearch;
 
 import com.google.gson.Gson;
-import dev.backend.wakuwaku.global.exception.ExceptionStatus;
-import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
@@ -22,7 +20,6 @@ import java.util.List;
 
 import static dev.backend.wakuwaku.global.infra.google.places.textsearch.constant.TextSearchConstant.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -115,7 +112,6 @@ class GooglePlacesTextSearchServiceTest {
             assertThat(place.getLocation()).isNotNull();
             assertThat(place.getPhotos()).isNotNull();
         }
-
     }
 
     @DisplayName("Next Page Token 값이 없거나 비었으면 빈 리스트를 반환한다.")
