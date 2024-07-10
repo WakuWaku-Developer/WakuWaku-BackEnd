@@ -50,13 +50,13 @@ spring:
   mvc:
     static-path-pattern: /static/**
 
-    # redis
-    data:
-      redis:
-        host: 127.0.0.1
-        port: 6379
-        # Redis 서버와의 연결 시간 제한
-        timeout: 3000
+  # redis
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      # Redis 서버와의 연결 시간 제한
+      timeout: 3000
 
 # URL에 sessionId가 표시될 때, 표시하지 않기 위함
 server:
