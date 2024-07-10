@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static dev.backend.wakuwaku.global.exception.WakuWakuException.NOT_EXISTED_NEXT_PAGE_TOKEN;
 import static dev.backend.wakuwaku.global.infra.google.places.textsearch.constant.TextSearchConstant.*;
 
 @Service
@@ -53,7 +52,7 @@ public class GooglePlacesTextSearchService {
     // pageToken 만 가지고는 API 요청할 수 없음. (에러 발생)
     public List<Places> getRestaurantByNextPageToken(String searchWord, String pageToken, int cnt) {
         if (pageToken == null || pageToken.isEmpty()) {
-            throw NOT_EXISTED_NEXT_PAGE_TOKEN;
+            return Collections.emptyList();
         }
 
         TextSearchResponse textSearchResponse = restClient.post()
