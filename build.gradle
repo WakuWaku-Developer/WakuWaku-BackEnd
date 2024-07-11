@@ -81,7 +81,8 @@ def jacocoExcludePatterns = [
 		"*.Result*",
 		"*.BaseResponse*",
 		"*.*RequestUrlProvider",
-		"*.presentation.*"
+		"*.presentation.*",
+		"*.util.*"
 ]
 
 // JaCoCo 보고서 + SonarCloud 관련 제외 패턴
@@ -100,7 +101,8 @@ def sonarCloudExcludePatterns = [
 		"**/Result*",
 		"**/BaseResponse*",
 		"**/*RequestUrlProvider",
-		"**/presentation/**/*"
+		"**/presentation/**/*",
+		"**/util/**/*"
 ]
 
 //테스트 커버리지 규칙 정의하고 검증
