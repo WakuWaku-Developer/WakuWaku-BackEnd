@@ -2,6 +2,7 @@ package dev.backend.wakuwaku.domain.restaurant.controller;
 
 import dev.backend.wakuwaku.domain.restaurant.dto.response.DetailsInfoRestaurantResponse;
 import dev.backend.wakuwaku.domain.restaurant.dto.response.Restaurants;
+import dev.backend.wakuwaku.domain.restaurant.dto.response.SimpleInfoRestaurant;
 import dev.backend.wakuwaku.domain.restaurant.dto.response.SimpleInfoRestaurantResponse;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
@@ -19,9 +20,9 @@ public class RestaurantController {
 
     @GetMapping
     public BaseResponse<SimpleInfoRestaurantResponse> getSimpleInfoRestaurants(@RequestParam("search") String searchWord,
-                                                                                     @RequestParam(name = "page",
-                                                                                             required = false,
-                                                                                             defaultValue = "1") Integer page) {
+                                                                               @RequestParam(name = "page",
+                                                                                       required = false,
+                                                                                       defaultValue = "1") Integer page) {
         Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, page);
 
         List<SimpleInfoRestaurant> simpleInfoRestaurants = restaurants.getRestaurants().stream()
