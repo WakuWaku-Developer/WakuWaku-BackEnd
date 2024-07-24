@@ -17,4 +17,5 @@ import java.util.List;
 @AllArgsConstructor
 public class Restaurants {
     private List<Restaurant> restaurants = new ArrayList<>();
+    private int totalPage = 0;
 }

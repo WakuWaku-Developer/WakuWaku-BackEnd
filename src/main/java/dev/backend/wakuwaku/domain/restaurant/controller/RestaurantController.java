@@ -18,7 +18,11 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     @GetMapping
-    public BaseResponse<List<SimpleInfoRestaurantResponse>> getSimpleInfoRestaurants(@RequestParam("search") String searchWord) {
+    public BaseResponse<SimpleInfoRestaurantResponse> getSimpleInfoRestaurants(@RequestParam("search") String searchWord,
+                                                                                     @RequestParam(name = "page",
+                                                                                             required = false,
+                                                                                             defaultValue = "1") Integer page) {
+        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, page);
 
         Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord);
 
