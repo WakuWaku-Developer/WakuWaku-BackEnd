@@ -24,11 +24,11 @@ public class RestaurantController {
                                                                                              defaultValue = "1") Integer page) {
         Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, page);
 
-        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord);
+        List<SimpleInfoRestaurant> simpleInfoRestaurants = restaurants.getRestaurants().stream()
+                .map(SimpleInfoRestaurant::new)
+                .toList();
 
-        return new BaseResponse<>(restaurants.getRestaurants().stream()
-                .map(SimpleInfoRestaurantResponse::new)
-                .toList());
+        return new BaseResponse<>(new SimpleInfoRestaurantResponse(simpleInfoRestaurants, restaurants.getTotalPage()));
     }
 
     @GetMapping("/{placeId}/details")
