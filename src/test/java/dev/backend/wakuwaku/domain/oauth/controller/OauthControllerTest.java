@@ -98,6 +98,7 @@ class OauthControllerTest {
         loginRequest.setOauthServerType(OauthServerType.GOOGLE);
         loginRequest.setCode(code);
 
+
         // when & then
         mockMvc.perform(post("/oauth/login")
                         .contentType(MediaType.APPLICATION_JSON)
