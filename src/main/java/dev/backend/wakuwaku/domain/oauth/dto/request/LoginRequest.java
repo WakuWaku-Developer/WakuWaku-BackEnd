@@ -12,8 +12,6 @@ public class LoginRequest {
     private OauthServerType oauthServerType;
     private String code;
 
-    // Getters and setters
-
     public OauthServerType getOauthServerType() {
         return oauthServerType;
     }
