@@ -3,6 +3,7 @@ package dev.backend.wakuwaku.domain.oauth.controller;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
+import dev.backend.wakuwaku.domain.oauth.dto.request.LoginRequest;
 import dev.backend.wakuwaku.domain.oauth.service.OauthService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -30,6 +32,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,25 +94,28 @@ class OauthControllerTest {
         responseMap.put("id", memberId);
         given(oauthService.login(OauthServerType.GOOGLE, code)).willReturn(responseMap);
 
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setOauthServerType(OauthServerType.GOOGLE);
+        loginRequest.setCode(code);
+
         // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/oauth/login/{oauthServerType}", OauthServerType.GOOGLE)
-                        .queryParam("code", code))
+        mockMvc.perform(post("/oauth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"oauthServerType\": \"GOOGLE\", \"code\": \"authorization_code\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(memberId))  // 경로 수정
+                .andExpect(jsonPath("$.data.id").value(memberId))
                 .andDo(MockMvcRestDocumentationWrapper.document("oauth-login",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("OAuth")
                                 .description("OAuth 로그인.")
-                                .pathParameters(
-                                        parameterWithName("oauthServerType").description("OAuth 서버 타입: NAVER, KAKAO, GOOGLE")
-                                )
-                                .queryParameters(
-                                        parameterWithName("code").description("인증 코드")
+                                .requestFields(
+                                        fieldWithPath("oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입: NAVER, KAKAO, GOOGLE"),
+                                        fieldWithPath("code").type(JsonFieldType.STRING).description("인증 코드")
                                 )
                                 .responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID")  // 경로 수정
+                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID")
                                 )
                                 .build()
                         )
@@ -117,7 +123,4 @@ class OauthControllerTest {
 
         then(oauthService).should().login(OauthServerType.GOOGLE, code);
     }
-
-
-
 }
