@@ -49,6 +49,5 @@ public class OauthController {
         Map<String, Long> login = oauthService.login(loginRequest.getOauthServerType(), loginRequest.getCode());
         return new BaseResponse<>(login);
     }
-
 }
 
