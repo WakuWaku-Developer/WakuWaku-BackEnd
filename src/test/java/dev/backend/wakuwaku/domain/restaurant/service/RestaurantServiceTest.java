@@ -8,6 +8,7 @@ import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.details.GooglePlacesDetailsService;
 import dev.backend.wakuwaku.global.infra.google.places.dto.*;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.GooglePlacesTextSearchService;
+import dev.backend.wakuwaku.global.infra.redis.service.RedisService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,7 @@ import static dev.backend.wakuwaku.global.exception.ExceptionStatus.INVALID_PARA
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,12 +40,17 @@ class RestaurantServiceTest {
     @Mock
     private GooglePlacesTextSearchService googlePlacesTextSearchService;
 
+    @Mock
+    private RedisService redisService;
+
     @InjectMocks
     private RestaurantService restaurantService;
 
     private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
 
     private static final String NAME = "우동신";
+
+    private static final int TOTAL_PAGE = 5;
 
     private final List<Photo> photos = new ArrayList<>();
 
@@ -173,9 +178,9 @@ class RestaurantServiceTest {
                 .isEqualTo(INVALID_PARAMETER);
     }
 
-    @DisplayName("식당의 간단한 정보를 얻음")
+    @DisplayName("Redis 에 존재한다면 캐시된 데이터로 식당의 간단한 정보를 얻어야 한다.")
     @Test
-    void getSimpleRestaurants() {
+    void getSimpleRestaurantsByRedis() {
         // given
         String searchWord = "도쿄";
 
@@ -184,10 +189,11 @@ class RestaurantServiceTest {
 
         Restaurant restaurant = new Restaurant(places);
 
-        given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0)).willReturn(placesList);
+        given(redisService.getPlacesByRedis(searchWord, TOTAL_PAGE)).willReturn(placesList);
+        given(redisService.getTotalPage(searchWord)).willReturn(TOTAL_PAGE);
 
         // when
-        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord);
+        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, TOTAL_PAGE);
 
         // then
         assertThat(restaurants.getRestaurants()).hasSize(1);
@@ -198,8 +204,65 @@ class RestaurantServiceTest {
         assertThat(restaurants.getRestaurants().get(0).getRating()).isEqualTo(restaurant.getRating());
         assertThat(restaurants.getRestaurants().get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
         assertThat(restaurants.getRestaurants().get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
+        assertThat(restaurants.getTotalPage()).isEqualTo(TOTAL_PAGE);
+
+        then(redisService).should().getPlacesByRedis( searchWord, TOTAL_PAGE);
+        then(redisService).should().getTotalPage( searchWord);
+    }
+
+    @DisplayName("Page 번호가 1이고 Redis 에 존재하지 않는 정보는 Google Places API 를 호출하여 식당의 간단한 정보를 얻어야 한다.")
+    @Test
+    void getSimpleRestaurantsByGooglePlacesAPIAndPageNumberOne() {
+        // given
+        String searchWord = "도쿄";
+
+        List<Places> placesList = new ArrayList<>();
+        placesList.add(places);
+
+        Restaurant restaurant = new Restaurant(places);
+
+        given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0)).willReturn(placesList);
+        given(redisService.getPlacesByRedis(searchWord, 1)).willReturn(null);
+        given(redisService.getTotalPage(searchWord)).willReturn(TOTAL_PAGE);
+        willDoNothing().given(redisService).savePlaces(searchWord, placesList);
+
+        // when
+        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, 1);
+
+        // then
+        assertThat(restaurants.getRestaurants()).hasSize(1);
+        assertThat(restaurants.getRestaurants().get(0).getPlaceId()).isEqualTo(restaurant.getPlaceId());
+        assertThat(restaurants.getRestaurants().get(0).getName()).isEqualTo(restaurant.getName());
+        assertThat(restaurants.getRestaurants().get(0).getLat()).isEqualTo(restaurant.getLat());
+        assertThat(restaurants.getRestaurants().get(0).getLng()).isEqualTo(restaurant.getLng());
+        assertThat(restaurants.getRestaurants().get(0).getRating()).isEqualTo(restaurant.getRating());
+        assertThat(restaurants.getRestaurants().get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
+        assertThat(restaurants.getRestaurants().get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
+        assertThat(restaurants.getTotalPage()).isEqualTo(TOTAL_PAGE);
 
         then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0);
+        then(redisService).should().getPlacesByRedis( searchWord, 1);
+        then(redisService).should().getTotalPage( searchWord);
+        then(redisService).should().savePlaces(searchWord, placesList);
+    }
+
+    @DisplayName("Page 번호가 1이 아니고 Redis 에 존재하지 않는 정보는 빈 Restaurants 를 해야 한다.")
+    @Test
+    void getSimpleRestaurantsByGooglePlacesAPIAndPageNumberIsNotOne() {
+        // given
+        String searchWord = "도쿄";
+
+        given(redisService.getPlacesByRedis(searchWord, TOTAL_PAGE)).willReturn(null);
+
+        // when
+        Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, TOTAL_PAGE);
+
+        // then
+        assertThat(restaurants.getRestaurants()).isEmpty();
+        assertThat(restaurants.getRestaurants()).isEmpty();
+        assertThat(restaurants.getTotalPage()).isZero();
+
+        then(redisService).should().getPlacesByRedis( searchWord, TOTAL_PAGE);
     }
 
     @DisplayName("검색어가 null 이면 INVALID_SEARCH_WORD 예외를 반환해야 한다.")
@@ -207,7 +270,7 @@ class RestaurantServiceTest {
     void failTextSearchByNullSearchWord() {
         // when & then
         thenThrownBy(
-                () -> restaurantService.getSimpleRestaurants(null)
+                () -> restaurantService.getSimpleRestaurants(null, TOTAL_PAGE)
         )
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
@@ -219,7 +282,7 @@ class RestaurantServiceTest {
     void failTextSearchByNoSearchWord() {
         // when & then
         thenThrownBy(
-                () -> restaurantService.getSimpleRestaurants("")
+                () -> restaurantService.getSimpleRestaurants("", TOTAL_PAGE)
         )
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
@@ -231,7 +294,7 @@ class RestaurantServiceTest {
     void failTextSearchBySpaceSearchWord() {
         // when & then
         thenThrownBy(
-                () -> restaurantService.getSimpleRestaurants(" ")
+                () -> restaurantService.getSimpleRestaurants(" ", TOTAL_PAGE)
         )
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
@@ -243,7 +306,7 @@ class RestaurantServiceTest {
     void failTextSearchByTabSearchWord() {
         // when & then
         thenThrownBy(
-                () -> restaurantService.getSimpleRestaurants("  ")
+                () -> restaurantService.getSimpleRestaurants("  ", TOTAL_PAGE)
         )
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")

@@ -52,12 +52,9 @@ public class RestaurantService {
         if ((placesByRedis == null || placesByRedis.isEmpty()) && page == CALL_GOOGLE_API_PAGE) {
             List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord.trim() + FRONT_OF_RESTAURANT + RESTAURANT, 0);
 
-
             redisService.savePlaces(searchWord, places);
 
-            List<Places> savePlacesByRedis = redisService.getPlacesByRedis(searchWord, page);
-
-            List<Restaurant> restaurants = savePlacesByRedis.stream()
+            List<Restaurant> restaurants = places.stream()
                     .map(Restaurant::new)
                     .toList();
 
