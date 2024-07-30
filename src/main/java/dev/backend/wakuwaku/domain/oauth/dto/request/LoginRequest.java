@@ -3,10 +3,8 @@ package dev.backend.wakuwaku.domain.oauth.dto.request;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class LoginRequest {
     private OauthServerType oauthServerType;
@@ -16,7 +14,10 @@ public class LoginRequest {
         return oauthServerType;
     }
 
-    public void setOauthServerType(OauthServerType oauthServerType) {
+    public void createOauthServerType(OauthServerType oauthServerType) {
         this.oauthServerType = oauthServerType;
+    }
+    public void createCode(String code) {
+        this.code = code;
     }
 }

@@ -2,6 +2,7 @@ package dev.backend.wakuwaku.domain.oauth.controller;
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.google.gson.Gson;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.dto.request.LoginRequest;
 import dev.backend.wakuwaku.domain.oauth.service.OauthService;
@@ -95,14 +96,17 @@ class OauthControllerTest {
         given(oauthService.login(OauthServerType.GOOGLE, code)).willReturn(responseMap);
 
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setOauthServerType(OauthServerType.GOOGLE);
-        loginRequest.setCode(code);
+        loginRequest.createOauthServerType(OauthServerType.GOOGLE);
+        loginRequest.createCode(code);
 
+        // Gson 객체 생성
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(loginRequest);
 
         // when & then
         mockMvc.perform(post("/oauth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"oauthServerType\": \"GOOGLE\", \"code\": \"authorization_code\"}"))
+                        .content(jsonContent))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(memberId))
                 .andDo(MockMvcRestDocumentationWrapper.document("oauth-login",
