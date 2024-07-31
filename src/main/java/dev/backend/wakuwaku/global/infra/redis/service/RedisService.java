@@ -84,4 +84,8 @@ public class RedisService {
 
         return (int) totalPage;
     }
+
+    public void deletePlaces(String key) {
+        redisTemplate.delete(key);
+    }
 }
