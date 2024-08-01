@@ -54,7 +54,9 @@ public class RestaurantService {
 
             redisService.savePlaces(searchWord, places);
 
-            List<Restaurant> restaurants = places.stream()
+            List<Places> firstPlaces = redisService.getPlacesByRedis(searchWord, page);
+
+            List<Restaurant> restaurants = firstPlaces.stream()
                     .map(Restaurant::new)
                     .toList();
 
