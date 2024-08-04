@@ -22,7 +22,6 @@ public class Favorite extends BaseEntity {
     private Member member;
 
     //@JoinColumn
-
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
