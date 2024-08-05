@@ -12,8 +12,8 @@ public class GetLikeResponse {
     private String likesStatus;
 
     public GetLikeResponse(Like likes){
-        this.memberId = likes.getMemberId().getId();
-        this.restaurantId = likes.getRestaurantId().getId();
+        this.memberId = likes.getMember().getId();
+        this.restaurantId = likes.getRestaurant().getId();
         this.likesStatus = likes.getLikeStatus();
     }
 

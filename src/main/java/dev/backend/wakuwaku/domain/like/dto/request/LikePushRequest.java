@@ -14,7 +14,7 @@ public class LikePushRequest {
 
 
     public LikePushRequest(Like likes){
-        this.memberId = likes.getMemberId().getId();
-        this.restaurantId = likes.getRestaurantId().getId();
+        this.memberId = likes.getMember().getId();
+        this.restaurantId = likes.getRestaurant().getId();
     }
 }

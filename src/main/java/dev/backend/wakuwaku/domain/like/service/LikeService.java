@@ -13,52 +13,42 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.NOT_EXISTED_MEMBER_INFO;
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.NOT_EXISTED_PLACE_ID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class LikeService {
-    private final LikeRepository likesRepository;
+    private final LikeRepository likeRepository;
     private final MemberService memberService;
     private final RestaurantService restaurantService;
 
-    //TODO: 수정필요
-    public Long likesPush(Long memberId, Long restaurantId) {
-        Like like = likesRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
+    public Long pushLike(Long memberId, Long restaurantId) {
+        Like like = likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
 
         if (like != null) {
-            // 좋아요 상태 변경
-            String status = like.getLikeStatus();
-            if ("Y".equals(status)) {
-                like.updateLikeStatus("N");
-            } else if ("N".equals(status)) {
-                like.updateLikeStatus("Y");
-            }
-            likesRepository.save(like);
+            like.updateLikeStatus("Y".equals(like.getLikeStatus()) ? "N" : "Y");
         } else {
-            // 좋아요 엔터티가 존재하지 않으면 새로운 레코드 생성
             Member member = memberService.findById(memberId);
             Restaurant restaurant = restaurantService.findById(restaurantId);
 
-            if (member != null && restaurant != null) {
-                like = Like.builder()
-                        .memberId(member)
-                        .restaurantId(restaurant)
-                        .likeStatus("Y")
-                        .build();
-                like = likesRepository.save(like); // save() 후에 엔티티를 다시 할당
-            } else {
-                log.error("Member or Restaurant not found");
-            }
+            if (member == null) throw NOT_EXISTED_MEMBER_INFO;
+            else if (restaurant == null) throw NOT_EXISTED_PLACE_ID;
+
+            like = Like.builder()
+                    .member(member)
+                    .restaurant(restaurant)
+                    .likeStatus("Y")
+                    .build();
+
+            //likeRepository.save(like);
         }
-        return like != null ? like.getId() : null; // 엔티티가 null이 아닌 경우에만 ID 반환
+        return like.getId();
     }
 
-    /**
-     찾기
-     */
-    public List<Like> findAll(){
-        return likesRepository.findAll();
+    public List<Like> findAll() {
+        return likeRepository.findAll();
     }
-
 }

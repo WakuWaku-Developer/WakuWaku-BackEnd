@@ -36,8 +36,6 @@ public enum ExceptionStatus {
     NOT_EXISTED_MEMBER_INFO(NOT_FOUND ,5002, "사용자 정보를 찾을 수 없습니다.");
 
 
-    // like exception
-   // NOT_EXISTED_PLACE_INFO(NOT_FOUND ,6000, ".");
 
     private final HttpStatus httpStatus;
     private final int code;

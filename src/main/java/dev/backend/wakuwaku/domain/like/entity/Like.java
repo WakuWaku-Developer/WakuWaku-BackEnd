@@ -9,10 +9,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "likes_table")
+@Table(name = "like_table")
 public class Like extends StatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,20 +21,20 @@ public class Like extends StatusEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
-    private Member memberId;
+    private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "place_id", referencedColumnName = "id")
-    private Restaurant restaurantId;
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
+    private Restaurant restaurant;
 
     @Column
     private String likeStatus;
 
     @Builder
-    public Like(Long id, Member memberId, Restaurant restaurantId, String likeStatus) {
+    public Like(Long id, Member member, Restaurant restaurant, String likeStatus) {
         this.id = id;
-        this.memberId = memberId;
-        this.restaurantId = restaurantId;
+        this.member = member;
+        this.restaurant = restaurant;
         this.likeStatus = likeStatus;
     }
 
