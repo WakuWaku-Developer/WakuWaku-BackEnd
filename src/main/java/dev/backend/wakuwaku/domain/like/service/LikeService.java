@@ -43,7 +43,7 @@ public class LikeService {
                     .likeStatus("Y")
                     .build();
 
-            //likeRepository.save(like);
+            likeRepository.save(like);
         }
         return like.getId();
     }

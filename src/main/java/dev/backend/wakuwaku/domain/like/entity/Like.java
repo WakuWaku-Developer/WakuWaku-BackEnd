@@ -1,6 +1,5 @@
 package dev.backend.wakuwaku.domain.like.entity;
 
-
 import dev.backend.wakuwaku.domain.StatusEntity;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
@@ -9,12 +8,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "like_table")
-public class Like extends StatusEntity {
+public class Like extends StatusEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +39,7 @@ public class Like extends StatusEntity {
         this.likeStatus = likeStatus;
     }
 
-    public void updateLikeStatus(String likeStatus){
+    public void updateLikeStatus(String likeStatus) {
         this.likeStatus = likeStatus;
     }
 }
