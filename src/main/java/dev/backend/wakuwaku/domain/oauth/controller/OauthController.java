@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.oauth.controller;
 
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
+import dev.backend.wakuwaku.domain.oauth.dto.request.LoginRequest;
 import dev.backend.wakuwaku.domain.oauth.service.OauthService;
 import dev.backend.wakuwaku.global.response.BaseResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,12 +42,11 @@ public class OauthController {
         return new BaseResponse<>();
     }
 
-    @GetMapping("/login/{oauthServerType}")
-    BaseResponse<Map<String, Long>> login(
-            @PathVariable(name = "oauthServerType") OauthServerType oauthServerType,
-            @RequestParam(name = "code") String code) {
 
-        Map<String, Long> login = oauthService.login(oauthServerType, code);
+    @PostMapping("/login")
+    BaseResponse<Map<String, Long>> login(@RequestBody LoginRequest loginRequest) {
+
+        Map<String, Long> login = oauthService.login(loginRequest.getOauthServerType(), loginRequest.getCode());
         return new BaseResponse<>(login);
     }
 }
