@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -222,8 +223,8 @@ class RestaurantServiceTest {
         Restaurant restaurant = new Restaurant(places);
 
         given(googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0)).willReturn(placesList);
-        given(redisService.getPlacesByRedis(searchWord, 1)).willReturn(null);
-        given(redisService.getTotalPage(searchWord)).willReturn(TOTAL_PAGE);
+        given(redisService.getPlacesByRedis(searchWord, 1)).willReturn(Collections.emptyList());
+        given(redisService.getTotalPage(searchWord)).willReturn(1);
         willDoNothing().given(redisService).savePlaces(searchWord, placesList);
 
         // when
@@ -238,11 +239,11 @@ class RestaurantServiceTest {
         assertThat(restaurants.getRestaurants().get(0).getRating()).isEqualTo(restaurant.getRating());
         assertThat(restaurants.getRestaurants().get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
         assertThat(restaurants.getRestaurants().get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
-        assertThat(restaurants.getTotalPage()).isEqualTo(TOTAL_PAGE);
+        assertThat(restaurants.getTotalPage()).isEqualTo(1);
 
         then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0);
         then(redisService).should().getPlacesByRedis( searchWord, 1);
-        then(redisService).should().getTotalPage( searchWord);
+        then(redisService).should(times(2)).getTotalPage( searchWord);
         then(redisService).should().savePlaces(searchWord, placesList);
     }
 
