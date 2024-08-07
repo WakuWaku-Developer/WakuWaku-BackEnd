@@ -79,7 +79,7 @@ public class RestaurantService {
             return places.subList(0, 10);
         }
 
-        return places.subList(0, places.size() + 1);
+        return places;
     }
 
     private int getTotalPage(String searchWord) {
