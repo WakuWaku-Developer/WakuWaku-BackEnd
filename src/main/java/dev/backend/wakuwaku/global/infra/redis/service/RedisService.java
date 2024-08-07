@@ -35,6 +35,10 @@ public class RedisService {
         int remain = size % 10;
         int quotient = size / 10;
 
+        if (remain == 0 && quotient == 0) {
+            return 0;
+        }
+
         if (remain == 0) {
             return quotient;
         }
