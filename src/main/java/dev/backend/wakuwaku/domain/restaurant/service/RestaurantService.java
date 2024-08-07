@@ -43,39 +43,47 @@ public class RestaurantService {
     }
 
     public Restaurants getSimpleRestaurants(String searchWord, int page) {
-        if (searchWord == null || searchWord.isEmpty() || searchWord.matches("^[ \t]*$")) {
-            throw INVALID_SEARCH_WORD;
-        }
+        validateSearchWord(searchWord);
 
-        List<Places> placesByRedis = redisService.getPlacesByRedis(searchWord, page);
+        List<Places> places = redisService.getPlacesByRedis(searchWord, page);
 
-        if ((placesByRedis == null || placesByRedis.isEmpty()) && page == CALL_GOOGLE_API_PAGE) {
-            List<Places> places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord.trim() + FRONT_OF_RESTAURANT + RESTAURANT, 0);
+        if ((places == null || places.isEmpty()) && page == CALL_GOOGLE_API_PAGE) {
+            places = googlePlacesTextSearchService.getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord.trim() + FRONT_OF_RESTAURANT + RESTAURANT, 0);
 
             redisService.savePlaces(searchWord, places);
 
-            List<Places> firstPlaces = redisService.getPlacesByRedis(searchWord, page);
-
-            List<Restaurant> restaurants = firstPlaces.stream()
-                    .map(Restaurant::new)
-                    .toList();
-
-            int totalPage = redisService.getTotalPage(searchWord);
-
-            return new Restaurants(restaurants, totalPage);
+            places = getFirstPagePlaces(searchWord, places);
         }
 
-        if (placesByRedis == null || placesByRedis.isEmpty()) {
+        if (places == null || places.isEmpty()) {
             return new Restaurants();
         }
 
-        List<Restaurant> restaurants = placesByRedis.stream()
+        List<Restaurant> restaurants = places.stream()
                 .map(Restaurant::new)
                 .toList();
 
-        int placesSize = redisService.getTotalPage(searchWord);
+        return new Restaurants(restaurants, getTotalPage(searchWord));
+    }
 
-        return new Restaurants(restaurants, placesSize);
+    private void validateSearchWord(String searchWord) {
+        if (searchWord == null || searchWord.isEmpty() || searchWord.matches("^[ \t]*$")) {
+            throw INVALID_SEARCH_WORD;
+        }
+    }
+
+    private List<Places> getFirstPagePlaces(String searchWord, List<Places> places) {
+        int totalPage = getTotalPage(searchWord);
+
+        if (totalPage > 1) {
+            return places.subList(0, 10);
+        }
+
+        return places.subList(0, places.size() + 1);
+    }
+
+    private int getTotalPage(String searchWord) {
+        return redisService.getTotalPage(searchWord);
     }
 
     public Places getDetailsRestaurant(String placeId) {
