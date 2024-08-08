@@ -30,6 +30,7 @@ public class LikeController {
             throw WakuWakuException.NOT_EXISTED_PLACE_ID;
         }
 
+
         Long id = likeService.pushLike(memberId, restaurantId);
         String message = id != null ? "찜하기 성공" : "찜하기 실패";
 
