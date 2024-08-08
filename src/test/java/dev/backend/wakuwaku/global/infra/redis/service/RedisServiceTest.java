@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RedisServiceTest {
     @Container
     private static final RedisContainer REDIS_CONTAINER =
-            new RedisContainer(DockerImageName.parse("redis:7.2.5-alpine3.20")).withExposedPorts(6379);
+            new RedisContainer(DockerImageName.parse("redis:alpine")).withExposedPorts(6379);
 
     @DynamicPropertySource
     private static void registerRedisProperties(DynamicPropertyRegistry registry) {
