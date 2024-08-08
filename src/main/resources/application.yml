@@ -55,7 +55,7 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
-
+      password:
       # Redis 서버와의 연결 시간 제한
       timeout: 3000
 

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -31,13 +32,18 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
+    @Value("${spring.data.redis.password}")
+    private String redisPassword;
+
     /**
      * Redis와 연결을 위한 'Connection'을 생성하고 관리하는 메서드
-     * <p>여기서는 LettuceConnectionFactory를 사용하여 host와 port 정보를 기반으로 'Connection'을 생성
+     * <p>여기서는 LettuceConnectionFactory를 사용하여 host와 port, password 정보를 기반으로 'Connection'을 생성
      */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(redisHost, redisPort);
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisHost, redisPort);
+        redisStandaloneConfiguration.setPassword(redisPassword);
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
     /**

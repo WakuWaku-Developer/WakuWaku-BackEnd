@@ -18,6 +18,7 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
+      password:
 
       # Spring Data Redis에서 제공하는 RedisRepository 기능을 사용할지 여부를 결정하는 것.
       # 테스트 환경에서는 해당 기능을 사용하지 않기 때문에 비활성화하여 불필요한 리소스 사용을 줄이고 테스트 실행 속도를 높이며
