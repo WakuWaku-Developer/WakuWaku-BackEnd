@@ -16,27 +16,54 @@ import java.io.Serializable;
 @Table(name = "like_table")
 public class Like extends StatusEntity implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ManyToOne 매핑 수정
     @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id")
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "placeId")
     private Restaurant restaurant;
 
     @Column
     private String likeStatus;
 
+    @Column
+    private String name;
+
+    @Column
+    private double lat;
+
+    @Column
+    private double lng;
+
+    @Column
+    private String retaurantPhotoUrl;
+
+    @Column
+    private int userRatingsTotal;
+
+    @Column
+    private double rating;
+
     @Builder
-    public Like(Long id, Member member, Restaurant restaurant, String likeStatus) {
-        this.id = id;
+    public Like(Member member, Restaurant restaurant, String likeStatus,
+                String name, double lat, double lng, String retaurantPhotoUrl,
+                int userRatingsTotal, double rating) {
         this.member = member;
         this.restaurant = restaurant;
         this.likeStatus = likeStatus;
+        this.name = name;
+        this.lat = lat;
+        this.lng = lng;
+        this.retaurantPhotoUrl = retaurantPhotoUrl;
+        this.userRatingsTotal = userRatingsTotal;
+        this.rating = rating;
     }
 
     public void updateLikeStatus(String likeStatus) {
