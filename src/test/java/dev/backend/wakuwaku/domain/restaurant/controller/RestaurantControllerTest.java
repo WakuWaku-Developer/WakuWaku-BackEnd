@@ -2,6 +2,7 @@ package dev.backend.wakuwaku.domain.restaurant.controller;
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.SimpleType;
 import dev.backend.wakuwaku.domain.restaurant.dto.response.Restaurants;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.service.RestaurantService;
@@ -157,7 +158,7 @@ class RestaurantControllerTest {
                                 .description("응답(simpleInfoRestaurants[]의 size) 개수가 최대 10개까지 가능함.")
                                 .queryParameters(
                                         parameterWithName("search").description("검색어 (장소명 혹은 지역명만 입력) (예시: 도쿄, 후쿠오카, 나가사키)"),
-                                        parameterWithName("page").description("페이지 번호 (기본값 1)")
+                                        parameterWithName("page").type(SimpleType.INTEGER).description("페이지 번호").defaultValue(1).optional()
                                 )
                                 .responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 시 반환되는 code 값"),
