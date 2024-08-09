@@ -77,6 +77,7 @@ public class GooglePlacesTextSearchService {
         for (Places place : places) {
             List<Photo> photos = place.getPhotos();
 
+            // 사진이 없는 식당은 검색 결과에 포함 X
             if (photos == null || photos.isEmpty() || place.getPlusCode() == null || place.getPlusCode().getCompoundCode() == null || place.getPlusCode().getCompoundCode().contains(INVALID_RESTAURANT_LOCATION)) {
                 continue;
             }
