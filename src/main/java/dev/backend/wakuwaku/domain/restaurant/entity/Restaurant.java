@@ -29,7 +29,7 @@ public class Restaurant extends BaseEntity {
 
     private double lng;
 
-    private List<String> photos = new ArrayList<>();
+    private String photo = "";
 
     private int userRatingsTotal;
 
@@ -40,9 +40,11 @@ public class Restaurant extends BaseEntity {
         this.name = places.getDisplayName().getText();
         this.lat = places.getLocation().getLatitude();
         this.lng = places.getLocation().getLongitude();
-        this.photos = places.getPhotos().stream()
-                .map(Photo::getPhotoUrl)
-                .toList();
+
+        if (places.getPhotos() != null && !places.getPhotos().isEmpty()) {
+            this.photo = places.getPhotos().get(0).getPhotoUrl();
+        }
+
         this.userRatingsTotal = places.getUserRatingCount();
         this.rating = places.getRating();
     }

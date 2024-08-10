@@ -4,8 +4,6 @@ import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Location;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 public class SimpleInfoRestaurant {
     private final String placeId;
@@ -13,7 +11,7 @@ public class SimpleInfoRestaurant {
     private final Number rating;
     private final Number userRatingsTotal;
     private final Location location;
-    private final List<String> photoUrl;
+    private String photoUrl = "";
 
     public SimpleInfoRestaurant(Restaurant restaurant) {
         this.placeId = restaurant.getPlaceId();
@@ -21,6 +19,9 @@ public class SimpleInfoRestaurant {
         this.rating = restaurant.getRating();
         this.userRatingsTotal = restaurant.getUserRatingsTotal();
         this.location = new Location(restaurant.getLat(), restaurant.getLng());
-        this.photoUrl = restaurant.getPhotos();
+
+        if (restaurant.getPhoto() != null) {
+            this.photoUrl = restaurant.getPhoto();
+        }
     }
 }

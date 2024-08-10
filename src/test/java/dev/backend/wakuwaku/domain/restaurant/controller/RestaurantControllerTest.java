@@ -169,8 +169,8 @@ class RestaurantControllerTest {
                                         fieldWithPath("data.simpleInfoRestaurants[].userRatingsTotal").type(JsonFieldType.NUMBER).optional().description("식당 총 리뷰 수"),
                                         fieldWithPath("data.simpleInfoRestaurants[].location.latitude").type(JsonFieldType.NUMBER).description("위도"),
                                         fieldWithPath("data.simpleInfoRestaurants[].location.longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                        fieldWithPath("data.simpleInfoRestaurants[].photoUrl").type(JsonFieldType.ARRAY).optional().description("식당 대표 사진 URL"),
-                                        fieldWithPath("data.totalPage").type(JsonFieldType.NUMBER).optional().description("이 검색어에 대한 총 페이지 수"))
+                                        fieldWithPath("data.simpleInfoRestaurants[].photoUrl").type(JsonFieldType.STRING).optional().description("식당 대표 사진 URL"),
+                                        fieldWithPath("data.totalPage").type(JsonFieldType.NUMBER).description("이 검색어에 대한 총 페이지 수"))
                                 .build()
                         )
                        )

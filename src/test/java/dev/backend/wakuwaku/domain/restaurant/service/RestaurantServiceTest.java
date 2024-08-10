@@ -204,7 +204,7 @@ class RestaurantServiceTest {
         assertThat(restaurants.getRestaurants().get(0).getLng()).isEqualTo(restaurant.getLng());
         assertThat(restaurants.getRestaurants().get(0).getRating()).isEqualTo(restaurant.getRating());
         assertThat(restaurants.getRestaurants().get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
-        assertThat(restaurants.getRestaurants().get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
+        assertThat(restaurants.getRestaurants().get(0).getPhoto()).isEqualTo(restaurant.getPhoto());
         assertThat(restaurants.getTotalPage()).isEqualTo(TOTAL_PAGE);
 
         then(redisService).should().getPlacesByRedis( searchWord, TOTAL_PAGE);
@@ -238,7 +238,7 @@ class RestaurantServiceTest {
         assertThat(restaurants.getRestaurants().get(0).getLng()).isEqualTo(restaurant.getLng());
         assertThat(restaurants.getRestaurants().get(0).getRating()).isEqualTo(restaurant.getRating());
         assertThat(restaurants.getRestaurants().get(0).getUserRatingsTotal()).isEqualTo(restaurant.getUserRatingsTotal());
-        assertThat(restaurants.getRestaurants().get(0).getPhotos()).isEqualTo(restaurant.getPhotos());
+        assertThat(restaurants.getRestaurants().get(0).getPhoto()).isEqualTo(restaurant.getPhoto());
         assertThat(restaurants.getTotalPage()).isEqualTo(1);
 
         then(googlePlacesTextSearchService).should().getRestaurantsByTextSearch(JAPAN_WITH_SPACE + searchWord + FRONT_OF_RESTAURANT + RESTAURANT, 0);
