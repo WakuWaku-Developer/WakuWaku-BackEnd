@@ -1,7 +1,6 @@
 package dev.backend.wakuwaku.domain.restaurant.entity;
 
 import dev.backend.wakuwaku.domain.BaseEntity;
-import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,9 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
