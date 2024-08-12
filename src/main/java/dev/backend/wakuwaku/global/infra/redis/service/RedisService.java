@@ -32,18 +32,7 @@ public class RedisService {
     }
 
     private int calculateTotalPage(int size) {
-        int remain = size % 10;
-        int quotient = size / 10;
-
-        if (remain == 0 && quotient == 0) {
-            return 0;
-        }
-
-        if (remain == 0) {
-            return quotient;
-        }
-
-        return quotient + 1;
+        return (size + 9) / 10;
     }
 
     public List<Places> getPlacesByRedis(String key, int page) {
