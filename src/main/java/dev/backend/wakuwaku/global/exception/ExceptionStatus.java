@@ -33,9 +33,12 @@ public enum ExceptionStatus {
     // oauth exception
     FALIED_TO_LOGIN(NOT_FOUND ,5000, "로그인 중 오류가 발생했습니다. 다시 시도해 주세요."),
     NOT_EXISTED_SOCIAL_TYPE(NOT_FOUND ,5001, "지원하지 않는 소셜 타입입니다."),
-    NOT_EXISTED_MEMBER_INFO(NOT_FOUND ,5002, "사용자 정보를 찾을 수 없습니다.");
+    NOT_EXISTED_MEMBER_INFO(NOT_FOUND ,5002, "사용자 정보를 찾을 수 없습니다."),
 
 
+    // like exception
+
+    INVALID_LIKE_REQUEST(BAD_REQUEST ,6000, "찜이 불가능한 식당입니다.");
 
     private final HttpStatus httpStatus;
     private final int code;
