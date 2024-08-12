@@ -86,7 +86,7 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/wakuwaku
 
       - name: docker-compose.yml 파일 전송
-        uses: appleboy/scp-action@0.1.7
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
