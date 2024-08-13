@@ -7,7 +7,6 @@ import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.dto.Role;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClientComposite;
-import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProviderComposite;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,13 +21,10 @@ import java.util.Map;
 @Transactional
 public class OauthService {
 
-    private final OauthCodeRequestUrlProviderComposite oauthCodeRequestUrlProviderComposite;
     private final OauthMemberClientComposite oauthMemberClientComposite;
     private final MemberRepository memberRepository;
 
-    public String getAuthCodeRequestUrl(OauthServerType oauthServerType) {
-        return oauthCodeRequestUrlProviderComposite.provide(oauthServerType);
-    }
+
 
     public Map<String, Long> login(OauthServerType oauthServerType, String authCode) {
         OauthMember oauthMember;

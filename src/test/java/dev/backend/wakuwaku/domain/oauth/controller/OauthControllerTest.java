@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -28,7 +27,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -60,30 +58,7 @@ class OauthControllerTest {
                 .build();
     }
 
-    @Test
-    @DisplayName("OAuth Authorization Code 요청 URL로 리디렉션 테스트")
-    void redirectAuthCodeRequestUrl() throws Exception {
-        // given
-        String oauthServerType = "google";
-        String redirectUrl = "https://accounts.google.com/o/oauth2/auth";
-        given(oauthService.getAuthCodeRequestUrl(OauthServerType.GOOGLE)).willReturn(redirectUrl);
 
-        // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/oauth/{oauthServerType}", oauthServerType))
-                .andExpect(status().is3xxRedirection())
-                .andDo(MockMvcRestDocumentationWrapper.document("redirect-auth-code-request-url",
-                        resource(ResourceSnippetParameters.builder()
-                                .tag("OAuth")
-                                .description("OAuth Authorization Code 요청 URL로 리디렉션 (인증 코드 요청)")
-                                .pathParameters(
-                                        parameterWithName("oauthServerType").description("OAuth 서버 타입: NAVER, KAKAO, GOOGLE")
-                                )
-                                .build()
-                        )
-                ));
-
-        then(oauthService).should().getAuthCodeRequestUrl(OauthServerType.GOOGLE);
-    }
 
     @Test
     @DisplayName("OAuth 로그인 테스트")
