@@ -104,5 +104,5 @@ jobs:
             sudo docker rm -f $(sudo docker ps -aq)  
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wakuwaku
             cd ${{ secrets.DOCKER_COMPOSE_PATH }}
-            docker-compose up -d
+            docker compose up -d
             docker image prune -f
