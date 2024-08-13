@@ -8,26 +8,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "like_table")
-public class Like extends StatusEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+@Table(name = "like_table_test")
+public class Like extends StatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // ManyToOne 매핑 수정
     @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "placeId")
+    @JoinColumn(name = "restaurant_place_id")
     private Restaurant restaurant;
 
     @Column
