@@ -8,7 +8,6 @@ import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClientComposite;
-import dev.backend.wakuwaku.global.infra.oauth.oauthcode.OauthCodeRequestUrlProviderComposite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,8 +29,6 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class OauthServiceTest {
 
-    @Mock
-    private OauthCodeRequestUrlProviderComposite oauthCodeRequestUrlProviderComposite;
 
     @Mock
     private OauthMemberClientComposite oauthMemberClientComposite;
