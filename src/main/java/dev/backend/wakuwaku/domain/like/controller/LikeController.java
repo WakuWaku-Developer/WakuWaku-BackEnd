@@ -29,6 +29,7 @@ public class LikeController {
         Member member = likePushRequest.getMember();
         Restaurant restaurant = likePushRequest.getRestaurant();
 
+
         if (member == null) {
             throw NOT_EXISTED_MEMBER_INFO;
         } else if (restaurant == null) {
