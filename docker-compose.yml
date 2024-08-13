@@ -1,4 +1,4 @@
-service:
+services:
   app:
     image: wakuwaku240301/wakuwaku
     container_name: wakuwaku
