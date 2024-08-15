@@ -14,7 +14,6 @@ public class LikePushRequest {
 
     private Restaurant restaurant;
 
-
     public LikePushRequest(Like like){
         this.member = like.getMember();
         this.restaurant = like.getRestaurant();
