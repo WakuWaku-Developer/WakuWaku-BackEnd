@@ -217,7 +217,7 @@ tasks.register('copyOasToSwagger', Copy) {
 	delete "src/main/resources/static/swagger-ui/openapi3.yaml"
 
 	from layout.buildDirectory.dir("/api-spec/openapi3.yaml").get().asFile
-	into "src/main/resources/static/swagger-ui"
+	into "src/main/resources/static/swagger-ui/"
 
 	dependsOn "openapi3"
 }
