@@ -21,7 +21,6 @@ public class Like extends StatusEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
-
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
