@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "like_table_test")
+@Table(name = "likes")
 public class Like extends StatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class Like extends StatusEntity {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_place_id")
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
     @Column
