@@ -13,7 +13,7 @@ import static jakarta.persistence.EnumType.STRING;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(
-        name = "member_table",
+        name = "member",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "oauth_id_unique",
