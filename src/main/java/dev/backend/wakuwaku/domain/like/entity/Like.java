@@ -22,7 +22,7 @@ public class Like extends StatusEntity {
     @JoinColumn(name = "member_id")
     private Member member;
     @ManyToOne
-    @JoinColumn(name = "restaurant_id")
+    @JoinColumn(name = "restaurant_place_id")
     private Restaurant restaurant;
 
     @Column

@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
-    @Query("SELECT l FROM Like l WHERE l.member.id = :memberId AND l.restaurant.placeId = :restaurantId")
-    Optional<Like> findByMemberIdAndRestaurantId(@Param("memberId") Long memberId, @Param("restaurantId") String restaurantId);
+    @Query("SELECT l FROM Like l WHERE l.member.id = :memberId AND l.restaurant.placeId = :restaurantPlaceId")
+    Optional<Like> findByMemberIdAndRestaurantId(@Param("memberId") Long memberId, @Param("restaurantId") String restaurantPlaceId);
 
     // 찜 리스트
     @Query("SELECT l FROM Like l WHERE l.member.id = :memberId AND l.likeStatus = 'Y'")
