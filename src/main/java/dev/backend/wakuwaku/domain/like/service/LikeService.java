@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import static dev.backend.wakuwaku.global.exception.WakuWakuException.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,35 +24,51 @@ public class LikeService {
     private final RestaurantRepository restaurantRepository;
 
     public Long pushLike(Member member, Restaurant restaurant) {
-        // 1. 식당 정보가 DB에 있는지 확인
-        Optional<Restaurant> existingRestaurant = restaurantRepository.findByPlaceId(restaurant.getPlaceId());
-
-        Restaurant targetRestaurant;
-        if (existingRestaurant.isPresent()) {
-            targetRestaurant = existingRestaurant.get();
-        } else {
-            // 식당 정보가 없으면 새롭게 저장
-            targetRestaurant = restaurantRepository.save(restaurant);
+        if (member == null) {
+            throw NOT_EXISTED_MEMBER_INFO;
+        }
+        if (restaurant == null) {
+            throw NOT_EXISTED_PLACE_ID;
         }
 
-        // 2. 찜 정보 저장
-        Like like = Like.builder()
-                .member(member)
-                .restaurant(targetRestaurant)
-                .likeStatus("Y")
-                .name(restaurant.getName())
-                .lat(restaurant.getLat())
-                .lng(restaurant.getLng())
-                .retaurantPhotoUrl(restaurant.getPhoto().isEmpty() ? null : restaurant.getPhoto())
-                .userRatingsTotal(restaurant.getUserRatingsTotal())
-                .rating(restaurant.getRating())
-                .build();
+        // 1. 찜 테이블에서 해당 식당 정보가 있는지 확인
+        Optional<Like> existingLike = likeRepository.findByMemberIdAndRestaurantId(member.getId(), restaurant.getId());
 
-        likeRepository.save(like);
+        Like like;
+
+        if (existingLike.isPresent()) {
+            // 이미 존재하는 찜 정보가 있으면 해당 정보를 반환
+            like = existingLike.get();
+        } else {
+            // 찜 테이블에 식당 정보가 없으면 Restaurant 테이블에서 확인 후 저장
+            Optional<Restaurant> existingRestaurant = restaurantRepository.findById(restaurant.getId());
+
+            Restaurant targetRestaurant;
+
+            if (existingRestaurant.isPresent()) {
+                targetRestaurant = existingRestaurant.get();
+            } else {
+                targetRestaurant = restaurantRepository.save(restaurant);
+            }
+
+            // 새로운 찜 정보 생성
+            like = Like.builder()
+                    .member(member)
+                    .restaurant(targetRestaurant)
+                    .likeStatus("Y")
+                    .name(targetRestaurant.getName())
+                    .lat(targetRestaurant.getLat())
+                    .lng(targetRestaurant.getLng())
+                    .retaurantPhotoUrl(targetRestaurant.getPhoto().isEmpty() ? null : targetRestaurant.getPhoto())
+                    .userRatingsTotal(targetRestaurant.getUserRatingsTotal())
+                    .rating(targetRestaurant.getRating())
+                    .build();
+
+            likeRepository.save(like);
+        }
 
         return like.getId();
     }
-
 
     /**
      *
@@ -60,5 +77,20 @@ public class LikeService {
      */
     public List<Like> findLikeStatusAllByMemberId(Long memberId) {
         return likeRepository.findLikeStatusAllByMemberId(memberId);
+    }
+
+    /**
+     * 찜 삭제
+     * @param memberId
+     * @param restaurantId
+     * @return 찜 삭제 성공 여부
+     */
+    public boolean deleteLike(Long memberId, Long restaurantId) {
+        Optional<Like> like = likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
+        if (like.isPresent()) {
+            likeRepository.delete(like.get());
+            return true;
+        }
+        return false;
     }
 }
