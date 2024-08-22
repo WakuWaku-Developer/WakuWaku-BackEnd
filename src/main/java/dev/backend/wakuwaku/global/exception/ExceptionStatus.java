@@ -37,7 +37,9 @@ public enum ExceptionStatus {
 
     // like exception
 
-    INVALID_LIKE_REQUEST(BAD_REQUEST ,6000, "찜이 불가능한 식당입니다.");
+    INVALID_LIKE_REQUEST(BAD_REQUEST ,6000, "찜이 불가능한 식당입니다."),
+    FALIED_TO_LIKE_BECAUSE_MEMBER(BAD_REQUEST ,6001, "찜 요청이 불가능한 사용자입니다.");
+
 
     private final HttpStatus httpStatus;
     private final int code;
