@@ -43,8 +43,8 @@ public class LikeService {
             }
         } else {
             // 찜이 존재하지 않는 경우, 새로 추가
-            Member member = memberRepository.findById(memberId).orElseThrow(() -> NOT_EXISTED_MEMBER_INFO);
-            Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> NOT_EXISTED_MEMBER_INFO);
+            Member member = memberRepository.findById(memberId).orElseThrow(() -> NOT_FOUND_MEMBER_INFO);
+            Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> NOT_FOUND_RESTAURANT_INFO);
 
             Like newLike = Like.builder()
                     .member(member)

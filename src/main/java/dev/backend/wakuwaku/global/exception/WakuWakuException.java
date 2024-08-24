@@ -28,5 +28,7 @@ public class WakuWakuException extends RuntimeException {
     public static final WakuWakuException FALIED_TO_LIKE_BECAUSE_MEMBER       = new WakuWakuException(ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION);
     public static final WakuWakuException LIKE_NOT_FOUND_EXCEPTION       = new WakuWakuException(ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION);
     public static final WakuWakuException ALREADY_LIKED_EXCEPTION       = new WakuWakuException(ExceptionStatus.ALREADY_LIKED_EXCEPTION);
+    public static final WakuWakuException NOT_FOUND_RESTAURANT_INFO       = new WakuWakuException(ExceptionStatus.NOT_FOUND_RESTAURANT_INFO);
+    public static final WakuWakuException NOT_FOUND_MEMBER_INFO       = new WakuWakuException(ExceptionStatus.NOT_FOUND_MEMBER_INFO);
 
 }
