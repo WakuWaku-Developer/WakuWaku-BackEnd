@@ -25,5 +25,7 @@ public class WakuWakuException extends RuntimeException {
 
     public static final WakuWakuException NOT_EXISTED_SOCIAL_TYPE       = new WakuWakuException(ExceptionStatus.NOT_EXISTED_SOCIAL_TYPE);
     public static final WakuWakuException INVALID_LIKE_REQUEST       = new WakuWakuException(ExceptionStatus.INVALID_LIKE_REQUEST);
+    public static final WakuWakuException FALIED_TO_LIKE_BECAUSE_MEMBER       = new WakuWakuException(ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION);
+    public static final WakuWakuException LIKE_NOT_FOUND_EXCEPTION       = new WakuWakuException(ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION);
 
 }
