@@ -39,7 +39,9 @@ public enum ExceptionStatus {
 
     INVALID_LIKE_REQUEST(BAD_REQUEST ,6000, "찜이 불가능한 식당입니다."),
     FALIED_TO_LIKE_BECAUSE_MEMBER(BAD_REQUEST ,6001, "찜 요청이 불가능한 사용자입니다."),
-    LIKE_NOT_FOUND_EXCEPTION(NOT_FOUND ,6002, "찜 기록이 존재하지 않습니다.");
+    LIKE_NOT_FOUND_EXCEPTION(NOT_FOUND ,6002, "찜 기록이 존재하지 않습니다."),
+    ALREADY_LIKED_EXCEPTION(BAD_REQUEST ,6002, "이미 찜한 식당입니다.");
+
 
 
 

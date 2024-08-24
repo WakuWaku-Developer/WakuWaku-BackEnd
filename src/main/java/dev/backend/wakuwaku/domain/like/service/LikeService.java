@@ -34,11 +34,9 @@ public class LikeService {
             // 이미 찜되어 있는 경우
             Like like = existingLike.get();
             if ("Y".equals(like.getLikeStatus())) {
-                // 이미 찜 상태가 "Y"이면, "이미 찜되어 있습니다" 메시지를 반환
-                log.info("이미 찜되어 있습니다.");
-                return null;
+                throw ALREADY_LIKED_EXCEPTION;
             } else {
-                // 상태가 "N"인 경우 다시 "Y"로 업데이트
+                // 찜 상태가 "N"인 경우 다시 "Y"로 업데이트
                 like.updateLikeStatus("Y");
                 likeRepository.save(like);
                 return like.getId();
