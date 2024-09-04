@@ -92,15 +92,6 @@ public class Member extends StatusEntity {
     public void createCheckstatus(String checkStatus) {
         this.checkStatus = checkStatus;
     }
-    public void createNickname(String nickname) {
-        this.nickname = nickname;
-    }
-    public void createProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
-    public void createtBirthday(String birthday) {
-        this.birthday = birthday;
-    }
 
     public void createId(Long id) {
         this.id = id;
