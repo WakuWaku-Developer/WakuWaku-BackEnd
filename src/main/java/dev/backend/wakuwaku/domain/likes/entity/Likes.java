@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.likes.entity;
 
 import dev.backend.wakuwaku.domain.StatusEntity;
+import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import jakarta.persistence.*;
@@ -24,20 +25,18 @@ public class Likes extends StatusEntity {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-
-    // enum으로 수정
-    @Column(length = 1)
-    private String likesStatus;
+    @Column
+    private LikesStatusType likesStatus;
 
 
     @Builder
-    public Likes(Member member, Restaurant restaurant, String likesStatus) {
+    public Likes(Member member, Restaurant restaurant, LikesStatusType likesStatus) {
         this.member = member;
         this.restaurant = restaurant;
         this.likesStatus = likesStatus;
     }
 
-    public void updateLikeStatus(String likesStatus){
+    public void updateLikeStatus(LikesStatusType likesStatus){
         this.likesStatus = likesStatus;
     }
 }
