@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.like.service;
 
+import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.repository.LikesRepository;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
@@ -149,7 +150,7 @@ class LikesServiceTest {
         assertNotNull(like); // like가 null이 아닌지 확인합니다.
         assertEquals(MEMBER_EMAIL, like.getMember().getEmail()); // assertEquals를 사용하여 값 비교
         assertEquals(PLACE_ID, like.getRestaurant().getPlaceId());
-        assertEquals("Y", like.getLikesStatus());
+        assertEquals((LikesStatusType.Y), like.getLikesStatus());
 
     }
 
@@ -162,7 +163,7 @@ class LikesServiceTest {
         Likes existingLikes = Likes.builder()
                 .member(testMember)
                 .restaurant(testRestaurant)
-                .likesStatus("Y")
+                .likesStatus(LikesStatusType.Y)
                 .build();
         when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.of(existingLikes));
 
@@ -185,7 +186,7 @@ class LikesServiceTest {
         Likes existingLikes = Likes.builder()
                 .member(testMember)
                 .restaurant(testRestaurant)
-                .likesStatus("Y")
+                .likesStatus(LikesStatusType.Y)
                 .build();
         when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.of(existingLikes));
 

@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.like.repository;
 
+import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.repository.LikesRepository;
 import dev.backend.wakuwaku.domain.member.entity.Member;
@@ -80,7 +81,7 @@ public class LikesRepositoryTest {
         Likes like = Likes.builder()
                 .member(testMember)
                 .restaurant(saveRestaurant)
-                .likesStatus("Y")
+                .likesStatus(LikesStatusType.Y)
                 .build();
         likesRepository.save(like);
     }
@@ -99,7 +100,7 @@ public class LikesRepositoryTest {
         assertThat(foundLike).isPresent();
         assertThat(foundLike.get().getMember().getId()).isEqualTo(memberId);
         assertThat(foundLike.get().getRestaurant().getId()).isEqualTo(restaurantId);
-        assertThat(foundLike.get().getLikesStatus()).isEqualTo("Y");
+        assertThat(foundLike.get().getLikesStatus()).isEqualTo(LikesStatusType.Y);
     }
 
     @DisplayName("존재하지 않는 회원과 식당 ID로 찜 조회 시 비어있는 결과 반환")

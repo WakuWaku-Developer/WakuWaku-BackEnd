@@ -3,7 +3,11 @@ package dev.backend.wakuwaku.domain.like.controller;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import dev.backend.wakuwaku.domain.likes.controller.LikesController;
+import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
+import dev.backend.wakuwaku.domain.member.entity.Member;
+import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +28,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,6 +45,7 @@ class LikesControllerTest {
     private MockMvc mockMvc;
 
     private static final String BASE_URL = "/wakuwaku/v1/likes";
+    private Likes testLikes;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider restDocumentation) {
@@ -48,15 +54,29 @@ class LikesControllerTest {
                 .alwaysDo(MockMvcResultHandlers.print())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+        // Mock Likes 엔티티 설정
+        Member testMember = Member.builder().email("test@test.com").build();
+        Restaurant testRestaurant = new Restaurant();
+        Likes testLikes = Likes.builder()
+                .member(testMember)
+                .restaurant(testRestaurant)
+                .likesStatus(LikesStatusType.Y)
+                .build();
     }
 
     @Test
     @DisplayName("찜하기 테스트")
     void pushLike() throws Exception {
-        /*// given
+        // given
         Long memberId = 1L;
         Long restaurantId = 1L;
-        given(likesService.addLike(memberId, restaurantId)).willReturn();
+
+        // Mocking the Likes object and its ID
+        Likes mockLikes = mock(Likes.class);
+        given(mockLikes.getId()).willReturn(1L); // ID를 반환하도록 설정
+
+        // When addLikes is called, return the mockLikes object
+        given(likesService.addLikes(memberId, restaurantId)).willReturn(mockLikes);
 
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/push")
@@ -81,8 +101,9 @@ class LikesControllerTest {
                                 )
                                 .build()
                         )
-                ));*/
+                ));
     }
+
 
 
 
