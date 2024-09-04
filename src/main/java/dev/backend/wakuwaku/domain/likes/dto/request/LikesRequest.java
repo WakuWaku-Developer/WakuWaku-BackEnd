@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikeDeleteRequest {
+public class LikesRequest {
     private Long memberId;
     private Long restaurantId;
 }
