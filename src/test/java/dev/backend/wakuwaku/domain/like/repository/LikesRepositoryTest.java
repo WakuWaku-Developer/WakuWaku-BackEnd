@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.like.repository;
 
-import dev.backend.wakuwaku.domain.like.entity.Like;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
+import dev.backend.wakuwaku.domain.likes.repository.LikesRepository;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
@@ -23,9 +24,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class LikeRepositoryTest {
+public class LikesRepositoryTest {
     @Autowired
-    private LikeRepository likeRepository;
+    private LikesRepository likesRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -76,12 +77,12 @@ public class LikeRepositoryTest {
         saveRestaurant = restaurantRepository.save(new Restaurant(places));
 
         // 테스트용 찜 데이터를 저장
-        Like like = Like.builder()
+        Likes like = Likes.builder()
                 .member(testMember)
                 .restaurant(saveRestaurant)
-                .likeStatus("Y")
+                .likesStatus("Y")
                 .build();
-        likeRepository.save(like);
+        likesRepository.save(like);
     }
 
     @DisplayName("회원정보로 해당하는 식당 찜 여부")
@@ -92,13 +93,13 @@ public class LikeRepositoryTest {
         Long restaurantId = saveRestaurant.getId();
 
         // when
-        Optional<Like> foundLike = likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
+        Optional<Likes> foundLike = likesRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
 
         // then
         assertThat(foundLike).isPresent();
         assertThat(foundLike.get().getMember().getId()).isEqualTo(memberId);
         assertThat(foundLike.get().getRestaurant().getId()).isEqualTo(restaurantId);
-        assertThat(foundLike.get().getLikeStatus()).isEqualTo("Y");
+        assertThat(foundLike.get().getLikesStatus()).isEqualTo("Y");
     }
 
     @DisplayName("존재하지 않는 회원과 식당 ID로 찜 조회 시 비어있는 결과 반환")
@@ -109,7 +110,7 @@ public class LikeRepositoryTest {
         Long nonExistentRestaurantId = 999L;
 
         // when
-        Optional<Like> foundLike = likeRepository.findByMemberIdAndRestaurantId(nonExistentMemberId, nonExistentRestaurantId);
+        Optional<Likes> foundLike = likesRepository.findByMemberIdAndRestaurantId(nonExistentMemberId, nonExistentRestaurantId);
 
         // then
         assertThat(foundLike).isNotPresent();

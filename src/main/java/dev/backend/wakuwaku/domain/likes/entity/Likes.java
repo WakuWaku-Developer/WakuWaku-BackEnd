@@ -1,4 +1,4 @@
-package dev.backend.wakuwaku.domain.like.entity;
+package dev.backend.wakuwaku.domain.likes.entity;
 
 import dev.backend.wakuwaku.domain.StatusEntity;
 import dev.backend.wakuwaku.domain.member.entity.Member;
@@ -12,31 +12,32 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "likes")
-public class Like extends StatusEntity {
+public class Likes extends StatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ManyToOne 매핑 수정
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+
+    // enum으로 수정
     @Column(length = 1)
-    private String likeStatus;
+    private String likesStatus;
 
 
     @Builder
-    public Like(Member member, Restaurant restaurant, String likeStatus) {
+    public Likes(Member member, Restaurant restaurant, String likesStatus) {
         this.member = member;
         this.restaurant = restaurant;
-        this.likeStatus = likeStatus;
+        this.likesStatus = likesStatus;
     }
 
-    public void updateLikeStatus(String likeStatus){
-        this.likeStatus = likeStatus;
+    public void updateLikeStatus(String likesStatus){
+        this.likesStatus = likesStatus;
     }
 }

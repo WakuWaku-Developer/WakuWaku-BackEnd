@@ -1,7 +1,7 @@
-package dev.backend.wakuwaku.domain.like.service;
+package dev.backend.wakuwaku.domain.likes.service;
 
-import dev.backend.wakuwaku.domain.like.entity.Like;
-import dev.backend.wakuwaku.domain.like.repository.LikeRepository;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
+import dev.backend.wakuwaku.domain.likes.repository.LikesRepository;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
@@ -13,47 +13,47 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class LikeService {
+public class LikesService {
 
-    private final LikeRepository likeRepository;
+    private final LikesRepository likesRepository;
     private final RestaurantRepository restaurantRepository;
     private final MemberRepository memberRepository;
 
-    public Long addLike(Long memberId, Long restaurantId) {
+    public Likes addLikes(Long memberId, Long restaurantId) {
         // 찜이 이미 존재하는지 확인
-        Optional<Like> existingLike = likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
+        // Orelseget
+        Optional<Likes> existingLike = likesRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
 
         if (existingLike.isPresent()) {
             // 이미 찜되어 있는 경우
-            Like like = existingLike.get();
-            if ("Y".equals(like.getLikeStatus())) {
+            Likes likes = existingLike.get();
+            if ("Y".equals(likes.getLikesStatus())) {
                 throw ALREADY_LIKED_EXCEPTION;
             } else {
                 // 찜 상태가 "N"인 경우 다시 "Y"로 업데이트
-                like.updateLikeStatus("Y");
-                likeRepository.save(like);
-                return like.getId();
+                likes.updateLikeStatus("Y");
+                return likesRepository.save(likes);
             }
         } else {
             // 찜이 존재하지 않는 경우, 새로 추가
             Member member = memberRepository.findById(memberId).orElseThrow(() -> NOT_FOUND_MEMBER_INFO);
             Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> NOT_FOUND_RESTAURANT_INFO);
 
-            Like newLike = Like.builder()
+            Likes newLikes = Likes.builder()
                     .member(member)
                     .restaurant(restaurant)
-                    .likeStatus("Y")
+                    .likesStatus("Y")
                     .build();
 
-            likeRepository.save(newLike);
-            return newLike.getId();
+            likesRepository.save(newLikes);
+
+            return newLikes;
         }
     }
 
@@ -63,13 +63,13 @@ public class LikeService {
      * @param restaurantId
      * @return 찜 삭제 성공 여부
      */
-    public boolean deleteLike(Long memberId, Long restaurantId) {
-        Optional<Like> like = likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
+    public boolean deleteLikes(Long memberId, Long restaurantId) {
+        Optional<Likes> like = likesRepository.findByMemberIdAndRestaurantId(memberId, restaurantId);
         if (like.isPresent()) {
             // 찜 상태를 "N"으로 변경
-            Like existingLike = like.get();
-            existingLike.updateLikeStatus("N");
-            likeRepository.save(existingLike);
+            Likes existingLikes = like.get();
+            existingLikes.updateLikeStatus("N");
+            likesRepository.save(existingLikes);
             return true;
         } else {
             throw LIKE_NOT_FOUND_EXCEPTION;
