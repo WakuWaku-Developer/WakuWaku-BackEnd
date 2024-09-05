@@ -25,8 +25,7 @@ public class LikesController {
 
     @DeleteMapping("/delete")
     public BaseResponse<String> deleteLike(@RequestBody LikesRequest likesRequest) {
-        boolean result = likesService.deleteLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
-        String message = result ? "찜 삭제 성공" : "찜 삭제 실패";
-        return new BaseResponse<>(message);
+        likesService.deleteLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
+        return new BaseResponse<>("찜 삭제 성공");
     }
 }

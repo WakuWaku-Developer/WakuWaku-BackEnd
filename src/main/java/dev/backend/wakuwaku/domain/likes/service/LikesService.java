@@ -39,8 +39,7 @@ public class LikesService {
                     }
                     // 찜 상태 N -> Y로 업데이트
                     likes.updateLikeStatus(LikesStatusType.Y);  // "N" 상태인 경우 "Y"로 업데이트
-                    Likes updatedLikes = likesRepository.save(likes);
-                    return updatedLikes;
+                    return likes;
                 })
                 .orElseGet(() -> createNewLike(memberId, restaurantId));  // 찜이 없으면 새로 생성
     }
@@ -52,14 +51,14 @@ public class LikesService {
      * @param restaurantId
      * @return
      */
-    public boolean deleteLikes(Long memberId, Long restaurantId) {
+    public void deleteLikes(Long memberId, Long restaurantId) {
         Likes likes = likesRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)
                 .orElseThrow(() -> LIKE_NOT_FOUND_EXCEPTION);  // 찜이 없으면 예외 발생
 
         likes.updateLikeStatus(LikesStatusType.N);  // 찜 상태를 "N"으로 변경
         likesRepository.save(likes);
-        return true;
     }
+
 
 
     /**

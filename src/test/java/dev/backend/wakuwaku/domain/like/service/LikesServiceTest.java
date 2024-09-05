@@ -191,11 +191,11 @@ class LikesServiceTest {
         when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.of(existingLikes));
 
         // when
-        boolean result = likeService.deleteLikes(memberId, restaurantId);
+        likeService.deleteLikes(memberId, restaurantId); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
 
         // then
-        assertTrue(result);
-        verify(likeRepository).save(existingLikes);
+        verify(likeRepository).save(existingLikes); // save 메소드가 호출되었는지 검증
+        assertEquals(LikesStatusType.N, existingLikes.getLikesStatus()); // 상태가 변경되었는지 검증
     }
 
     @Test

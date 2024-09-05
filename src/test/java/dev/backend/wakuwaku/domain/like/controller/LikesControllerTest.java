@@ -28,6 +28,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -113,7 +114,7 @@ class LikesControllerTest {
         // given
         Long memberId = 1L;
         Long restaurantId = 1L;
-        given(likesService.deleteLikes(memberId, restaurantId)).willReturn(true);
+        willDoNothing().given(likesService).deleteLikes(memberId, restaurantId); // void 반환값 없으므로 willDoNothing
 
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/delete")

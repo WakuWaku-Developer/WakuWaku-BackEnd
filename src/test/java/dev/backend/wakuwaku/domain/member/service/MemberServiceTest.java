@@ -51,18 +51,17 @@ class MemberServiceTest {
         // given
         String email = "test@example.com";
         Member existingMember = new Member();
-        existingMember.createEmail(email);
-        existingMember.createCheckstatus("Y"); // "Y"로 설정하여 중복 상황을 시뮬레이트
+        existingMember.setCheckStatus("Y"); // "Y"로 설정하여 중복 상황
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
         // when & then
-        assertThatThrownBy(() -> memberService.validateDuplicateMember(existingMember))
+        assertThatThrownBy(() -> memberService.validateDuplicateMember(member))
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
                 .isEqualTo(ExceptionStatus.DUPLICATED_EMAIL);
 
-        // Optional: memberRepository의 findByEmail 메서드가 한 번 호출되었는지 확인
-        // 실제 로직에서는 메서드가 호출됨을 보장하기 위해 추가적인 검증 가능
+        // findByEmail 메서드가 한 번 호출되었는지 확인
+        then(memberRepository).should().findByEmail(email);
     }
 
     @Test
@@ -70,17 +69,15 @@ class MemberServiceTest {
     void validateDuplicateMember_NonDuplicateEmail() {
         // given
         String email = "test@example.com";
-        Member newMember = new Member();
-        newMember.createEmail(email);
-        newMember.createCheckstatus("N"); // "N"으로 설정하여 중복 상황을 회피
-        given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
+        given(memberRepository.findByEmail(email)).willReturn(Optional.empty()); // 중복 이메일이 없다고 설정
 
         // when & then
-        memberService.validateDuplicateMember(newMember); // 예외가 발생하지 않아야 함
+        memberService.validateDuplicateMember(member);
 
-        // Optional: memberRepository의 findByEmail 메서드가 한 번 호출되었는지 확인
-        // 실제 로직에서는 메서드가 호출됨을 보장하기 위해 추가적인 검증 가능
+        // findByEmail 메서드가 한 번 호출되었는지 확인
+        then(memberRepository).should().findByEmail(email);
     }
+
     @Test
     @DisplayName("모든 회원 조회 - 성공")
     void findAll() {
@@ -176,7 +173,7 @@ class MemberServiceTest {
         Long memberId = 1L;
         Member member = new Member();
         member.createId(memberId);
-        member.createCheckstatus("Y");
+        member.setCheckStatus("Y");
 
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
