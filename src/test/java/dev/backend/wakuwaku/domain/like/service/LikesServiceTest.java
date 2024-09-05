@@ -27,8 +27,8 @@ import java.util.Optional;
 
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.ALREADY_LIKED_EXCEPTION;
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -194,7 +194,6 @@ class LikesServiceTest {
         likeService.deleteLikes(memberId, restaurantId); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
 
         // then
-        verify(likeRepository).save(existingLikes); // save 메소드가 호출되었는지 검증
         assertEquals(LikesStatusType.N, existingLikes.getLikesStatus()); // 상태가 변경되었는지 검증
     }
 

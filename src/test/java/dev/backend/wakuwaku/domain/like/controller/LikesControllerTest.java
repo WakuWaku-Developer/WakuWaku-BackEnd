@@ -1,9 +1,12 @@
 package dev.backend.wakuwaku.domain.like.controller;
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.google.gson.Gson;
 import dev.backend.wakuwaku.domain.likes.controller.LikesController;
 import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
+import dev.backend.wakuwaku.domain.likes.dto.request.LikesRequest;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
 import dev.backend.wakuwaku.domain.member.entity.Member;
@@ -26,10 +29,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,6 +47,8 @@ class LikesControllerTest {
     private MockMvc mockMvc;
 
     private static final String BASE_URL = "/wakuwaku/v1/likes";
+    private Member testMember;
+    private Restaurant testRestaurant;
     private Likes testLikes;
 
     @BeforeEach
@@ -55,10 +58,11 @@ class LikesControllerTest {
                 .alwaysDo(MockMvcResultHandlers.print())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
-        // Mock Likes 엔티티 설정
-        Member testMember = Member.builder().email("test@test.com").build();
-        Restaurant testRestaurant = new Restaurant();
-        Likes testLikes = Likes.builder()
+
+        // Mock 객체 설정
+        testMember = Member.builder().email("test@test.com").build();
+        testRestaurant = new Restaurant();
+        testLikes = Likes.builder()
                 .member(testMember)
                 .restaurant(testRestaurant)
                 .likesStatus(LikesStatusType.Y)
@@ -71,24 +75,25 @@ class LikesControllerTest {
         // given
         Long memberId = 1L;
         Long restaurantId = 1L;
+        Long likesId = 1L;
 
-        // Mocking the Likes object and its ID
-        Likes mockLikes = mock(Likes.class);
-        given(mockLikes.getId()).willReturn(1L); // ID를 반환하도록 설정
-
-        // When addLikes is called, return the mockLikes object
+        // Create a mock Likes object
+        Likes mockLikes = new Likes(testMember, testRestaurant, LikesStatusType.Y); // 필요한 생성자나 빌더 사용
         given(likesService.addLikes(memberId, restaurantId)).willReturn(mockLikes);
+
+        LikesRequest requestDto = new LikesRequest(memberId, restaurantId);
+        String requestJson = new Gson().toJson(requestDto);
 
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/push")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"memberId\": 1, \"restaurantId\": 1 }"))
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 확인
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 확인
                 .andExpect(jsonPath("$.data").value("찜하기 성공"))  // 실제로 찜하기 성공 메시지를 확인
                 .andDo(MockMvcRestDocumentationWrapper.document("push-like",
-                        resource(ResourceSnippetParameters.builder()
+                        ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                                 .tag("Likes")
                                 .description("찜하기 요청")
                                 .requestFields(
@@ -106,8 +111,6 @@ class LikesControllerTest {
     }
 
 
-
-
     @Test
     @DisplayName("찜 삭제 테스트")
     void deleteLike() throws Exception {
@@ -116,16 +119,19 @@ class LikesControllerTest {
         Long restaurantId = 1L;
         willDoNothing().given(likesService).deleteLikes(memberId, restaurantId); // void 반환값 없으므로 willDoNothing
 
+        LikesRequest requestDto = new LikesRequest(memberId, restaurantId);
+        String requestJson = new Gson().toJson(requestDto);
+
         // when & then
         mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"memberId\": 1, \"restaurantId\": 1 }"))
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 확인
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 확인
                 .andExpect(jsonPath("$.data").value("찜 삭제 성공"))  // 실제로 삭제 성공 메시지를 확인
                 .andDo(MockMvcRestDocumentationWrapper.document("delete-like",
-                        resource(ResourceSnippetParameters.builder()
+                        ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                                 .tag("Likes")
                                 .description("찜 삭제 요청")
                                 .requestFields(
@@ -141,6 +147,4 @@ class LikesControllerTest {
                         )
                 ));
     }
-
 }
-

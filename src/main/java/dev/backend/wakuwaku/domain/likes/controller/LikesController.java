@@ -18,8 +18,7 @@ public class LikesController {
     @PostMapping("/push")
     public BaseResponse<String> pushLikes(@RequestBody LikesRequest likesRequest) {
         Likes likes = likesService.addLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
-        String message = likes.getId() != null ? "찜하기 성공" : "찜하기 실패";
-        return new BaseResponse<>(message);
+        return new BaseResponse<>("찜하기 성공");
     }
 
 

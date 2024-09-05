@@ -56,7 +56,6 @@ public class LikesService {
                 .orElseThrow(() -> LIKE_NOT_FOUND_EXCEPTION);  // 찜이 없으면 예외 발생
 
         likes.updateLikeStatus(LikesStatusType.N);  // 찜 상태를 "N"으로 변경
-        likesRepository.save(likes);
     }
 
 
