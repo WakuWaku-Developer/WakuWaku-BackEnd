@@ -44,12 +44,9 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
-
     @Autowired
     private MockMvc mockMvc;
-
     private static final String BASE_URL = "/wakuwaku/v1/members";
-
     private Member member;
 
     @BeforeEach
