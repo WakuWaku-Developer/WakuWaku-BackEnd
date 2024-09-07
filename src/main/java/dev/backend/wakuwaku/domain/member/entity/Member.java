@@ -86,7 +86,12 @@ public class Member extends StatusEntity {
     /**
      * 테스트 코드에서 사용 (setter)
      */
-
+    public void createEmail(String email) {
+        this.email = email;
+    }
+    public void createCheckstatus(String checkStatus) {
+        this.checkStatus = checkStatus;
+    }
     public void createId(Long id) {
         this.id = id;
     }

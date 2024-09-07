@@ -77,9 +77,9 @@ class LikesControllerTest {
         Long restaurantId = 1L;
         Long likesId = 1L;
 
-        // Create a mock Likes object
-        Likes mockLikes = new Likes(testMember, testRestaurant, LikesStatusType.Y); // 필요한 생성자나 빌더 사용
+        Likes mockLikes = new Likes(testMember, testRestaurant, LikesStatusType.Y);
         given(likesService.addLikes(memberId, restaurantId)).willReturn(mockLikes);
+        mockLikes.createId(1L);
 
         LikesRequest requestDto = new LikesRequest(memberId, restaurantId);
         String requestJson = new Gson().toJson(requestDto);
@@ -91,7 +91,7 @@ class LikesControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 확인
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 확인
-                .andExpect(jsonPath("$.data").value("찜하기 성공"))  // 실제로 찜하기 성공 메시지를 확인
+                .andExpect(jsonPath("$.data.likeId").value(likesId))  // LikesResponse의 likeId 필드 확인
                 .andDo(MockMvcRestDocumentationWrapper.document("push-like",
                         ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                                 .tag("Likes")
@@ -103,13 +103,12 @@ class LikesControllerTest {
                                 .responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data").type(JsonFieldType.STRING).description("결과 메시지")
+                                        fieldWithPath("data.likeId").type(JsonFieldType.NUMBER).description("찜 ID")  // likeId 필드 추가
                                 )
                                 .build()
                         )
                 ));
     }
-
 
     @Test
     @DisplayName("찜 삭제 테스트")
@@ -117,7 +116,7 @@ class LikesControllerTest {
         // given
         Long memberId = 1L;
         Long restaurantId = 1L;
-        willDoNothing().given(likesService).deleteLikes(memberId, restaurantId); // void 반환값 없으므로 willDoNothing
+        willDoNothing().given(likesService).deleteLikes(memberId, restaurantId);
 
         LikesRequest requestDto = new LikesRequest(memberId, restaurantId);
         String requestJson = new Gson().toJson(requestDto);
@@ -129,7 +128,6 @@ class LikesControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 확인
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 확인
-                .andExpect(jsonPath("$.data").value("찜 삭제 성공"))  // 실제로 삭제 성공 메시지를 확인
                 .andDo(MockMvcRestDocumentationWrapper.document("delete-like",
                         ResourceDocumentation.resource(ResourceSnippetParameters.builder()
                                 .tag("Likes")
@@ -140,8 +138,7 @@ class LikesControllerTest {
                                 )
                                 .responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data").type(JsonFieldType.STRING).description("결과 메시지")
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지")
                                 )
                                 .build()
                         )

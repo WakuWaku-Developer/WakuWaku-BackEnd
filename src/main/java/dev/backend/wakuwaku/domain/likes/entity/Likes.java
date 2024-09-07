@@ -39,4 +39,9 @@ public class Likes extends StatusEntity {
     public void updateLikeStatus(LikesStatusType likesStatus){
         this.likesStatus = likesStatus;
     }
+
+
+    public void createId(Long id){
+        this.id = id;
+    }
 }

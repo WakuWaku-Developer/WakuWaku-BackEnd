@@ -51,7 +51,7 @@ class MemberServiceTest {
         // given
         String email = "test@example.com";
         Member existingMember = new Member();
-        existingMember.setCheckStatus("Y"); // "Y"로 설정하여 중복 상황
+        existingMember.updateCheckstatus("Y"); // "Y"로 설정하여 중복 상황
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
         // when & then
@@ -173,7 +173,7 @@ class MemberServiceTest {
         Long memberId = 1L;
         Member member = new Member();
         member.createId(memberId);
-        member.setCheckStatus("Y");
+        member.updateCheckstatus("Y");
 
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 

@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.likes.controller;
 
 import dev.backend.wakuwaku.domain.likes.dto.request.LikesRequest;
+import dev.backend.wakuwaku.domain.likes.dto.response.LikesResponse;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
 import dev.backend.wakuwaku.global.response.BaseResponse;
@@ -16,15 +17,19 @@ public class LikesController {
     private final LikesService likesService;
 
     @PostMapping("/push")
-    public BaseResponse<String> pushLikes(@RequestBody LikesRequest likesRequest) {
+    public BaseResponse<LikesResponse> pushLikes(@RequestBody LikesRequest likesRequest) {
         Likes likes = likesService.addLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
-        return new BaseResponse<>("찜하기 성공");
+
+        LikesResponse response = new LikesResponse(likes.getId());
+
+        return new BaseResponse<>(response);
     }
 
 
+
     @DeleteMapping("/delete")
-    public BaseResponse<String> deleteLike(@RequestBody LikesRequest likesRequest) {
+    public BaseResponse<Void> deleteLike(@RequestBody LikesRequest likesRequest) {
         likesService.deleteLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
-        return new BaseResponse<>("찜 삭제 성공");
+        return new BaseResponse<>();
     }
 }
