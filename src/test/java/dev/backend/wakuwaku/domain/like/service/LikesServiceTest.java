@@ -150,6 +150,7 @@ class LikesServiceTest {
     }
 
     @DisplayName("멤버 Id로 해당 멤버의 찜 목록 PlaceId 반환")
+    @Test
     void getLikedRestaurantPlaceIds() {
         // given
         Member member = createMember(1);
@@ -183,6 +184,26 @@ class LikesServiceTest {
         assertThat(likedRestaurantPlaceIds.get(2)).isEqualTo(PLACE_ID);
         assertThat(likedRestaurantPlaceIds.get(3)).isEqualTo(PLACE_ID);
         assertThat(likedRestaurantPlaceIds.get(4)).isEqualTo(PLACE_ID);
+    }
+
+    @DisplayName("멤버 Id로 해당 멤버의 찜 목록이 비어있을 때 빈 리스트를 반환")
+    @Test
+    void NoHaveLikedRestaurant() {
+        // given
+        Member member = createMember(1);
+        member.createId(MEMBER_ID);
+
+        List<Likes> likesList = new ArrayList<>();
+
+        given(likesRepository.findByMemberId(MEMBER_ID)).willReturn(likesList);
+
+        // when
+        List<String> likedRestaurantPlaceIds = likesService.getLikedRestaurantPlaceIds(member);
+
+        // then
+        then(likesRepository).should().findByMemberId(MEMBER_ID);
+
+        assertThat(likedRestaurantPlaceIds).isEmpty();
     }
 
     private Member createMember(int number) {
