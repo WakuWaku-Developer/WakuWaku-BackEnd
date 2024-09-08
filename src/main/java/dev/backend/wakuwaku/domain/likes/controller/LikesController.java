@@ -20,7 +20,7 @@ public class LikesController {
     public BaseResponse<LikesResponse> pushLikes(@RequestBody LikesRequest likesRequest) {
         Likes likes = likesService.addLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
 
-        LikesResponse response = new LikesResponse(likes.getId());
+        LikesResponse response = new LikesResponse(likes);
 
         return new BaseResponse<>(response);
     }
