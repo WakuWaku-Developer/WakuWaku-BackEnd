@@ -15,5 +15,5 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     @Query("SELECT l FROM Likes l WHERE l.member.id = :memberId AND l.restaurant.id = :restaurantId")
     Optional<Likes> findByMemberIdAndRestaurantId(@Param("memberId") Long memberId, @Param("restaurantId") Long restaurantId);
 
-    List<Likes> findByMemberId(Long memberId);
+    List<Likes> findAllByMemberId(Long memberId);
 }

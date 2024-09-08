@@ -170,13 +170,13 @@ class LikesServiceTest {
         likesList.add(createLikes(member, restaurant4));
         likesList.add(createLikes(member, restaurant5));
 
-        given(likesRepository.findByMemberId(MEMBER_ID)).willReturn(likesList);
+        given(likesRepository.findAllByMemberId(MEMBER_ID)).willReturn(likesList);
 
         // when
         List<String> likedRestaurantPlaceIds = likesService.getLikedRestaurantPlaceIds(member);
 
         // then
-        then(likesRepository).should().findByMemberId(MEMBER_ID);
+        then(likesRepository).should().findAllByMemberId(MEMBER_ID);
 
         assertThat(likedRestaurantPlaceIds).hasSize(5);
         assertThat(likedRestaurantPlaceIds.get(0)).isEqualTo(PLACE_ID);
@@ -195,13 +195,13 @@ class LikesServiceTest {
 
         List<Likes> likesList = new ArrayList<>();
 
-        given(likesRepository.findByMemberId(MEMBER_ID)).willReturn(likesList);
+        given(likesRepository.findAllByMemberId(MEMBER_ID)).willReturn(likesList);
 
         // when
         List<String> likedRestaurantPlaceIds = likesService.getLikedRestaurantPlaceIds(member);
 
         // then
-        then(likesRepository).should().findByMemberId(MEMBER_ID);
+        then(likesRepository).should().findAllByMemberId(MEMBER_ID);
 
         assertThat(likedRestaurantPlaceIds).isEmpty();
     }

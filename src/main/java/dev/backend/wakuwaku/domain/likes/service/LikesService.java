@@ -85,7 +85,7 @@ public class LikesService {
     }
 
     public List<String> getLikedRestaurantPlaceIds(Member member) {
-        List<Likes> likesList = likesRepository.findByMemberId(member.getId());
+        List<Likes> likesList = likesRepository.findAllByMemberId(member.getId());
 
         if (likesList == null || likesList.isEmpty()) {
             return new ArrayList<>();
