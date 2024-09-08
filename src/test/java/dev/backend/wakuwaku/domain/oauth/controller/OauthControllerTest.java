@@ -3,6 +3,8 @@ package dev.backend.wakuwaku.domain.oauth.controller;
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.google.gson.Gson;
+import dev.backend.wakuwaku.domain.likes.service.LikesService;
+import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.dto.request.LoginRequest;
 import dev.backend.wakuwaku.domain.oauth.service.OauthService;
@@ -24,8 +26,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.BDDMockito.given;
@@ -39,12 +41,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(controllers = OauthController.class)
 class OauthControllerTest {
-
     @MockBean
     private OauthService oauthService;
 
     @MockBean
     private EntityManager entityManager;
+
+    @MockBean
+    private LikesService likesService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,17 +62,25 @@ class OauthControllerTest {
                 .build();
     }
 
-
-
     @Test
     @DisplayName("OAuth 로그인 테스트")
     void login() throws Exception {
         // given
         Long memberId = 1L;
         String code = "authorization_code";
-        Map<String, Long> responseMap = new HashMap<>();
-        responseMap.put("id", memberId);
-        given(oauthService.login(OauthServerType.GOOGLE, code)).willReturn(responseMap);
+
+        List<String> likesPlacesIds = new ArrayList<>();
+
+        likesPlacesIds.add(createPlacesIds(1));
+        likesPlacesIds.add(createPlacesIds(2));
+        likesPlacesIds.add(createPlacesIds(3));
+        likesPlacesIds.add(createPlacesIds(4));
+
+        Member member = new Member();
+        member.createId(memberId);
+
+        given(oauthService.login(OauthServerType.GOOGLE, code)).willReturn(member);
+        given(likesService.getLikedRestaurantPlaceIds(member)).willReturn(likesPlacesIds);
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.createOauthServerType(OauthServerType.GOOGLE);
@@ -84,6 +96,7 @@ class OauthControllerTest {
                         .content(jsonContent))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(memberId))
+                .andExpect(jsonPath("$.data.likedRestaurantPlaceIds").value(likesPlacesIds))
                 .andDo(MockMvcRestDocumentationWrapper.document("oauth-login",
                         resource(ResourceSnippetParameters.builder()
                                 .tag("OAuth")
@@ -95,12 +108,18 @@ class OauthControllerTest {
                                 .responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID")
+                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID"),
+                                        fieldWithPath("data.likedRestaurantPlaceIds").type(JsonFieldType.ARRAY).description("회원이 찜한 식당의 PlaceId")
                                 )
                                 .build()
                         )
                 ));
 
         then(oauthService).should().login(OauthServerType.GOOGLE, code);
+        then(likesService).should().getLikedRestaurantPlaceIds(member);
+    }
+
+    private String createPlacesIds(int number) {
+        return "test-placesId-" + number;
     }
 }

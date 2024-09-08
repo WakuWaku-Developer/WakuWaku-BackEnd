@@ -12,24 +12,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class OauthService {
-
     private final OauthMemberClientComposite oauthMemberClientComposite;
+
     private final MemberRepository memberRepository;
 
-
-
-    public Map<String, Long> login(OauthServerType oauthServerType, String authCode) {
+    public Member login(OauthServerType oauthServerType, String authCode) {
         OauthMember oauthMember;
+
         try {
             oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
+
         } catch (Exception e) {
             log.error("Failed to fetch OAuth member: {}", e.getMessage(), e);
             throw WakuWakuException.FAILED_TO_LOGIN;
@@ -54,8 +51,6 @@ public class OauthService {
             member.updateCheckstatus("Y");
         }
 
-        Map<String, Long> response = new HashMap<>();
-        response.put("id", member.getId());
-        return response;
+        return member;
     }
 }

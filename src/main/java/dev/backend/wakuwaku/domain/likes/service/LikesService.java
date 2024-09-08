@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.*;
 
 @Service
@@ -81,6 +84,16 @@ public class LikesService {
         return newLikes;
     }
 
+    public List<String> getLikedRestaurantPlaceIds(Member member) {
+        List<Likes> likesList = likesRepository.findAllByMemberId(member.getId());
 
+        if (likesList == null || likesList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return likesList.stream()
+                .map(likes -> likes.getRestaurant().getPlaceId())
+                .toList();
+    }
 }
 

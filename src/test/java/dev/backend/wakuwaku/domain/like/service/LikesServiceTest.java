@@ -13,7 +13,6 @@ import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
 import dev.backend.wakuwaku.global.infra.google.places.dto.*;
 import org.assertj.core.api.BDDAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,16 +28,18 @@ import static dev.backend.wakuwaku.global.exception.ExceptionStatus.ALREADY_LIKE
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.BDDMockito.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class LikesServiceTest {
 
     @InjectMocks
-    private LikesService likeService;
+    private LikesService likesService;
 
     @Mock
-    private LikesRepository likeRepository;
+    private LikesRepository likesRepository;
 
     @Mock
     private MemberRepository memberRepository;
@@ -46,13 +47,12 @@ class LikesServiceTest {
     @Mock
     private RestaurantRepository restaurantRepository;
 
-    private Member testMember;
-    private Restaurant testRestaurant;
     private static final String PLACE_ID = "ChIJAQCl79GMGGARZheneHqgIUs";
 
     private static final String NAME = "우동신";
 
     private static final int TOTAL_PAGE = 5;
+
     private static final String MEMBER_EMAIL = "m@m.com";
 
     private final List<Photo> photos = new ArrayList<>();
@@ -61,18 +61,164 @@ class LikesServiceTest {
 
     private Places places;
 
-    @BeforeEach
-    void setUp() {
-        testMember = Member.builder()
+    private static final Long MEMBER_ID = 1L;
+
+    private static final Long RESTAURANT_ID = 1L;
+
+    private static final String NICKNAME = "MIN";
+
+    @Test
+    @DisplayName("찜 추가 성공 테스트")
+    void addLikes_Success() {
+        // given
+        int number = 1;
+
+        when(memberRepository.findById(MEMBER_ID)).thenReturn(Optional.of(createMember(number)));
+        when(restaurantRepository.findById(RESTAURANT_ID)).thenReturn(Optional.of(createRestaurant(number)));
+        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.empty());
+
+        // when
+        Likes like = likesService.addLikes(MEMBER_ID, RESTAURANT_ID);
+
+        // then
+        assertNotNull(like); // like가 null이 아닌지 확인합니다.
+        assertEquals(MEMBER_EMAIL, like.getMember().getEmail()); // assertEquals를 사용하여 값 비교
+        assertEquals(NICKNAME + number, like.getMember().getNickname());
+        assertEquals(PLACE_ID, like.getRestaurant().getPlaceId());
+        assertEquals(number, like.getRestaurant().getRating());
+
+        assertEquals((LikesStatusType.Y), like.getLikesStatus());
+
+    }
+
+    @Test
+    @DisplayName("이미 찜한 경우 예외 발생 테스트")
+    void addLikes_AlreadyLikesd() {
+        // given
+        Likes existingLikes = Likes.builder()
+                .member(createMember(1))
+                .restaurant(createRestaurant(1))
+                .likesStatus(LikesStatusType.Y)
+                .build();
+        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.of(existingLikes));
+
+
+        // when & then
+        BDDAssertions.thenThrownBy(
+                        () -> likesService.addLikes(MEMBER_ID, RESTAURANT_ID)
+                )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(ALREADY_LIKED_EXCEPTION);
+    }
+
+    @Test
+    @DisplayName("찜 삭제 성공 테스트")
+    void deleteLikes_Success() {
+        // given
+        Likes existingLikes = Likes.builder()
+                .member(createMember(1))
+                .restaurant(createRestaurant(1))
+                .likesStatus(LikesStatusType.Y)
+                .build();
+
+        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.of(existingLikes));
+
+        // when
+        likesService.deleteLikes(MEMBER_ID, RESTAURANT_ID); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
+
+        // then
+        assertEquals(LikesStatusType.N, existingLikes.getLikesStatus()); // 상태가 변경되었는지 검증
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 찜 삭제 시 예외 발생 테스트")
+    void deleteLikes_NotFound() {
+        // given
+        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.empty());
+
+        // when & then
+
+        // --
+        //assertThrows(LIKE_NOT_FOUND_EXCEPTION.getClass(), () -> likeService.deleteLikes(memberId, restaurantId));
+        BDDAssertions.thenThrownBy(
+                () -> likesService.deleteLikes(MEMBER_ID, RESTAURANT_ID)
+        )
+                .isInstanceOf(WakuWakuException.class)
+                .extracting("status")
+                .isEqualTo(LIKE_NOT_FOUND_EXCEPTION);
+    }
+
+    @DisplayName("멤버 Id로 해당 멤버의 찜 목록 PlaceId 반환")
+    @Test
+    void getLikedRestaurantPlaceIds() {
+        // given
+        Member member = createMember(1);
+        member.createId(MEMBER_ID);
+
+        Restaurant restaurant1 = createRestaurant(1);
+        Restaurant restaurant2 = createRestaurant(2);
+        Restaurant restaurant3 = createRestaurant(3);
+        Restaurant restaurant4 = createRestaurant(4);
+        Restaurant restaurant5 = createRestaurant(5);
+
+
+        List<Likes> likesList = new ArrayList<>();
+        likesList.add(createLikes(member, restaurant1));
+        likesList.add(createLikes(member, restaurant2));
+        likesList.add(createLikes(member, restaurant3));
+        likesList.add(createLikes(member, restaurant4));
+        likesList.add(createLikes(member, restaurant5));
+
+        given(likesRepository.findAllByMemberId(MEMBER_ID)).willReturn(likesList);
+
+        // when
+        List<String> likedRestaurantPlaceIds = likesService.getLikedRestaurantPlaceIds(member);
+
+        // then
+        then(likesRepository).should().findAllByMemberId(MEMBER_ID);
+
+        assertThat(likedRestaurantPlaceIds).hasSize(5);
+        assertThat(likedRestaurantPlaceIds.get(0)).isEqualTo(PLACE_ID);
+        assertThat(likedRestaurantPlaceIds.get(1)).isEqualTo(PLACE_ID);
+        assertThat(likedRestaurantPlaceIds.get(2)).isEqualTo(PLACE_ID);
+        assertThat(likedRestaurantPlaceIds.get(3)).isEqualTo(PLACE_ID);
+        assertThat(likedRestaurantPlaceIds.get(4)).isEqualTo(PLACE_ID);
+    }
+
+    @DisplayName("멤버 Id로 해당 멤버의 찜 목록이 비어있을 때 빈 리스트를 반환")
+    @Test
+    void NoHaveLikedRestaurant() {
+        // given
+        Member member = createMember(1);
+        member.createId(MEMBER_ID);
+
+        List<Likes> likesList = new ArrayList<>();
+
+        given(likesRepository.findAllByMemberId(MEMBER_ID)).willReturn(likesList);
+
+        // when
+        List<String> likedRestaurantPlaceIds = likesService.getLikedRestaurantPlaceIds(member);
+
+        // then
+        then(likesRepository).should().findAllByMemberId(MEMBER_ID);
+
+        assertThat(likedRestaurantPlaceIds).isEmpty();
+    }
+
+    private Member createMember(int number) {
+        return Member.builder()
                 .oauthServerId("testId")
                 .email(MEMBER_EMAIL)
                 .role(Role.USER)
-                .nickname("MIN")
+                .nickname(NICKNAME + number)
                 .oauthServerType(OauthServerType.NAVER)
                 .birthday("19990118")
                 .profileImageUrl("www.d.com")
                 .build();
+    }
 
+    private Restaurant createRestaurant(int number) {
         dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName name = new dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName(NAME);
 
         Location location = new Location(35.686489, 139.697001);
@@ -106,7 +252,7 @@ class LikesServiceTest {
         places = Places.builder()
                 .id(PLACE_ID)
                 .displayName(name)
-                .rating(4.1)
+                .rating(number)
                 .location(location)
                 .currentOpeningHours(currentOpeningHours)
                 .photos(photos)
@@ -128,92 +274,14 @@ class LikesServiceTest {
                 .servesVegetarianFood(false)
                 .build();
 
-        testRestaurant = new Restaurant(places);
+        return new Restaurant(places);
     }
 
-    @Test
-    @DisplayName("찜 추가 성공 테스트")
-    void addLikes_Success() {
-        // given
-        Long memberId = 1L;
-        Long restaurantId = 1L;
-
-        when(memberRepository.findById(memberId)).thenReturn(Optional.of(testMember));
-        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(testRestaurant));
-        when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.empty());
-
-
-        // when
-        Likes like = likeService.addLikes(memberId, restaurantId);
-
-        // then
-        assertNotNull(like); // like가 null이 아닌지 확인합니다.
-        assertEquals(MEMBER_EMAIL, like.getMember().getEmail()); // assertEquals를 사용하여 값 비교
-        assertEquals(PLACE_ID, like.getRestaurant().getPlaceId());
-        assertEquals((LikesStatusType.Y), like.getLikesStatus());
-
-    }
-
-    @Test
-    @DisplayName("이미 찜한 경우 예외 발생 테스트")
-    void addLikes_AlreadyLikesd() {
-        // given
-        Long memberId = 1L;
-        Long restaurantId = 1L;
-        Likes existingLikes = Likes.builder()
-                .member(testMember)
-                .restaurant(testRestaurant)
+    private Likes createLikes(Member member, Restaurant restaurant) {
+        return Likes.builder()
+                .member(member)
+                .restaurant(restaurant)
                 .likesStatus(LikesStatusType.Y)
                 .build();
-        when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.of(existingLikes));
-
-
-        // when & then
-        BDDAssertions.thenThrownBy(
-                        () -> likeService.addLikes(memberId, restaurantId)
-                )
-                .isInstanceOf(WakuWakuException.class)
-                .extracting("status")
-                .isEqualTo(ALREADY_LIKED_EXCEPTION);
-    }
-
-    @Test
-    @DisplayName("찜 삭제 성공 테스트")
-    void deleteLikes_Success() {
-        // given
-        Long memberId = 1L;
-        Long restaurantId = 1L;
-        Likes existingLikes = Likes.builder()
-                .member(testMember)
-                .restaurant(testRestaurant)
-                .likesStatus(LikesStatusType.Y)
-                .build();
-        when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.of(existingLikes));
-
-        // when
-        likeService.deleteLikes(memberId, restaurantId); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
-
-        // then
-        assertEquals(LikesStatusType.N, existingLikes.getLikesStatus()); // 상태가 변경되었는지 검증
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 찜 삭제 시 예외 발생 테스트")
-    void deleteLikes_NotFound() {
-        // given
-        Long memberId = 1L;
-        Long restaurantId = 1L;
-        when(likeRepository.findByMemberIdAndRestaurantId(memberId, restaurantId)).thenReturn(Optional.empty());
-
-        // when & then
-
-        // --
-        //assertThrows(LIKE_NOT_FOUND_EXCEPTION.getClass(), () -> likeService.deleteLikes(memberId, restaurantId));
-        BDDAssertions.thenThrownBy(
-                () -> likeService.deleteLikes(memberId, restaurantId)
-        )
-                .isInstanceOf(WakuWakuException.class)
-                .extracting("status")
-                .isEqualTo(LIKE_NOT_FOUND_EXCEPTION);
     }
 }
