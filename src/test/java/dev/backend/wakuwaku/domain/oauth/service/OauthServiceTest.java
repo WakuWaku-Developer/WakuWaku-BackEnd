@@ -93,7 +93,7 @@ class OauthServiceTest {
                 .build();
 
         existingMember.createId(1L);
-        existingMember.createCheckstatus("N");
+        existingMember.setCheckStatus("N");
 
         given(oauthMemberClientComposite.fetch(eq(oauthServerType), eq(AUTH_CODE))).willReturn(oauthMember);
         given(memberRepository.findByEmail(eq(EMAIL))).willReturn(Optional.of(existingMember));
