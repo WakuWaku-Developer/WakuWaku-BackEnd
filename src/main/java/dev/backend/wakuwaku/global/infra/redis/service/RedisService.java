@@ -59,9 +59,9 @@ public class RedisService {
         redisTemplate.expire(realKey, REDIS_TTL, TimeUnit.DAYS);
 
         return objects.stream()
-                .filter(Places.class::isInstance)
-                .map(Places.class::cast)
-                .toList();
+                      .filter(Places.class::isInstance)
+                      .map(Places.class::cast)
+                      .toList();
     }
 
     public int getTotalPage(String key) {

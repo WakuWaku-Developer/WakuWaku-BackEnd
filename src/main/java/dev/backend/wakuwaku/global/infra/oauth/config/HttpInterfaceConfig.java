@@ -14,7 +14,6 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
  */
 @Configuration
 public class HttpInterfaceConfig {
-
     @Bean
     public KakaoApiClient kakaoApiClient() {
         return createHttpInterface(KakaoApiClient.class);
@@ -27,8 +26,10 @@ public class HttpInterfaceConfig {
 
     private <T> T createHttpInterface(Class<T> clazz) {
         WebClient webClient = WebClient.create();
+
         HttpServiceProxyFactory build = HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient)).build();
+                                        .builderFor(WebClientAdapter.create(webClient)).build();
+
         return build.createClient(clazz);
     }
 }

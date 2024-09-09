@@ -16,8 +16,8 @@ import org.springframework.util.MultiValueMap;
 @RequiredArgsConstructor
 @Slf4j
 public class GoogleMemberClient implements OauthMemberClient {
-
     private final GoogleApiClient googleApiClient;
+
     private final GoogleOauthConfig googleOauthConfig;
 
     @Override
@@ -29,11 +29,13 @@ public class GoogleMemberClient implements OauthMemberClient {
     public OauthMember fetch(String authCode) {
         GoogleToken tokenInfo = googleApiClient.fetchToken(tokenRequestParams(authCode));
         GoogleMemberResponse googleMemberResponse = googleApiClient.fetchMember(tokenInfo.access_token());
+
         return googleMemberResponse.toDomain();
     }
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
             params.add("grant_type", "authorization_code");
             params.add("client_id", googleOauthConfig.getClientId());
             params.add("client_secret", googleOauthConfig.getClientSecret());
@@ -41,6 +43,7 @@ public class GoogleMemberClient implements OauthMemberClient {
             params.add("redirect_uri", googleOauthConfig.getRedirectUri());
             params.add("token_uri", googleOauthConfig.getTokenUri());
             params.add("resource_uri", googleOauthConfig.getResourceUri());
+
             return params;
     }
 }

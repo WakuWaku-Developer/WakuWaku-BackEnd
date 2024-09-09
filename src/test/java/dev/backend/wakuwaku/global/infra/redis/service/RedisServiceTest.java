@@ -163,8 +163,8 @@ class RedisServiceTest {
         CurrentOpeningHours currentOpeningHours = new CurrentOpeningHours(true, weekdayDescriptions);
 
         Photo photo = Photo.builder()
-                .photoUrl("https://lh3.googleusercontent.com/places/ANXAkqG2xQHKla3ebHNhRNrgMFi4WB6hGbR6LZTd2ig0PK5qTwkIvk0EP1fzPQ8UXmAt3FcU1Gz0XjYYCQJvFJQQVhAMss2GtKenoAI=s4800-w1440-h810")
-                .build();
+                           .photoUrl("https://lh3.googleusercontent.com/places/ANXAkqG2xQHKla3ebHNhRNrgMFi4WB6hGbR6LZTd2ig0PK5qTwkIvk0EP1fzPQ8UXmAt3FcU1Gz0XjYYCQJvFJQQVhAMss2GtKenoAI=s4800-w1440-h810")
+                           .build();
 
         photos.add(photo);
 
@@ -175,37 +175,37 @@ class RedisServiceTest {
         AuthorAttribution authorAttribution = new AuthorAttribution("촉촉한볼따구", "https://lh3.googleusercontent.com/a-/ALV-UjVoB_ILlpMn32pQwKbd5R99vuCX8mSb5T4rUzTRBBRts8CQolD9=s128-c0x00000000-cc-rp-mo");
 
         Review review = Review.builder()
-                .relativePublishTimeDescription("3주 전")
-                .rating(3)
-                .text(reviewText)
-                .authorAttribution(authorAttribution)
-                .build();
+                              .relativePublishTimeDescription("3주 전")
+                              .rating(3)
+                              .text(reviewText)
+                              .authorAttribution(authorAttribution)
+                              .build();
 
         reviews.add(review);
 
         return Places.builder()
-                .id(PLACE_ID)
-                .displayName(name)
-                .rating(rating)
-                .location(location)
-                .currentOpeningHours(currentOpeningHours)
-                .photos(photos)
-                .dineIn(true)
-                .takeout(false)
-                .delivery(false)
-                .editorialSummary(editorialSummary)
-                .reviews(reviews)
-                .nationalPhoneNumber(null)
-                .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
-                .websiteUri("http://www.udonshin.com/")
-                .userRatingCount(3965)
-                .reservable(true)
-                .servesBreakfast(false)
-                .servesLunch(true)
-                .servesDinner(true)
-                .servesBeer(true)
-                .servesWine(false)
-                .servesVegetarianFood(false)
-                .build();
+                     .id(PLACE_ID)
+                     .displayName(name)
+                     .rating(rating)
+                     .location(location)
+                     .currentOpeningHours(currentOpeningHours)
+                     .photos(photos)
+                     .dineIn(true)
+                     .takeout(false)
+                     .delivery(false)
+                     .editorialSummary(editorialSummary)
+                     .reviews(reviews)
+                     .nationalPhoneNumber(null)
+                     .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
+                     .websiteUri("http://www.udonshin.com/")
+                     .userRatingCount(3965)
+                     .reservable(true)
+                     .servesBreakfast(false)
+                     .servesLunch(true)
+                     .servesDinner(true)
+                     .servesBeer(true)
+                     .servesWine(false)
+                     .servesVegetarianFood(false)
+                     .build();
     }
 }

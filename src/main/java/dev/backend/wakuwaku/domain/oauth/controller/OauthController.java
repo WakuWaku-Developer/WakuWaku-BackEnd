@@ -28,8 +28,8 @@ public class OauthController {
         List<String> placeIdOfLikesRestaurants = likesService.getLikedRestaurantPlaceIds(member);
 
         return new BaseResponse<>(OAuthLoginResponse.builder()
-                .id(member.getId())
-                .likedRestaurantPlaceIds(placeIdOfLikesRestaurants)
-                .build());
+                                                         .id(member.getId())
+                                                         .likedRestaurantPlaceIds(placeIdOfLikesRestaurants)
+                                                         .build());
     }
 }

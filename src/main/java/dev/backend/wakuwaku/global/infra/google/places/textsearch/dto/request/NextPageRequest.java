@@ -7,10 +7,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NextPageRequest {
     public final String textQuery;
+
     public final String regionCode = "jp";
+
     public final String languageCode = "ko";
+
     public final String includedType = "restaurant";
+
     public final boolean strictTypeFiltering = true;
-    public final double minRating = 3.5;
+
+    public final double minRating = 4.0;
+
     public final String pageToken;
 }

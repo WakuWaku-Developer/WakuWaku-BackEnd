@@ -14,16 +14,15 @@ public record NaverMemberResponse(
         String message,
         Response response
 ) {
-
     public OauthMember toDomain() {
 
         return OauthMember.builder()
-                .oauthId(new OauthId(String.valueOf(response.id), NAVER))
-                .nickname(response.nickname)
-                .profileImageUrl(response.profileImage)
-                .email(response.email)
-                .birthday(response.birthday)
-                .build();
+                          .oauthId(new OauthId(String.valueOf(response.id), NAVER))
+                          .nickname(response.nickname)
+                          .profileImageUrl(response.profileImage)
+                          .email(response.email)
+                          .birthday(response.birthday)
+                          .build();
     }
 
     @JsonNaming(value = SnakeCaseStrategy.class)

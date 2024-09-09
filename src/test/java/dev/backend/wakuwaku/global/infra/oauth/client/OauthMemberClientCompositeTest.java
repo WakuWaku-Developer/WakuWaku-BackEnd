@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 class OauthMemberClientCompositeTest {
-
     private OauthMemberClientComposite clientComposite;
 
     @Mock
@@ -44,8 +43,11 @@ class OauthMemberClientCompositeTest {
     void testFetch() {
         // Given
         String mockAuthCode = "mockAuthCode";
+
         OauthServerType oauthServerType = OauthServerType.GOOGLE;
+
         GoogleToken mockToken = new GoogleToken("mockAccessToken", "bearer", 3600, null, "mockIdToken");
+
         GoogleMemberResponse mockResponse = new GoogleMemberResponse("12345", "test@gmail.com", "John", "Doe", "https://example.com/picture");
 
         // Mock GoogleOauthConfig에서 필요한 값들 설정
@@ -57,6 +59,7 @@ class OauthMemberClientCompositeTest {
 
         // MultiValueMap 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
         params.add("grant_type", "authorization_code");
         params.add("client_id", mockGoogleOauthConfig.getClientId());
         params.add("client_secret", mockGoogleOauthConfig.getClientSecret());

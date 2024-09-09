@@ -43,9 +43,6 @@ public enum ExceptionStatus {
     NOT_FOUND_MEMBER_INFO(NOT_FOUND ,6004, "사용자 정보를 찾을 수 없습니다."),
     ALREADY_LIKED_EXCEPTION(BAD_REQUEST ,6005, "이미 찜한 식당입니다.");
 
-
-
-
     private final HttpStatus httpStatus;
     private final int code;
     private final String message;

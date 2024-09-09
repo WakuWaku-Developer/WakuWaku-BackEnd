@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SimpleInfoRestaurantResponse {
     private List<SimpleInfoRestaurant> simpleInfoRestaurants;
+
     private int totalPage;
 
     public SimpleInfoRestaurantResponse(List<SimpleInfoRestaurant> simpleInfoRestaurants, int totalPage) {

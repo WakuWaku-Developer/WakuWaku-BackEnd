@@ -56,10 +56,10 @@ class OauthControllerTest {
     @BeforeEach
     void setUp(final WebApplicationContext context, final RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
-                .alwaysDo(MockMvcResultHandlers.print())
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
-                .build();
+                                      .apply(documentationConfiguration(restDocumentation))
+                                      .alwaysDo(MockMvcResultHandlers.print())
+                                      .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                                      .build();
     }
 
     @Test
@@ -93,7 +93,8 @@ class OauthControllerTest {
         // when & then
         mockMvc.perform(post("/oauth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonContent))
+                        .content(jsonContent)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(memberId))
                 .andExpect(jsonPath("$.data.likedRestaurantPlaceIds").value(likesPlacesIds))

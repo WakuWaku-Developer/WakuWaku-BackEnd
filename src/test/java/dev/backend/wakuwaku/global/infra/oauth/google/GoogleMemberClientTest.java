@@ -20,7 +20,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class GoogleMemberClientTest {
-
     @Mock
     private GoogleApiClient mockApiClient;
 

@@ -21,13 +21,14 @@ public class RestaurantController {
     @GetMapping
     public BaseResponse<SimpleInfoRestaurantResponse> getSimpleInfoRestaurants(@RequestParam("search") String searchWord,
                                                                                @RequestParam(name = "page",
-                                                                                       required = false,
-                                                                                       defaultValue = "1") Integer page) {
+                                                                                             required = false,
+                                                                                             defaultValue = "1") Integer page) {
+
         Restaurants restaurants = restaurantService.getSimpleRestaurants(searchWord, page);
 
         List<SimpleInfoRestaurant> simpleInfoRestaurants = restaurants.getRestaurants().stream()
-                .map(SimpleInfoRestaurant::new)
-                .toList();
+                                                                                       .map(SimpleInfoRestaurant::new)
+                                                                                       .toList();
 
         return new BaseResponse<>(new SimpleInfoRestaurantResponse(simpleInfoRestaurants, restaurants.getTotalPage()));
     }

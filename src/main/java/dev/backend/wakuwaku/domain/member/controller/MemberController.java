@@ -20,13 +20,11 @@ import java.util.List;
 public class MemberController {
     private final MemberService memberService;
 
-
     @GetMapping("/{id}")
     public BaseResponse<GetMemberResponse> findById(@PathVariable("id") Long id) {
         Member memberEntity = memberService.findById(id);
-        
-        return new BaseResponse<>(new GetMemberResponse(memberEntity));
 
+        return new BaseResponse<>(new GetMemberResponse(memberEntity));
     }
 
     @PutMapping("/{id}")
@@ -34,8 +32,8 @@ public class MemberController {
         Long dbId = memberService.update(id, memberUpdateRequest);
 
         return new BaseResponse<>(new MemberIdResponse(dbId));
-
     }
+
     @DeleteMapping("/{id}") // 삭제
     public BaseResponse<Void> delete(@PathVariable("id") Long id) {
         memberService.deactivateById(id);
@@ -48,8 +46,7 @@ public class MemberController {
         List<Member> memberList = memberService.findAll();
 
         return new BaseResponse<>(memberList.stream()
-                .map(GetMemberResponse::new)
-                .toList());
+                                                 .map(GetMemberResponse::new)
+                                                 .toList());
     }
-
 }

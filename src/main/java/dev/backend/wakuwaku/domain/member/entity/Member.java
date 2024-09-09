@@ -25,7 +25,6 @@ import static jakarta.persistence.EnumType.STRING;
         }
 )
 public class Member extends StatusEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -73,15 +72,18 @@ public class Member extends StatusEntity {
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
     public void updateBirthday(String birthday) {
         this.birthday = birthday;
     }
-    public void updateCheckstatus(String checkStatus) {this.checkStatus = checkStatus;  }
+
+    public void updateCheckStatus(String checkStatus) {
+        this.checkStatus = checkStatus;
+    }
 
     public void deactivate() {
         this.checkStatus = "N";
     }
-
 
     /**
      * 테스트 코드에서 사용 (setter)
@@ -89,11 +91,12 @@ public class Member extends StatusEntity {
     public void createEmail(String email) {
         this.email = email;
     }
+
     public void createCheckstatus(String checkStatus) {
         this.checkStatus = checkStatus;
     }
+
     public void createId(Long id) {
         this.id = id;
     }
-
 }

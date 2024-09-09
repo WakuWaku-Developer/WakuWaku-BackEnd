@@ -16,7 +16,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class NaverMemberClientTest {
-
     @Mock
     private NaverApiClient naverApiClient;
 
@@ -36,6 +35,7 @@ class NaverMemberClientTest {
     void testFetch() {
         // 네이버 토큰 테스트 데이터
         NaverToken tokenInfo = new NaverToken("accessToken", "refreshToken", "tokenType", 3600, null, null);
+
         when(naverApiClient.fetchToken(any())).thenReturn(tokenInfo);
 
         // 사용자 정보 테스트데이터
@@ -44,7 +44,9 @@ class NaverMemberClientTest {
                 "male", "30", "1990-01-01", "http://example.com/profile.jpg",
                 "1990", "01012345678"
         );
+
         NaverMemberResponse naverMemberResponse = new NaverMemberResponse("200", "success", response);
+
         when(naverApiClient.fetchMember(any())).thenReturn(naverMemberResponse);
 
         // FRONT에서 넘겨주는 코드를 받아서 사용자 정보를 받아 저장함.

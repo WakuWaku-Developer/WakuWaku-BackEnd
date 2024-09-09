@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthorAttribution {
     String displayName;
+
     String photoUri;
 }

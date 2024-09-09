@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Getter
 public class GoogleOauthConfig{
-
         @Value("${oauth.google.redirect-uri}")
         String redirectUri;
 
@@ -25,6 +24,4 @@ public class GoogleOauthConfig{
 
         @Value("${oauth.google.resource-uri}")
         String resourceUri;
-
-        //state
 }

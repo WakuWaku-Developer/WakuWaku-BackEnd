@@ -10,9 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Photo {
     String name;
+
     int widthPx;
+
     int heightPx;
+
     List<AuthorAttribution> authorAttributions;
+
     String photoUrl;
 
     @Builder

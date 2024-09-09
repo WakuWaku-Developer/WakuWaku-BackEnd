@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class GoogleApiClientImplTest {
-
     @Mock
     private RestTemplate restTemplate;
 
@@ -34,6 +33,7 @@ public class GoogleApiClientImplTest {
     void testFetchToken() {
         // Mock data
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
         params.add("grant_type", "authorization_code");
         params.add("client_id", "mockClientId");
         params.add("client_secret", "mockClientSecret");
@@ -72,10 +72,10 @@ public class GoogleApiClientImplTest {
         // 테스트 데이터
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth("mockAccessToken");
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<GoogleMemberResponse> responseEntity = new ResponseEntity<>(new GoogleMemberResponse("123", "test@example.com", "John", "Doe", "https://example.com/pic.jpg"), HttpStatus.OK);
-
 
         when(restTemplate.exchange(
                 ArgumentMatchers.anyString(),
@@ -86,7 +86,6 @@ public class GoogleApiClientImplTest {
 
         // 엑세스 토큰 값을 통해 사용자 정보 가져옴.
         GoogleMemberResponse response = googleApiClient.fetchMember("mockAccessToken");
-
 
         verify(restTemplate, times(1)).exchange(
                 ArgumentMatchers.anyString(),
@@ -102,5 +101,4 @@ public class GoogleApiClientImplTest {
         assertEquals("Doe", response.getFamily_name());
         assertEquals("https://example.com/pic.jpg", response.getPicture());
     }
-
 }

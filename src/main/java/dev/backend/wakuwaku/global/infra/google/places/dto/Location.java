@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Location {
     double latitude;
+
     double longitude;
 }

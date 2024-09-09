@@ -8,8 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Review {
     String relativePublishTimeDescription;
+
     float rating;
+
     LocalizedText text;
+
     AuthorAttribution authorAttribution;
 
     @Builder

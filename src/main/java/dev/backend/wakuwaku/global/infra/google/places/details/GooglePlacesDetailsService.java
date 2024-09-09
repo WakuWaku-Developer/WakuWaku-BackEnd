@@ -32,9 +32,9 @@ public class GooglePlacesDetailsService {
         }
 
         Places detailsResponse = restClient.get()
-                .uri(getDetailsUrl(placeId))
-                .retrieve()
-                .body(Places.class);
+                                           .uri(getDetailsUrl(placeId))
+                                           .retrieve()
+                                           .body(Places.class);
 
         return getDetailsResponse(detailsResponse);
     }

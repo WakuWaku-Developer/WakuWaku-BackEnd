@@ -20,11 +20,11 @@ public class MemberService {
 
     protected void validateDuplicateMember(Member member) {
         memberRepository.findByEmail(member.getEmail())
-                .ifPresent(m -> {
-                    if (!m.getCheckStatus().equals("N")) {
-                        throw DUPLICATED_EMAIL;
-                    }
-                });
+                        .ifPresent(m -> {
+                            if (!m.getCheckStatus().equals("N")) {
+                                throw DUPLICATED_EMAIL;
+                            }
+                        });
     }
 
     /*
@@ -39,9 +39,9 @@ public class MemberService {
      */
     public Member findById(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(
-                        () -> NONE_USER
-                );
+                               .orElseThrow(
+                                       () -> NONE_USER
+                               );
     }
 
     /*
@@ -49,7 +49,7 @@ public class MemberService {
      */
     public Long update(Long id, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> NONE_USER); // 예외 처리 추가
+                                        .orElseThrow(() -> NONE_USER); // 예외 처리 추가
 
         member.updateNickname(memberUpdateRequest.getNickname());
         member.updateProfileImageUrl(memberUpdateRequest.getProfileImageUrl());
@@ -60,14 +60,15 @@ public class MemberService {
         return member.getId();
     }
 
-
     /*
     회원 탈퇴
      */
     public void deactivateById(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(() -> NONE_USER);
+
         // checkStatus : Y -> N
         member.deactivate();
+
         memberRepository.save(member);
     }
 }

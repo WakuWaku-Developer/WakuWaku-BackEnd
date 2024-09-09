@@ -19,10 +19,10 @@ public class GooglePlacesPhotoService {
 
     public String getActualPhotoUrl(Photo photo, String apiKey) {
         PhotoResponse photoResult = restClient.get()
-                .uri(getPhotoUrl(photo, apiKey))
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .body(PhotoResponse.class);
+                                              .uri(getPhotoUrl(photo, apiKey))
+                                              .accept(MediaType.APPLICATION_JSON)
+                                              .retrieve()
+                                              .body(PhotoResponse.class);
 
         if (photoResult == null || photoResult.getPhotoUri() == null || photoResult.getPhotoUri().isEmpty() || photoResult.getPhotoUri().isBlank()) {
             throw NONE_PHOTO_URL;

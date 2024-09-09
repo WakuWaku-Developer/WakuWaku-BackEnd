@@ -13,17 +13,21 @@ import static dev.backend.wakuwaku.domain.oauth.dto.OauthServerType.GOOGLE;
 @NoArgsConstructor
 public class GoogleMemberResponse {
     String id;
+
     String email;
+
     String given_name;
+
     String family_name;
+
     String picture;
 
     public OauthMember toDomain() {
         return OauthMember.builder()
-                .oauthId(new OauthId(String.valueOf(id), GOOGLE))
-                .email(email)
-                .nickname(given_name + " " + family_name)
-                .profileImageUrl(picture)
-                .build();
+                          .oauthId(new OauthId(String.valueOf(id), GOOGLE))
+                          .email(email)
+                          .nickname(given_name + " " + family_name)
+                          .profileImageUrl(picture)
+                          .build();
     }
 }
