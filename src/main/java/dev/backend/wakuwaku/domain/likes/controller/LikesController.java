@@ -1,6 +1,7 @@
 package dev.backend.wakuwaku.domain.likes.controller;
 
-import dev.backend.wakuwaku.domain.likes.dto.request.LikesRequest;
+import dev.backend.wakuwaku.domain.likes.dto.request.PushLikesRequest;
+import dev.backend.wakuwaku.domain.likes.dto.response.AllLikesResponse;
 import dev.backend.wakuwaku.domain.likes.dto.response.LikesResponse;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
@@ -24,19 +25,18 @@ public class LikesController {
     }
 
     @PostMapping("/push")
-    public BaseResponse<LikesResponse> pushLikes(@RequestBody LikesRequest likesRequest) {
-        Likes likes = likesService.addLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
+    public BaseResponse<LikesResponse> pushLikes(@RequestBody PushLikesRequest pushLikesRequest) {
+        Likes likes = likesService.addLikes(pushLikesRequest.getMemberId(), pushLikesRequest.getRestaurantInfo());
 
-        LikesResponse response = new LikesResponse(likes);
-
-        return new BaseResponse<>(response);
+        return new BaseResponse<>(new LikesResponse(likes));
     }
 
 
 
-    @DeleteMapping("/delete")
-    public BaseResponse<Void> deleteLike(@RequestBody LikesRequest likesRequest) {
-        likesService.deleteLikes(likesRequest.getMemberId(), likesRequest.getRestaurantId());
+    @DeleteMapping("/delete/{likesId}")
+    public BaseResponse<Void> deleteLike(@PathVariable("likesId") Long likesId) {
+        likesService.deleteLikes(likesId);
+
         return new BaseResponse<>();
     }
 }
