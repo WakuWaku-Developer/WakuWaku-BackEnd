@@ -73,18 +73,6 @@ public class LikesService {
     }
 
     /**
-     * 찜 삭제
-     * @param likesId
-     * @return
-     */
-    public void deleteLikes(Long likesId) {
-        Likes likes = likesRepository.findById(likesId)
-                                     .orElseThrow(() -> LIKE_NOT_FOUND_EXCEPTION);  // 찜이 없으면 예외 발생
-
-        likes.updateLikeStatus(LikesStatusType.N);  // 찜 상태를 "N"으로 변경
-    }
-
-    /**
      * 새로운 찜 (식당/멤버) 데이터 생성
      * @param memberId
      * @param restaurant
@@ -104,6 +92,18 @@ public class LikesService {
         likesRepository.save(newLikes);
 
         return newLikes;
+    }
+
+    /**
+     * 찜 삭제
+     * @param likesId
+     * @return
+     */
+    public void deleteLikes(Long likesId) {
+        Likes likes = likesRepository.findById(likesId)
+                                     .orElseThrow(() -> LIKE_NOT_FOUND_EXCEPTION);  // 찜이 없으면 예외 발생
+
+        likes.updateLikeStatus(LikesStatusType.N);  // 찜 상태를 "N"으로 변경
     }
 
     public List<String> getLikedRestaurantPlaceIds(Member member) {
