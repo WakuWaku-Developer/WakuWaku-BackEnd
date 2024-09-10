@@ -14,10 +14,21 @@ import java.util.Optional;
 @Repository
 public interface LikesRepository extends JpaRepository<Likes, Long> {
 
-    @Query("SELECT l FROM Likes l WHERE l.member.id = :memberId AND l.restaurant.id = :restaurantId")
+    @Query("SELECT l " +
+            "FROM Likes l " +
+            "WHERE l.member.id = :memberId " +
+            "AND l.restaurant.id = :restaurantId")
     Optional<Likes> findByMemberIdAndRestaurantId(@Param("memberId") Long memberId, @Param("restaurantId") Long restaurantId);
 
-    List<Likes> findAllByMemberId(Long memberId);
+    @Query("select l " +
+            "from Likes l " +
+            "where l.likesStatus = 'Y' " +
+            "and l.member.id = :memberId")
+    List<Likes> findAllByMemberId(@Param("memberId") Long memberId);
 
-    Page<Likes> findAllByMemberId(Long memberId, Pageable pageable);
+    @Query("select l " +
+            "from Likes l " +
+            "where l.likesStatus = 'Y' " +
+            "and l.member.id = :memberId")
+    Page<Likes> findAllByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 }
