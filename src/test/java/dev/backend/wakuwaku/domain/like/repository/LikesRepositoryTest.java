@@ -150,6 +150,11 @@ class LikesRepositoryTest {
         Likes likes3 = likesRepository.save(createLikes(member, restaurant3));
         Likes likes4 = likesRepository.save(createLikes(member, restaurant4));
 
+        Restaurant restaurant99 = restaurantRepository.save(createRestaurant(99));
+
+        Likes likes99 = likesRepository.save(createLikes(member, restaurant99));
+        likes99.updateLikeStatus(LikesStatusType.N);
+
         // when
         List<Likes> likes = likesRepository.findAllByMemberId(member.getId());
 
@@ -159,7 +164,8 @@ class LikesRepositoryTest {
                                .contains(likes1)
                                .contains(likes2)
                                .contains(likes3)
-                               .contains(likes4);
+                               .contains(likes4)
+                               .isNotIn(likes99);
     }
 
     @DisplayName("MemberId에 해당하는 찜 목록 중 요청 페이지만 반환")
@@ -177,34 +183,42 @@ class LikesRepositoryTest {
             likesList.add(likes);
         }
 
+        Restaurant restaurant = restaurantRepository.save(createRestaurant(99));
+
+        Likes likes = likesRepository.save(createLikes(member, restaurant));
+        likes.updateLikeStatus(LikesStatusType.N);
+
         Pageable pageable = PageRequest.of(1, 10);
 
         // when
         Page<Likes> likesPage = likesRepository.findAllByMemberId(member.getId(), pageable);
 
         // then
-        assertThat(likesPage).isNotEmpty()
-                                   .hasSize(10)
-                                   .contains(likesList.get(10))
-                                   .contains(likesList.get(11))
-                                   .contains(likesList.get(12))
-                                   .contains(likesList.get(13))
-                                   .contains(likesList.get(14))
-                                   .contains(likesList.get(15))
-                                   .contains(likesList.get(16))
-                                   .contains(likesList.get(17))
-                                   .contains(likesList.get(18))
-                                   .contains(likesList.get(19))
-                                   .isNotIn(likesList.get(0))
-                                   .isNotIn(likesList.get(1))
-                                   .isNotIn(likesList.get(2))
-                                   .isNotIn(likesList.get(3))
-                                   .isNotIn(likesList.get(4))
-                                   .isNotIn(likesList.get(5))
-                                   .isNotIn(likesList.get(6))
-                                   .isNotIn(likesList.get(7))
-                                   .isNotIn(likesList.get(8))
-                                   .isNotIn(likesList.get(9));
+        assertThat(likesPage.getTotalElements()).isEqualTo(20);
+
+        assertThat(likesPage.getContent()).isNotEmpty()
+                                                .hasSize(10)
+                                                .contains(likesList.get(10))
+                                                .contains(likesList.get(11))
+                                                .contains(likesList.get(12))
+                                                .contains(likesList.get(13))
+                                                .contains(likesList.get(14))
+                                                .contains(likesList.get(15))
+                                                .contains(likesList.get(16))
+                                                .contains(likesList.get(17))
+                                                .contains(likesList.get(18))
+                                                .contains(likesList.get(19))
+                                                .isNotIn(likesList.get(0))
+                                                .isNotIn(likesList.get(1))
+                                                .isNotIn(likesList.get(2))
+                                                .isNotIn(likesList.get(3))
+                                                .isNotIn(likesList.get(4))
+                                                .isNotIn(likesList.get(5))
+                                                .isNotIn(likesList.get(6))
+                                                .isNotIn(likesList.get(7))
+                                                .isNotIn(likesList.get(8))
+                                                .isNotIn(likesList.get(9))
+                                                .isNotIn(likes);
     }
 
     private Member createMember(int number) {
