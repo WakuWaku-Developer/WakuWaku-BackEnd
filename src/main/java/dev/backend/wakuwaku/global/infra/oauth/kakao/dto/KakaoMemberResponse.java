@@ -15,14 +15,13 @@ public record KakaoMemberResponse(
         LocalDateTime connectedAt,
         KakaoAccount kakaoAccount
 ) {
-
     public OauthMember toDomain() {
         return OauthMember.builder()
-                .oauthId(new OauthId(String.valueOf(id), KAKAO))
-                .nickname(kakaoAccount.profile.nickname)
-                .profileImageUrl(kakaoAccount.profile.profileImageUrl)
-                .email(kakaoAccount().email)
-                .build();
+                          .oauthId(new OauthId(String.valueOf(id), KAKAO))
+                          .nickname(kakaoAccount.profile.nickname)
+                          .profileImageUrl(kakaoAccount.profile.profileImageUrl)
+                          .email(kakaoAccount().email)
+                          .build();
     }
 
     @JsonNaming(SnakeCaseStrategy.class)

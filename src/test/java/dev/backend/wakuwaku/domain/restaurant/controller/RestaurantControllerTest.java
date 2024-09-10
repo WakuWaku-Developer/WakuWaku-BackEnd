@@ -65,10 +65,10 @@ class RestaurantControllerTest {
     void setUp (final WebApplicationContext context,
                final RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
-                .alwaysDo(MockMvcResultHandlers.print())
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
-                .build();
+                                      .apply(documentationConfiguration(restDocumentation))
+                                      .alwaysDo(MockMvcResultHandlers.print())
+                                      .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                                      .build();
 
         dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName name = new dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName(NAME);
 
@@ -101,29 +101,29 @@ class RestaurantControllerTest {
         reviews.add(review);
 
         places = Places.builder()
-                .id(PLACE_ID)
-                .displayName(name)
-                .rating(4.1)
-                .location(location)
-                .currentOpeningHours(currentOpeningHours)
-                .photos(photos)
-                .dineIn(true)
-                .takeout(false)
-                .delivery(false)
-                .editorialSummary(editorialSummary)
-                .reviews(reviews)
-                .nationalPhoneNumber(null)
-                .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
-                .websiteUri("http://www.udonshin.com/")
-                .userRatingCount(3965)
-                .reservable(true)
-                .servesBreakfast(false)
-                .servesLunch(true)
-                .servesDinner(true)
-                .servesBeer(true)
-                .servesWine(false)
-                .servesVegetarianFood(false)
-                .build();
+                       .id(PLACE_ID)
+                       .displayName(name)
+                       .rating(4.1)
+                       .location(location)
+                       .currentOpeningHours(currentOpeningHours)
+                       .photos(photos)
+                       .dineIn(true)
+                       .takeout(false)
+                       .delivery(false)
+                       .editorialSummary(editorialSummary)
+                       .reviews(reviews)
+                       .nationalPhoneNumber(null)
+                       .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
+                       .websiteUri("http://www.udonshin.com/")
+                       .userRatingCount(3965)
+                       .reservable(true)
+                       .servesBreakfast(false)
+                       .servesLunch(true)
+                       .servesDinner(true)
+                       .servesBeer(true)
+                       .servesWine(false)
+                       .servesVegetarianFood(false)
+                       .build();
     }
 
     @Test
@@ -153,9 +153,9 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("data.simpleInfoRestaurants[*].photoUrl").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get simple info",
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Get Simple Info")
-                                .summary("Get Simple Info By Search Word")
-                                .description("응답(simpleInfoRestaurants[]의 size) 개수가 최대 10개까지 가능함.")
+                                .tag("Restaurant")
+                                .summary("검색어로 Google Places API 호출하여 식당 조회")
+                                .description("응답(simpleInfoRestaurants[]의 size) 개수가 최대 10개까지 가능")
                                 .queryParameters(
                                         parameterWithName("search").description("검색어 (장소명 혹은 지역명만 입력) (예시: 도쿄, 후쿠오카, 나가사키)"),
                                         parameterWithName("page").type(SimpleType.INTEGER).description("페이지 번호").defaultValue(1).optional()
@@ -213,8 +213,8 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("data.weekdayText").exists())
                 .andDo(MockMvcRestDocumentationWrapper.document("get details info",
                         resource(ResourceSnippetParameters.builder()
-                                    .tag("Get Details Info")
-                                    .description("Get Details Info By PlaceId")
+                                    .tag("Restaurant")
+                                    .description("식당의 PlaceId로 해당 식당의 자세한 정보 조회")
                                     .pathParameters(
                                     parameterWithName("placeId").description("Details Info를 얻고 싶은 식당의 Place Id")
                                     )

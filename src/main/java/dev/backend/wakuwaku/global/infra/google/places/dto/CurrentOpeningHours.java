@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CurrentOpeningHours {
     boolean openNow;
+
     List<String> weekdayDescriptions;
 }

@@ -58,7 +58,8 @@ class GooglePlacesTextSearchServiceTest {
         given(googlePlacesPhotoService.getActualPhotoUrl(any(Photo.class), eq(apiKey))).willReturn(testPhotoUrl);
 
         // Mocking the first page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -66,7 +67,8 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(firstPageResponse, MediaType.APPLICATION_JSON));
 
         // Mocking the next page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -100,7 +102,8 @@ class GooglePlacesTextSearchServiceTest {
         Gson gson = new Gson();
         String content = gson.toJson(textSearchResponse);
 
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -126,7 +129,8 @@ class GooglePlacesTextSearchServiceTest {
 
         given(googlePlacesPhotoService.getActualPhotoUrl(any(Photo.class), eq(apiKey))).willReturn(testPhotoUrl);
 
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -168,7 +172,8 @@ class GooglePlacesTextSearchServiceTest {
         given(googlePlacesPhotoService.getActualPhotoUrl(any(Photo.class), eq(apiKey))).willReturn(testPhotoUrl);
 
         // Mocking the first page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -176,7 +181,8 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(firstPageResponse, MediaType.APPLICATION_JSON));
 
         // Mocking the next page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -184,7 +190,8 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(nextPageResponse, MediaType.APPLICATION_JSON));
 
         // Mocking the retry next page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -192,7 +199,8 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(retryNextPageResponse, MediaType.APPLICATION_JSON));
 
         // Mocking the retry next page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -229,7 +237,8 @@ class GooglePlacesTextSearchServiceTest {
         given(googlePlacesPhotoService.getActualPhotoUrl(any(Photo.class), eq(apiKey))).willReturn(testPhotoUrl);
 
         // Mocking the first page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -237,7 +246,8 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(firstPageResponse, MediaType.APPLICATION_JSON));
 
         // Mocking the next page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -274,7 +284,8 @@ class GooglePlacesTextSearchServiceTest {
         given(googlePlacesPhotoService.getActualPhotoUrl(any(Photo.class), eq(apiKey))).willReturn(testPhotoUrl);
 
         // Mocking the first page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))
@@ -282,7 +293,8 @@ class GooglePlacesTextSearchServiceTest {
                 .andRespond(withSuccess(firstPageResponse, MediaType.APPLICATION_JSON));
 
         // Mocking the next page request
-        mockServer.expect(requestTo(TEXT_SEARCH_URL))
+        mockServer.expect(requestTo(TEXT_SEARCH_URL)
+                )
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS))
                 .andExpect(header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey))

@@ -56,8 +56,8 @@ public class DetailsInfoRestaurantResponse {
         this.name = places.getDisplayName().getText();
         this.editorialSummary = places.getEditorialSummary().getText();
         this.photos = places.getPhotos().stream()
-                .map(Photo::getPhotoUrl)
-                .toList();
+                                        .map(Photo::getPhotoUrl)
+                                        .toList();
         this.dineIn = places.isDineIn();
         this.delivery = places.isDelivery();
         this.takeout = places.isTakeout();
@@ -74,8 +74,8 @@ public class DetailsInfoRestaurantResponse {
         this.userRatingsTotal = places.getUserRatingCount();
         this.rating = places.getRating();
         this.reviews = places.getReviews().stream()
-                .map(ReviewResponse::new)
-                .toList();
+                                          .map(ReviewResponse::new)
+                                          .toList();
         this.openNow = places.getCurrentOpeningHours().isOpenNow();
         this.weekdayText = places.getCurrentOpeningHours().getWeekdayDescriptions();
     }

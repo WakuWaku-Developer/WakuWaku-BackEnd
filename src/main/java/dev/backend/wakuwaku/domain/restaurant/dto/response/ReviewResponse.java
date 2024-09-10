@@ -8,9 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewResponse {
     private String relativePublishTimeDescription;
+
     private float rating;
+
     private String text;
+
     private String authorName;
+
     private String authorProfileUrl;
 
     public ReviewResponse(Review review) {

@@ -41,31 +41,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest {
-
     @MockBean
     private MemberService memberService;
+
     @Autowired
     private MockMvc mockMvc;
+
     private static final String BASE_URL = "/wakuwaku/v1/members";
+
     private Member member;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
-                .alwaysDo(MockMvcResultHandlers.print())
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
-                .build();
+                                      .apply(documentationConfiguration(restDocumentation))
+                                      .alwaysDo(MockMvcResultHandlers.print())
+                                      .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                                      .build();
 
         member = Member.builder()
-                .oauthServerId("oauth-id")
-                .oauthServerType(OauthServerType.GOOGLE)
-                .email("test@example.com")
-                .birthday("1990-01-01")
-                .nickname("nickname")
-                .profileImageUrl("http://example.com/profile.jpg")
-                .role(Role.USER)
-                .build();
+                       .oauthServerId("oauth-id")
+                       .oauthServerType(OauthServerType.GOOGLE)
+                       .email("test@example.com")
+                       .birthday("1990-01-01")
+                       .nickname("nickname")
+                       .profileImageUrl("http://example.com/profile.jpg")
+                       .role(Role.USER)
+                       .build();
     }
 
     @Test
@@ -75,31 +77,33 @@ class MemberControllerTest {
         given(memberService.findById(1L)).willReturn(member);
 
         // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
-                .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
-                .andExpect(jsonPath("$.data.email").value(member.getEmail()))
-                .andExpect(jsonPath("$.data.nickname").value(member.getNickname()))
-                .andDo(MockMvcRestDocumentationWrapper.document("get-member-by-id",
-                        resource(ResourceSnippetParameters.builder()
-                                .tag("Member")
-                                .description("회원 ID로 회원 정보를 조회합니다.")
-                                .pathParameters(parameterWithName("id").description("회원 ID"))
-                                .responseFields(
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("회원 이메일"),
-                                        fieldWithPath("data.oauthServerId").type(JsonFieldType.STRING).description("OAuth 서버 ID"),
-                                        fieldWithPath("data.oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입"),
-                                        fieldWithPath("data.birthday").type(JsonFieldType.STRING).description("회원 생일"),
-                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
-                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
-                                        fieldWithPath("data.role").type(JsonFieldType.STRING).description("회원 역할")
-                                )
-                                .build()
-                        )
-                ));
+        mockMvc.perform(RestDocumentationRequestBuilders
+                        .get(BASE_URL + "/{id}", 1L)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
+                    .andExpect(jsonPath("$.data.email").value(member.getEmail()))
+                    .andExpect(jsonPath("$.data.nickname").value(member.getNickname()))
+                    .andDo(MockMvcRestDocumentationWrapper.document("get-member-by-id",
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Member")
+                                    .description("회원 ID로 회원 정보를 조회합니다.")
+                                    .pathParameters(parameterWithName("id").description("회원 ID"))
+                                    .responseFields(
+                                            fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                            fieldWithPath("data.oauthServerId").type(JsonFieldType.STRING).description("OAuth 서버 ID"),
+                                            fieldWithPath("data.oauthServerType").type(JsonFieldType.STRING).description("OAuth 서버 타입"),
+                                            fieldWithPath("data.birthday").type(JsonFieldType.STRING).description("회원 생일"),
+                                            fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("회원 프로필 이미지 URL"),
+                                            fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                            fieldWithPath("data.role").type(JsonFieldType.STRING).description("회원 역할")
+                                    )
+                                    .build()
+                            )
+                    ));
 
         then(memberService).should().findById(1L);
     }
@@ -109,12 +113,15 @@ class MemberControllerTest {
     void update() throws Exception {
         // given
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "http://example.com/new-profile.jpg", "1991-01-01");
+
         given(memberService.update(ArgumentMatchers.eq(1L), ArgumentMatchers.any(MemberUpdateRequest.class))).willReturn(1L);
 
         // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(BASE_URL + "/{id}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders
+                        .put(BASE_URL + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"nickname\": \"newNickname\", \"profileImageUrl\": \"http://example.com/new-profile.jpg\", \"birthday\": \"1991-01-01\" }"))
+                        .content("{ \"nickname\": \"newNickname\", \"profileImageUrl\": \"http://example.com/new-profile.jpg\", \"birthday\": \"1991-01-01\" }")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
@@ -147,7 +154,9 @@ class MemberControllerTest {
         Long memberId = 1L;
 
         // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/{id}", memberId))
+        mockMvc.perform(RestDocumentationRequestBuilders
+                        .delete(BASE_URL + "/{id}", memberId)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가
@@ -169,10 +178,13 @@ class MemberControllerTest {
         // given
         List<Member> members = new ArrayList<>();
         members.add(member);
+
         given(memberService.findAll()).willReturn(members);
 
         // when & then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/list"))
+        mockMvc.perform(RestDocumentationRequestBuilders
+                        .get(BASE_URL + "/list")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1000))  // 응답 코드 추가
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))  // 응답 메시지 추가

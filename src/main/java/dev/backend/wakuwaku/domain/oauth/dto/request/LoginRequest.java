@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginRequest {
     private OauthServerType oauthServerType;
+
     private String code;
 
     public OauthServerType getOauthServerType() {
@@ -17,6 +18,7 @@ public class LoginRequest {
     public void createOauthServerType(OauthServerType oauthServerType) {
         this.oauthServerType = oauthServerType;
     }
+
     public void createCode(String code) {
         this.code = code;
     }

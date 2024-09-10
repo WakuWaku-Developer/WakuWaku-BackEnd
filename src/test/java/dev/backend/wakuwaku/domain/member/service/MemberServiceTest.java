@@ -26,7 +26,6 @@ import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
-
     @Mock
     private MemberRepository memberRepository;
 
@@ -38,11 +37,11 @@ class MemberServiceTest {
     @BeforeEach
     void setUp() {
         member = Member.builder()
-                .email("test@example.com")
-                .nickname("testUser")
-                .profileImageUrl("https://example.com/profile.jpg")
-                .birthday("1990-01-01")
-                .build();
+                       .email("test@example.com")
+                       .nickname("testUser")
+                       .profileImageUrl("https://example.com/profile.jpg")
+                       .birthday("1990-01-01")
+                       .build();
     }
 
     @Test
@@ -50,8 +49,11 @@ class MemberServiceTest {
     void validateDuplicateMember_DuplicateEmail() {
         // given
         String email = "test@example.com";
+
         Member existingMember = new Member();
-        existingMember.updateCheckstatus("Y"); // "Y"로 설정하여 중복 상황
+
+        existingMember.updateCheckStatus("Y"); // "Y"로 설정하여 중복 상황
+
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
         // when & then
@@ -69,6 +71,7 @@ class MemberServiceTest {
     void validateDuplicateMember_NonDuplicateEmail() {
         // given
         String email = "test@example.com";
+
         given(memberRepository.findByEmail(email)).willReturn(Optional.empty()); // 중복 이메일이 없다고 설정
 
         // when & then
@@ -98,6 +101,7 @@ class MemberServiceTest {
     void findById() {
         // given
         member.createId(1L);
+
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
         // when
@@ -119,6 +123,7 @@ class MemberServiceTest {
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
                 .isEqualTo(ExceptionStatus.NONE_USER);
+
         then(memberRepository).should().findById(1L);
     }
 
@@ -129,14 +134,15 @@ class MemberServiceTest {
         MemberUpdateRequest updateRequest = new MemberUpdateRequest("newNickname", "newProfileUrl", "1991-01-01");
 
         member.createId(1L);
+
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
         // Configure save method to update the member and return it
         given(memberRepository.save(any(Member.class)))
-                .willAnswer(invocation -> {
-                    Member updatedMember = invocation.getArgument(0);
-                    return updatedMember;
-                });
+                                        .willAnswer(invocation -> {
+                                            Member updatedMember = invocation.getArgument(0);
+                                            return updatedMember;
+                                        });
 
         // when
         Long updatedMemberId = memberService.update(1L, updateRequest);
@@ -173,7 +179,7 @@ class MemberServiceTest {
         Long memberId = 1L;
         Member member = new Member();
         member.createId(memberId);
-        member.updateCheckstatus("Y");
+        member.updateCheckStatus("Y");
 
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 

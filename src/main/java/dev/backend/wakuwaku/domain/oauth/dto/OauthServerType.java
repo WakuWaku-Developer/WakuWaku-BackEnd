@@ -8,12 +8,9 @@ import static java.util.Locale.ENGLISH;
  * "kakao"를 통해 OauthServerType.KAKAO를 찾아오기 위해 fromName() 이라는 메서드를 구현
  */
 public enum OauthServerType {
-
     KAKAO,
     NAVER,
-
-    GOOGLE,
-    ;
+    GOOGLE;
 
     public static OauthServerType fromName(String type) {
         return OauthServerType.valueOf(type.toUpperCase(ENGLISH));

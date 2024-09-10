@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OAuthLoginResponse {
     private Long id;
+
     private List<String> likedRestaurantPlaceIds = new ArrayList<>();
 
     @Builder

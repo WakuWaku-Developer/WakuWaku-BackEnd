@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -43,5 +44,20 @@ public class Restaurant extends BaseEntity {
 
         this.userRatingsTotal = places.getUserRatingCount();
         this.rating = places.getRating();
+    }
+
+    @Builder
+    public Restaurant(String placeId, String name, double lat, double lng, String photo, int userRatingsTotal, double rating) {
+        this.placeId = placeId;
+        this.name = name;
+        this.lat = lat;
+        this.lng = lng;
+
+        if (photo != null && !photo.isBlank() && !photo.isEmpty()) {
+            this.photo = photo;
+        }
+
+        this.userRatingsTotal = userRatingsTotal;
+        this.rating = rating;
     }
 }

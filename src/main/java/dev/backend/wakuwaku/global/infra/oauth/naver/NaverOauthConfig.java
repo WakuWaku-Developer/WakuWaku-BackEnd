@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Getter
 public class NaverOauthConfig{
-
         @Value("${oauth.naver.redirect_uri}")
         String redirectUri;
 
@@ -19,5 +18,4 @@ public class NaverOauthConfig{
         String clientSecret;
         @Value("${oauth.naver.scope}")
         String[] scope;
-        // state
 }

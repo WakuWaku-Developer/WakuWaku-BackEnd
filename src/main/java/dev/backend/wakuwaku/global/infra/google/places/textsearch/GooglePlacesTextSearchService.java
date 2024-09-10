@@ -35,13 +35,13 @@ public class GooglePlacesTextSearchService {
 
     public List<Places> getRestaurantsByTextSearch(String searchWord, int cnt) {
         TextSearchResponse textSearchResponse = restClient.post()
-                .uri(TEXT_SEARCH_URL)
-                .header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS)
-                .header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(getTextSearchRequestBody(searchWord))
-                .retrieve()
-                .body(TextSearchResponse.class);
+                                                          .uri(TEXT_SEARCH_URL)
+                                                          .header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS)
+                                                          .header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey)
+                                                          .contentType(MediaType.APPLICATION_JSON)
+                                                          .body(getTextSearchRequestBody(searchWord))
+                                                          .retrieve()
+                                                          .body(TextSearchResponse.class);
 
         cnt += 1;
 
@@ -56,13 +56,13 @@ public class GooglePlacesTextSearchService {
         }
 
         return restClient.post()
-                .uri(TEXT_SEARCH_URL)
-                .header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS)
-                .header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(getNextPageRequestBody(searchWord, pageToken))
-                .retrieve()
-                .body(TextSearchResponse.class);
+                         .uri(TEXT_SEARCH_URL)
+                         .header(TEXT_SEARCH_RESPONSE_FIELDS_HEADER, TEXT_SEARCH_RESPONSE_FIELDS)
+                         .header(TEXT_SEARCH_REQUEST_API_KEY_HEADER, apiKey)
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .body(getNextPageRequestBody(searchWord, pageToken))
+                         .retrieve()
+                         .body(TextSearchResponse.class);
     }
 
     private List<Places> getPlaces(TextSearchResponse textSearchResponse, String searchWord, int cnt) {

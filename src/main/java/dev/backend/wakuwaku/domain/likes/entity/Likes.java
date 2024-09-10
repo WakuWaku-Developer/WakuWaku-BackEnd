@@ -21,13 +21,13 @@ public class Likes extends StatusEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @Column
+    @Enumerated(value = EnumType.STRING)
     private LikesStatusType likesStatus;
-
 
     @Builder
     public Likes(Member member, Restaurant restaurant, LikesStatusType likesStatus) {
@@ -38,10 +38,5 @@ public class Likes extends StatusEntity {
 
     public void updateLikeStatus(LikesStatusType likesStatus){
         this.likesStatus = likesStatus;
-    }
-
-
-    public void createId(Long id){
-        this.id = id;
     }
 }

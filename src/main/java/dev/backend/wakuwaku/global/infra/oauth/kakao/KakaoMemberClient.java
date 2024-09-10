@@ -19,15 +19,14 @@ import org.springframework.util.MultiValueMap;
 @Component
 @RequiredArgsConstructor
 public class KakaoMemberClient implements OauthMemberClient {
-
     private final KakaoApiClient kakaoApiClient;
+
     private final KakaoOauthConfig kakaoOauthConfig;
 
     @Override
     public OauthServerType supportServer() {
         return OauthServerType.KAKAO;
     }
-
 
     /**
      (1) - 먼저 Auth Code를 통해서 AccessToken을 조회
@@ -38,16 +37,19 @@ public class KakaoMemberClient implements OauthMemberClient {
     public OauthMember fetch(String authCode) {
         KakaoToken tokenInfo = kakaoApiClient.fetchToken(tokenRequestParams(authCode)); // (1)
         KakaoMemberResponse kakaoMemberResponse = kakaoApiClient.fetchMember("Bearer " + tokenInfo.accessToken());  // (2)
+
         return kakaoMemberResponse.toDomain();  // (3)
     }
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoOauthConfig.getClientId());
         params.add("redirect_uri", kakaoOauthConfig.getRedirectUri());
         params.add("code", authCode);
         params.add("client_secret", kakaoOauthConfig.getClientSecret());
+
         return params;
     }
 }

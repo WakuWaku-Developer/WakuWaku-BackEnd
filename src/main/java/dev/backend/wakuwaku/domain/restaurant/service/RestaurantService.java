@@ -23,23 +23,26 @@ import static dev.backend.wakuwaku.global.exception.WakuWakuException.INVALID_SE
 @Transactional
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
+
     private final GooglePlacesTextSearchService googlePlacesTextSearchService;
+
     private final GooglePlacesDetailsService googlePlacesDetailsService;
+
     private final RedisService redisService;
 
     public Restaurant save(Restaurant restaurant) {
         return restaurantRepository.findByPlaceId(restaurant.getPlaceId())
-                .orElseGet(
-                        () -> restaurantRepository.save(restaurant)
-                );
+                                                            .orElseGet(
+                                                                    () -> restaurantRepository.save(restaurant)
+                                                            );
     }
 
     @Transactional(readOnly = true)
     public Restaurant findById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
-                .orElseThrow(
-                        () -> INVALID_PARAMETER
-                );
+                                   .orElseThrow(
+                                           () -> INVALID_PARAMETER
+                                   );
     }
 
     public Restaurants getSimpleRestaurants(String searchWord, int page) {
@@ -60,8 +63,8 @@ public class RestaurantService {
         }
 
         List<Restaurant> restaurants = places.stream()
-                .map(Restaurant::new)
-                .toList();
+                                             .map(Restaurant::new)
+                                             .toList();
 
         return new Restaurants(restaurants, getTotalPage(searchWord));
     }

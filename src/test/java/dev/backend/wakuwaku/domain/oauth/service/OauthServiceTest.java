@@ -35,9 +35,13 @@ class OauthServiceTest {
     private OauthService oauthService;
 
     private static final String AUTH_CODE = "test_auth_code";
+
     private static final String EMAIL = "test@example.com";
+
     private static final String NICKNAME = "TestUser";
+
     private static final String PROFILE_IMAGE_URL = "https://example.com/profile.jpg";
+
     private static final String BIRTHDAY = "1990-01-01";
 
     @Test
@@ -51,13 +55,13 @@ class OauthServiceTest {
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
 
         Member newMember = Member.builder()
-                .oauthServerId(oauthId.getOauthServerId())
-                .oauthServerType(oauthId.getOauthServerType())
-                .email(EMAIL)
-                .birthday(BIRTHDAY)
-                .nickname(NICKNAME)
-                .profileImageUrl(PROFILE_IMAGE_URL)
-                .build();
+                                 .oauthServerId(oauthId.getOauthServerId())
+                                 .oauthServerType(oauthId.getOauthServerType())
+                                 .email(EMAIL)
+                                 .birthday(BIRTHDAY)
+                                 .nickname(NICKNAME)
+                                 .profileImageUrl(PROFILE_IMAGE_URL)
+                                 .build();
 
         given(oauthMemberClientComposite.fetch(oauthServerType, AUTH_CODE)).willReturn(oauthMember);
         given(memberRepository.findByEmail(EMAIL)).willReturn(Optional.empty());
@@ -92,11 +96,11 @@ class OauthServiceTest {
         OauthMember oauthMember = new OauthMember(oauthId, NICKNAME, PROFILE_IMAGE_URL, EMAIL, BIRTHDAY);
 
         Member existingMember = Member.builder()
-                .email(EMAIL)
-                .nickname(NICKNAME)
-                .profileImageUrl(PROFILE_IMAGE_URL)
-                .birthday(BIRTHDAY)
-                .build();
+                                      .email(EMAIL)
+                                      .nickname(NICKNAME)
+                                      .profileImageUrl(PROFILE_IMAGE_URL)
+                                      .birthday(BIRTHDAY)
+                                      .build();
 
         existingMember.createId(1L);
         existingMember.createCheckstatus("N");

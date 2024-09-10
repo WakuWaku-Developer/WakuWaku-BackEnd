@@ -40,8 +40,8 @@ class GooglePlacesPhotoServiceTest {
     @BeforeEach
     void setUp() {
         photo = Photo.builder()
-                .name(PHOTO_REFERENCE_NAME)
-                .build();
+                     .name(PHOTO_REFERENCE_NAME)
+                     .build();
     }
 
     @Test
@@ -55,7 +55,8 @@ class GooglePlacesPhotoServiceTest {
         Gson gson = new Gson();
         String photoResponseToJson = gson.toJson(photoResponse);
 
-        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey)))
+        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey))
+                )
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(photoResponseToJson, MediaType.APPLICATION_JSON));
 
@@ -76,7 +77,8 @@ class GooglePlacesPhotoServiceTest {
 
         String photoResponseToJson = gson.toJson((Object) null);
 
-        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey)))
+        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey))
+                )
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(photoResponseToJson, MediaType.APPLICATION_JSON));
 
@@ -101,7 +103,8 @@ class GooglePlacesPhotoServiceTest {
 
         String photoResponseToJson = gson.toJson(photoResponse);
 
-        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey)))
+        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey))
+                )
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(photoResponseToJson, MediaType.APPLICATION_JSON));
 
@@ -126,7 +129,8 @@ class GooglePlacesPhotoServiceTest {
 
         String photoResponseToJson = gson.toJson(photoResponse);
 
-        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey)))
+        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey))
+                )
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(photoResponseToJson, MediaType.APPLICATION_JSON));
 
@@ -151,7 +155,8 @@ class GooglePlacesPhotoServiceTest {
 
         String photoResponseToJson = gson.toJson(photoResponse);
 
-        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey)))
+        mockServer.expect(requestTo(getPhotoUrl(photo ,apiKey))
+                )
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(photoResponseToJson, MediaType.APPLICATION_JSON));
 

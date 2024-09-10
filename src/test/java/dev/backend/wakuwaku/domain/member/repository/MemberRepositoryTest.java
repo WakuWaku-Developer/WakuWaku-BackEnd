@@ -23,14 +23,14 @@ class MemberRepositoryTest {
     @BeforeEach
     void setUp() {
         Member member = Member.builder()
-                .oauthServerId("testOauthServerId")
-                .oauthServerType(OauthServerType.GOOGLE)
-                .email("test@example.com")
-                .birthday("1990-01-01")
-                .nickname("testNickname")
-                .profileImageUrl("http://example.com/image.jpg")
-                .role(Role.USER)
-                .build();
+                              .oauthServerId("testOauthServerId")
+                              .oauthServerType(OauthServerType.GOOGLE)
+                              .email("test@example.com")
+                              .birthday("1990-01-01")
+                              .nickname("testNickname")
+                              .profileImageUrl("http://example.com/image.jpg")
+                              .role(Role.USER)
+                              .build();
 
         savedMember = memberRepository.save(member);
     }
@@ -46,7 +46,9 @@ class MemberRepositoryTest {
 
         // then
         assertThat(optionalMember).isPresent();
+
         Member foundMember = optionalMember.get();
+
         assertThat(foundMember.getId()).isEqualTo(savedMember.getId());
         assertThat(foundMember.getEmail()).isEqualTo(savedMember.getEmail());
         assertThat(foundMember.getNickname()).isEqualTo(savedMember.getNickname());
@@ -68,7 +70,9 @@ class MemberRepositoryTest {
 
         // then
         assertThat(optionalMember).isPresent();
+
         Member foundMember = optionalMember.get();
+
         assertThat(foundMember.getId()).isEqualTo(savedMember.getId());
         assertThat(foundMember.getEmail()).isEqualTo(savedMember.getEmail());
         assertThat(foundMember.getNickname()).isEqualTo(savedMember.getNickname());

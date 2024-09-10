@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class LikesResponse {
-    private Long likeId;
+    private Long likesId;
 
     public LikesResponse(Likes likes) {
-        this.likeId = likes.getId();
+        this.likesId = likes.getId();
     }
 }

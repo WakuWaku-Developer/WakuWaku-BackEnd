@@ -9,13 +9,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GetMemberResponse {
-
     private String email;
+
     private String oauthServerId;
+
     private OauthServerType oauthServerType;
+
     private String birthday;
+
     private String profileImageUrl;
+
     private String nickname;
+
     private Role role;
 
     public GetMemberResponse(Member memberEntity) {

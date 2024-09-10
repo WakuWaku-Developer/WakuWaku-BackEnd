@@ -8,5 +8,6 @@ import java.util.List;
 @Getter
 public class TextSearchResponse {
     private List<Places> places;
+
     private String nextPageToken;
 }

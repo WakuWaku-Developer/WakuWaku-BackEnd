@@ -13,7 +13,6 @@ import static jakarta.persistence.EnumType.STRING;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OauthId {
-
     @Column(nullable = false, name = "oauth_server_id")
     private String oauthServerId;
 

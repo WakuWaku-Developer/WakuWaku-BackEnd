@@ -14,8 +14,8 @@ import org.springframework.util.MultiValueMap;
 @Component
 @RequiredArgsConstructor
 public class NaverMemberClient implements OauthMemberClient {
-
     private final NaverApiClient naverApiClient;
+
     private final NaverOauthConfig naverOauthConfig;
 
     @Override
@@ -27,15 +27,18 @@ public class NaverMemberClient implements OauthMemberClient {
     public OauthMember fetch(String authCode) {
         NaverToken tokenInfo = naverApiClient.fetchToken(tokenRequestParams(authCode));
         NaverMemberResponse naverMemberResponse = naverApiClient.fetchMember("Bearer " + tokenInfo.accessToken());
+
         return naverMemberResponse.toDomain();
     }
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
         params.add("grant_type", "authorization_code");
         params.add("client_id", naverOauthConfig.getClientId());
         params.add("client_secret", naverOauthConfig.getClientSecret());
         params.add("code", authCode);
+
         return params;
     }
 }

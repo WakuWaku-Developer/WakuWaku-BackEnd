@@ -1,6 +1,8 @@
 package dev.backend.wakuwaku.domain.like.service;
 
 import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
+import dev.backend.wakuwaku.domain.likes.dto.request.LikesRestaurantRequest;
+import dev.backend.wakuwaku.domain.likes.dto.response.AllLikesResponse;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.repository.LikesRepository;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
@@ -11,7 +13,6 @@ import dev.backend.wakuwaku.domain.oauth.dto.Role;
 import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
 import dev.backend.wakuwaku.domain.restaurant.repository.RestaurantRepository;
 import dev.backend.wakuwaku.global.exception.WakuWakuException;
-import dev.backend.wakuwaku.global.infra.google.places.dto.*;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +32,13 @@ import java.util.Optional;
 
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.ALREADY_LIKED_EXCEPTION;
 import static dev.backend.wakuwaku.global.exception.ExceptionStatus.LIKE_NOT_FOUND_EXCEPTION;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @ExtendWith(MockitoExtension.class)
 class LikesServiceTest {
-
     @InjectMocks
     private LikesService likesService;
 
@@ -51,19 +55,23 @@ class LikesServiceTest {
 
     private static final String NAME = "우동신";
 
-    private static final int TOTAL_PAGE = 5;
-
     private static final String MEMBER_EMAIL = "m@m.com";
 
-    private final List<Photo> photos = new ArrayList<>();
+    private static final double LAT = 99.99;
 
-    private final List<Review> reviews = new ArrayList<>();
+    private static final double LNG = 11.11;
 
-    private Places places;
+    private static final String PHOTO_URL = "test-photo-url";
+
+    private static final int USER_RATINGS_TOTAL = 999;
+
+    private static final double RATING = 4.35;
 
     private static final Long MEMBER_ID = 1L;
 
     private static final Long RESTAURANT_ID = 1L;
+
+    private static final Long LIKES_ID = 1L;
 
     private static final String NICKNAME = "MIN";
 
@@ -73,19 +81,24 @@ class LikesServiceTest {
         // given
         int number = 1;
 
+        LikesRestaurantRequest likesRestaurantRequest = createLikesRestaurantRequest(number);
+
+        Restaurant restaurant = createRestaurant();
+        ReflectionTestUtils.setField(restaurant, "id", RESTAURANT_ID);
+
         when(memberRepository.findById(MEMBER_ID)).thenReturn(Optional.of(createMember(number)));
-        when(restaurantRepository.findById(RESTAURANT_ID)).thenReturn(Optional.of(createRestaurant(number)));
+        when(restaurantRepository.findByPlaceId(PLACE_ID + number)).thenReturn(Optional.of(restaurant));
         when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.empty());
 
         // when
-        Likes like = likesService.addLikes(MEMBER_ID, RESTAURANT_ID);
+        Likes like = likesService.addLikes(MEMBER_ID, likesRestaurantRequest);
 
         // then
         assertNotNull(like); // like가 null이 아닌지 확인합니다.
         assertEquals(MEMBER_EMAIL, like.getMember().getEmail()); // assertEquals를 사용하여 값 비교
         assertEquals(NICKNAME + number, like.getMember().getNickname());
         assertEquals(PLACE_ID, like.getRestaurant().getPlaceId());
-        assertEquals(number, like.getRestaurant().getRating());
+        assertEquals(RATING, like.getRestaurant().getRating());
 
         assertEquals((LikesStatusType.Y), like.getLikesStatus());
 
@@ -95,17 +108,23 @@ class LikesServiceTest {
     @DisplayName("이미 찜한 경우 예외 발생 테스트")
     void addLikes_AlreadyLikesd() {
         // given
-        Likes existingLikes = Likes.builder()
-                .member(createMember(1))
-                .restaurant(createRestaurant(1))
-                .likesStatus(LikesStatusType.Y)
-                .build();
-        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.of(existingLikes));
+        LikesRestaurantRequest likesRestaurantRequest = createLikesRestaurantRequest(1);
 
+        Restaurant restaurant = createRestaurant();
+        ReflectionTestUtils.setField(restaurant, "id", RESTAURANT_ID);
+
+        Likes existingLikes = Likes.builder()
+                                   .member(createMember(1))
+                                   .restaurant(restaurant)
+                                   .likesStatus(LikesStatusType.Y)
+                                   .build();
+
+        given(restaurantRepository.findByPlaceId(likesRestaurantRequest.getPlaceId())).willReturn(Optional.ofNullable(restaurant));
+        given(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).willReturn(Optional.of(existingLikes));
 
         // when & then
         BDDAssertions.thenThrownBy(
-                        () -> likesService.addLikes(MEMBER_ID, RESTAURANT_ID)
+                        () -> likesService.addLikes(MEMBER_ID, likesRestaurantRequest)
                 )
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
@@ -117,15 +136,15 @@ class LikesServiceTest {
     void deleteLikes_Success() {
         // given
         Likes existingLikes = Likes.builder()
-                .member(createMember(1))
-                .restaurant(createRestaurant(1))
-                .likesStatus(LikesStatusType.Y)
-                .build();
+                                   .member(createMember(1))
+                                   .restaurant(createRestaurant())
+                                   .likesStatus(LikesStatusType.Y)
+                                   .build();
 
-        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.of(existingLikes));
+        when(likesRepository.findById(LIKES_ID)).thenReturn(Optional.of(existingLikes));
 
         // when
-        likesService.deleteLikes(MEMBER_ID, RESTAURANT_ID); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
+        likesService.deleteLikes(LIKES_ID); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
 
         // then
         assertEquals(LikesStatusType.N, existingLikes.getLikesStatus()); // 상태가 변경되었는지 검증
@@ -135,14 +154,14 @@ class LikesServiceTest {
     @DisplayName("존재하지 않는 찜 삭제 시 예외 발생 테스트")
     void deleteLikes_NotFound() {
         // given
-        when(likesRepository.findByMemberIdAndRestaurantId(MEMBER_ID, RESTAURANT_ID)).thenReturn(Optional.empty());
+        when(likesRepository.findById(LIKES_ID)).thenReturn(Optional.empty());
 
         // when & then
 
         // --
         //assertThrows(LIKE_NOT_FOUND_EXCEPTION.getClass(), () -> likeService.deleteLikes(memberId, restaurantId));
         BDDAssertions.thenThrownBy(
-                () -> likesService.deleteLikes(MEMBER_ID, RESTAURANT_ID)
+                () -> likesService.deleteLikes(LIKES_ID)
         )
                 .isInstanceOf(WakuWakuException.class)
                 .extracting("status")
@@ -156,11 +175,11 @@ class LikesServiceTest {
         Member member = createMember(1);
         member.createId(MEMBER_ID);
 
-        Restaurant restaurant1 = createRestaurant(1);
-        Restaurant restaurant2 = createRestaurant(2);
-        Restaurant restaurant3 = createRestaurant(3);
-        Restaurant restaurant4 = createRestaurant(4);
-        Restaurant restaurant5 = createRestaurant(5);
+        Restaurant restaurant1 = createRestaurant();
+        Restaurant restaurant2 = createRestaurant();
+        Restaurant restaurant3 = createRestaurant();
+        Restaurant restaurant4 = createRestaurant();
+        Restaurant restaurant5 = createRestaurant();
 
 
         List<Likes> likesList = new ArrayList<>();
@@ -206,82 +225,91 @@ class LikesServiceTest {
         assertThat(likedRestaurantPlaceIds).isEmpty();
     }
 
-    private Member createMember(int number) {
-        return Member.builder()
-                .oauthServerId("testId")
-                .email(MEMBER_EMAIL)
-                .role(Role.USER)
-                .nickname(NICKNAME + number)
-                .oauthServerType(OauthServerType.NAVER)
-                .birthday("19990118")
-                .profileImageUrl("www.d.com")
-                .build();
+    @DisplayName("페이징 처리된 회원의 찜 목록 조회")
+    @Test
+    void getPaginatedLikesList() {
+        // given
+        Member member = createMember(1);
+
+        Restaurant restaurant1 = createRestaurant();
+        Restaurant restaurant2 = createRestaurant();
+        Restaurant restaurant3 = createRestaurant();
+
+        List<Likes> likesList = new ArrayList<>();
+        likesList.add(createLikes(member, restaurant1));
+        likesList.add(createLikes(member, restaurant2));
+        likesList.add(createLikes(member, restaurant3));
+
+        List<Restaurant> restaurants = new ArrayList<>();
+        restaurants.add(restaurant1);
+        restaurants.add(restaurant2);
+        restaurants.add(restaurant3);
+
+        List<String> placeIds = restaurants.stream()
+                                           .map(Restaurant::getPlaceId)
+                                           .toList();
+
+        // 0번 페이지 + 10개의 사이즈
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Likes> likesPage = new PageImpl<>(likesList, pageable, likesList.size());
+
+        given(likesRepository.findAllByMemberId(MEMBER_ID, pageable)).willReturn(likesPage);
+        given(restaurantRepository.findAllByPlaceIds(placeIds)).willReturn(restaurants);
+
+        // when
+        AllLikesResponse paginatedLikesList = likesService.getPaginatedLikesList(MEMBER_ID, pageable);
+
+        // then
+        then(likesRepository).should().findAllByMemberId(MEMBER_ID, pageable);
+        then(restaurantRepository).should().findAllByPlaceIds(placeIds);
+
+        assertThat(paginatedLikesList).isNotNull();
+        assertThat(paginatedLikesList.getLikesRestaurants()).hasSize(3);
+        assertThat(paginatedLikesList.getTotalPages()).isEqualTo(1);
     }
 
-    private Restaurant createRestaurant(int number) {
-        dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName name = new dev.backend.wakuwaku.global.infra.google.places.dto.DisplayName(NAME);
+    private Member createMember(int number) {
+        return Member.builder()
+                     .oauthServerId("testId")
+                     .email(MEMBER_EMAIL)
+                     .role(Role.USER)
+                     .nickname(NICKNAME + number)
+                     .oauthServerType(OauthServerType.NAVER)
+                     .birthday("19990118")
+                     .profileImageUrl("www.d.com")
+                     .build();
+    }
 
-        Location location = new Location(35.686489, 139.697001);
-
-        List<String> weekdayDescriptions = new ArrayList<>();
-        weekdayDescriptions.add("월요일:오전11:00~오후10:00,화요일:오전11:00~오후10:00,수요일:오전11:00~오후10:00,목요일:오전11:00~오후10:00,금요일:오전11:00~오후10:00,토요일:오전11:00~오후10:00,일요일:오전11:00~오후10:00");
-
-        CurrentOpeningHours currentOpeningHours = new CurrentOpeningHours(true, weekdayDescriptions);
-
-        Photo photo = Photo.builder()
-                .photoUrl("https://lh3.googleusercontent.com/places/ANXAkqG2xQHKla3ebHNhRNrgMFi4WB6hGbR6LZTd2ig0PK5qTwkIvk0EP1fzPQ8UXmAt3FcU1Gz0XjYYCQJvFJQQVhAMss2GtKenoAI=s4800-w1440-h810")
-                .build();
-
-        photos.add(photo);
-
-        LocalizedText editorialSummary = new LocalizedText("다양한 반주와 함께 바삭한 튀김과 수제 우동을 맛 볼 수 있는 아담한 식당입니다.");
-
-        LocalizedText reviewText = new LocalizedText("붓카게 우동과 자루소바 주문\\n직원 매우 친절함.의외로 튀김 맛있다\\n우동 자체는 꽤 맛있긴 하지만 이게 3시간을 기다릴 맛인가?이 가격 값을 하는가? 하면 별점 3점인 맛\\n웨이팅이 아예 없고 근처에 있다면 갈만한 집이긴 한데 절대 기다려서 먹을 맛 아님!!!!\\n면발이 탱글하다는데 개인적으로 오사카에서 먹은 다른 우동 집이 오백만배 탱글하고 맛있었음\\n손님도 로컬 거의 없고 대부분 외국인임\\n우연히 내가 그 근처를 지나가고 있는데 웨이팅이 없다? 할 때만 가십쇼");
-
-        AuthorAttribution authorAttribution = new AuthorAttribution("촉촉한볼따구", "https://lh3.googleusercontent.com/a-/ALV-UjVoB_ILlpMn32pQwKbd5R99vuCX8mSb5T4rUzTRBBRts8CQolD9=s128-c0x00000000-cc-rp-mo");
-
-        Review review = Review.builder()
-                .relativePublishTimeDescription("3주 전")
-                .rating(3)
-                .text(reviewText)
-                .authorAttribution(authorAttribution)
-                .build();
-
-        reviews.add(review);
-
-        places = Places.builder()
-                .id(PLACE_ID)
-                .displayName(name)
-                .rating(number)
-                .location(location)
-                .currentOpeningHours(currentOpeningHours)
-                .photos(photos)
-                .dineIn(true)
-                .takeout(false)
-                .delivery(false)
-                .editorialSummary(editorialSummary)
-                .reviews(reviews)
-                .nationalPhoneNumber(null)
-                .formattedAddress("일본 〒151-0053 Tokyo, Shibuya City, Yoyogi, 2-chōme−20−１６ 相馬ビル １F")
-                .websiteUri("http://www.udonshin.com/")
-                .userRatingCount(3965)
-                .reservable(true)
-                .servesBreakfast(false)
-                .servesLunch(true)
-                .servesDinner(true)
-                .servesBeer(true)
-                .servesWine(false)
-                .servesVegetarianFood(false)
-                .build();
-
-        return new Restaurant(places);
+    private Restaurant createRestaurant() {
+        return Restaurant.builder()
+                         .placeId(PLACE_ID)
+                         .name(NAME)
+                         .lat(LAT)
+                         .lng(LNG)
+                         .photo(PHOTO_URL)
+                         .userRatingsTotal(USER_RATINGS_TOTAL)
+                         .rating(RATING)
+                         .build();
     }
 
     private Likes createLikes(Member member, Restaurant restaurant) {
         return Likes.builder()
-                .member(member)
-                .restaurant(restaurant)
-                .likesStatus(LikesStatusType.Y)
-                .build();
+                    .member(member)
+                    .restaurant(restaurant)
+                    .likesStatus(LikesStatusType.Y)
+                    .build();
+    }
+
+    private LikesRestaurantRequest createLikesRestaurantRequest(int number) {
+        return LikesRestaurantRequest.builder()
+                                     .placeId(PLACE_ID + number)
+                                     .name(NAME)
+                                     .lat(LAT)
+                                     .lng(LNG)
+                                     .photo(PHOTO_URL)
+                                     .userRatingsTotal(USER_RATINGS_TOTAL)
+                                     .rating(RATING)
+                                     .build();
     }
 }

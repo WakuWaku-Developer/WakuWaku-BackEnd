@@ -24,13 +24,12 @@ import lombok.*;
         }
 )
 public class OauthMember {
-
-
-
     @Embedded
     private OauthId oauthId;
+
     @Column(nullable = false, length = 50) // 필드의 길이 및 null 허용 여부 설정
     private String nickname;
+
     @Column(length = 200) // 프로필 이미지 URL의 최대 길이 설정
     private String profileImageUrl;
 
@@ -39,6 +38,4 @@ public class OauthMember {
 
     @Column
     private String birthday;
-
-
 }
