@@ -1,6 +1,6 @@
 services:
   app:
-    image: wakuwaku240301/wakuwaku
+    image: wakuwakube/wakuwaku
     container_name: wakuwaku
     ports:
       - 8080:8080
