@@ -35,6 +35,7 @@ class RedisServiceTest {
     private RedisService redisService;
 
     private static final String REDIS_KEY = "도쿄";
+    private static final String REDIS_TEST_KEY = "TEST";
 
     private static final String NAME = "우동신";
 
@@ -43,6 +44,10 @@ class RedisServiceTest {
     @AfterEach
     void AfterEach() {
         redisService.deletePlaces(REDIS_KEY);
+
+        redisService.deletePlaces(REDIS_TEST_KEY + "1");
+        redisService.deletePlaces(REDIS_TEST_KEY + "2");
+        redisService.deletePlaces(REDIS_TEST_KEY + "3");
     }
 
     @Test
@@ -148,16 +153,16 @@ class RedisServiceTest {
     }
 
     @Test
-    @DisplayName("캐시된 데이터의 개수를 반환해야 한다.")
+    @DisplayName("캐시된 데이터의 개수가 존재한다면 캐시된 데이터의 개수를 반환해야 한다.")
     void getCacheDataSize() {
         // given
         List<Places> placesList1 = List.of(createPlaces(4.1), createPlaces(4.3), createPlaces(4.5));
         List<Places> placesList2 = List.of(createPlaces(3.1), createPlaces(3.3), createPlaces(3.5));
         List<Places> placesList3 = List.of(createPlaces(2.1), createPlaces(2.3), createPlaces(2.5));
 
-        redisService.savePlaces("test1", placesList1);
-        redisService.savePlaces("test2", placesList2);
-        redisService.savePlaces("test3", placesList3);
+        redisService.savePlaces(REDIS_TEST_KEY + "1", placesList1);
+        redisService.savePlaces(REDIS_TEST_KEY + "2", placesList2);
+        redisService.savePlaces(REDIS_TEST_KEY + "3", placesList3);
 
         // when
         long cacheSize = redisService.getCacheSize();
@@ -165,6 +170,16 @@ class RedisServiceTest {
         // then
         assertThat(cacheSize).isNotZero()
                                    .isEqualTo(3L);
+    }
+
+    @Test
+    @DisplayName("캐시된 데이터의 개수가 존재하지 않는다면 0을 반환해야 한다.")
+    void getCacheDataSizeIsZero() {
+        // when
+        long cacheSize = redisService.getCacheSize();
+
+        // then
+        assertThat(cacheSize).isZero();
     }
 
     private Places createPlaces(double rating) {
