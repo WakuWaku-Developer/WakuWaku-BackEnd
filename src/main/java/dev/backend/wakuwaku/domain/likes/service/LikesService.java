@@ -41,18 +41,18 @@ public class LikesService {
         Restaurant restaurant = getRestaurant(restaurantInfo);
 
         return likesRepository.findByMemberIdAndRestaurantId(memberId, restaurant.getId())
-                .map(likes -> {
-                    // 이미 찜이 되어있을 때
-                    if (LikesStatusType.Y.equals(likes.getLikesStatus())) {
-                        throw ALREADY_LIKED_EXCEPTION;
-                    }
+                              .map(likes -> {
+                                  // 이미 찜이 되어있을 때
+                                  if (LikesStatusType.Y.equals(likes.getLikesStatus())) {
+                                      throw ALREADY_LIKED_EXCEPTION;
+                                  }
 
-                    // 찜 상태 N -> Y로 업데이트
-                    likes.updateLikeStatus(LikesStatusType.Y);  // "N" 상태인 경우 "Y"로 업데이트
+                                  // 찜 상태 N -> Y로 업데이트
+                                  likes.updateLikeStatus(LikesStatusType.Y);  // "N" 상태인 경우 "Y"로 업데이트
 
-                    return likes;
-                })
-                .orElseGet(() -> createNewLike(memberId, restaurant));  // 찜이 없으면 새로 생성
+                                  return likes;
+                              })
+                              .orElseGet(() -> createNewLike(memberId, restaurant));  // 찜이 없으면 새로 생성
     }
 
     private Restaurant getRestaurant(LikesRestaurantRequest restaurantInfo) {

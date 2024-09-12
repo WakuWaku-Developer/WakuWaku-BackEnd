@@ -2,6 +2,8 @@ package dev.backend.wakuwaku.global.infra.google.places.photo;
 
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import dev.backend.wakuwaku.global.infra.google.places.photo.dto.response.PhotoResponse;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -9,6 +11,7 @@ import org.springframework.web.client.RestClient;
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.NONE_PHOTO_URL;
 import static dev.backend.wakuwaku.global.infra.google.places.photo.constant.PhotoConstant.*;
 
+@Timed("google.api.photo")
 @Service
 public class GooglePlacesPhotoService {
     private final RestClient restClient;
@@ -17,6 +20,7 @@ public class GooglePlacesPhotoService {
         this.restClient = restClientBuilder.build();
     }
 
+    @Counted("google.api")
     public String getActualPhotoUrl(Photo photo, String apiKey) {
         PhotoResponse photoResult = restClient.get()
                                               .uri(getPhotoUrl(photo, apiKey))

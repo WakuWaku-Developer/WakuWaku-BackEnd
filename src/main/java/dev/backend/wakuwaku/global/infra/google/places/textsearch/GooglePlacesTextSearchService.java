@@ -7,6 +7,8 @@ import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoSe
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.NextPageRequest;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.request.TextSearchRequest;
 import dev.backend.wakuwaku.global.infra.google.places.textsearch.dto.response.TextSearchResponse;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import static dev.backend.wakuwaku.global.infra.google.places.textsearch.constant.TextSearchConstant.*;
 
+@Timed("google.api.simple.info")
 @Service
 public class GooglePlacesTextSearchService {
     private final RestClient restClient;
@@ -33,6 +36,7 @@ public class GooglePlacesTextSearchService {
         this.googlePlacesPhotoService = googlePlacesPhotoService;
     }
 
+    @Counted("google.api")
     public List<Places> getRestaurantsByTextSearch(String searchWord, int cnt) {
         TextSearchResponse textSearchResponse = restClient.post()
                                                           .uri(TEXT_SEARCH_URL)
@@ -50,6 +54,7 @@ public class GooglePlacesTextSearchService {
 
     // pageToken 을 얻은 searchWord 와 같은 searchWord 로 검색해야만 제대로 동작함. (그렇지 않으면 에러 발생)
     // pageToken 만 가지고는 API 요청할 수 없음. (에러 발생)
+    @Counted("google.api")
     public TextSearchResponse getRestaurantByNextPageToken(String searchWord, String pageToken) {
         if (pageToken == null || pageToken.isEmpty()) {
             return null;

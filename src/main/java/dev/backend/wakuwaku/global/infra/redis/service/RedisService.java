@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static dev.backend.wakuwaku.global.infra.redis.constant.RedisConstant.*;
@@ -80,5 +81,11 @@ public class RedisService {
 
     public void deletePlaces(String key) {
         redisTemplate.delete(key);
+    }
+
+    public long getCacheSize() {
+        Set<String> keys = redisTemplate.keys("*");
+
+        return keys != null ? keys.size() : 0;
     }
 }

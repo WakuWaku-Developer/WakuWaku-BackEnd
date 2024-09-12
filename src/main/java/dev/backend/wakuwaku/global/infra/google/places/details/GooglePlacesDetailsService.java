@@ -3,6 +3,8 @@ package dev.backend.wakuwaku.global.infra.google.places.details;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Places;
 import dev.backend.wakuwaku.global.infra.google.places.dto.Photo;
 import dev.backend.wakuwaku.global.infra.google.places.photo.GooglePlacesPhotoService;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import static dev.backend.wakuwaku.global.exception.WakuWakuException.NOT_EXISTE
 import static dev.backend.wakuwaku.global.exception.WakuWakuException.NOT_EXISTED_PLACE_ID;
 import static dev.backend.wakuwaku.global.infra.google.places.details.constant.DetailsConstant.*;
 
+@Timed("google.api.details.info")
 @Service
 public class GooglePlacesDetailsService {
     private final RestClient restClient;
@@ -26,6 +29,7 @@ public class GooglePlacesDetailsService {
         this.googlePlacesPhotoService = googlePlacesPhotoService;
     }
 
+    @Counted("google.api")
     public Places getRestaurantByDetailsSearch(String placeId) {
         if (placeId == null || placeId.isEmpty()) {
             throw NOT_EXISTED_PLACE_ID;
