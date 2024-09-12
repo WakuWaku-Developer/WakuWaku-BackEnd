@@ -1,9 +1,10 @@
 services:
-  app:
+  app1:
     image: wakuwakube/wakuwaku
     container_name: wakuwaku
     ports:
       - 8080:8080
+      - 9201:9201
     depends_on:
       - redis
 
