@@ -147,6 +147,26 @@ class RedisServiceTest {
         assertThat(placesByRedis).isEmpty();
     }
 
+    @Test
+    @DisplayName("캐시된 데이터의 개수를 반환해야 한다.")
+    void getCacheDataSize() {
+        // given
+        List<Places> placesList1 = List.of(createPlaces(4.1), createPlaces(4.3), createPlaces(4.5));
+        List<Places> placesList2 = List.of(createPlaces(3.1), createPlaces(3.3), createPlaces(3.5));
+        List<Places> placesList3 = List.of(createPlaces(2.1), createPlaces(2.3), createPlaces(2.5));
+
+        redisService.savePlaces("test1", placesList1);
+        redisService.savePlaces("test2", placesList2);
+        redisService.savePlaces("test3", placesList3);
+
+        // when
+        long cacheSize = redisService.getCacheSize();
+
+        // then
+        assertThat(cacheSize).isNotZero()
+                                   .isEqualTo(3L);
+    }
+
     private Places createPlaces(double rating) {
         List<Photo> photos = new ArrayList<>();
 
