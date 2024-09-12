@@ -203,12 +203,12 @@ jar {
 openapi3 {
 	setServers([
 			{
-				url = "http://localhost:8080"
-				description = "local server"
+				url = "https://api.wakuwaku-place.store"
+				description = "Develop Server"
 			},
 			{
-				url = "http://15.164.249.106:8080"
-				description = "Develop server"
+				url = "http://localhost:8080"
+				description = "Local Server"
 			}
 	])
 	title = "WakuWaku API Document"
