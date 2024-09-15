@@ -9,6 +9,7 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 public interface KakaoApiClient {
@@ -17,5 +18,5 @@ public interface KakaoApiClient {
 
     // 추가
     @GetExchange(url = "https://kapi.kakao.com/v2/user/me")
-    KakaoMemberResponse fetchMember(@RequestHeader(name = AUTHORIZATION) String bearerToken);
+    KakaoMemberResponse fetchMember(@RequestHeader(name = AUTHORIZATION) String bearerToken, @RequestHeader(name = CONTENT_TYPE) String contentType);
 }

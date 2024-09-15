@@ -50,7 +50,7 @@ class KakaoMemberClientTest {
         );
         KakaoMemberResponse kakaoMemberResponse = new KakaoMemberResponse(123L, true, null, kakaoAccount);
 
-        when(kakaoApiClient.fetchMember(any())).thenReturn(kakaoMemberResponse);
+        when(kakaoApiClient.fetchMember(any(), any())).thenReturn(kakaoMemberResponse);
 
         // FRONT에서 넘겨주는 코드를 받아서 사용자 정보를 받아 저장함.
         OauthMember oauthMember = kakaoMemberClient.fetch("authCode");
