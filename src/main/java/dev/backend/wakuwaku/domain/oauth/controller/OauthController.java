@@ -29,6 +29,9 @@ public class OauthController {
 
         return new BaseResponse<>(OAuthLoginResponse.builder()
                                                          .id(member.getId())
+                                                         .profileUrl(member.getProfileImageUrl())
+                                                         .nickname(member.getNickname())
+                                                         .accessToken(member.getOauthServerId())
                                                          .likedRestaurantPlaceIds(placeIdOfLikesRestaurants)
                                                          .build());
     }
