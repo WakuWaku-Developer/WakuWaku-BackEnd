@@ -30,7 +30,10 @@ public class GoogleMemberClient implements OauthMemberClient {
         GoogleToken tokenInfo = googleApiClient.fetchToken(tokenRequestParams(authCode));
         GoogleMemberResponse googleMemberResponse = googleApiClient.fetchMember(tokenInfo.access_token());
 
-        return googleMemberResponse.toDomain();
+        String userFirstName = googleMemberResponse.getGiven_name();
+        String userLastName = googleMemberResponse.getFamily_name();
+
+        return googleMemberResponse.toDomain(getUserName(userFirstName, userLastName));
     }
 
     private MultiValueMap<String, String> tokenRequestParams(String authCode) {
@@ -45,5 +48,13 @@ public class GoogleMemberClient implements OauthMemberClient {
             params.add("resource_uri", googleOauthConfig.getResourceUri());
 
             return params;
+    }
+
+    private String getUserName(String firstName, String lastName) {
+        if (lastName == null) {
+            return firstName;
+        }
+
+        return lastName + firstName;
     }
 }
