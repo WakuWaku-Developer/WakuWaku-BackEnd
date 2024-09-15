@@ -64,7 +64,55 @@ public class GoogleMemberClientTest {
         assertNotNull(result);
         assertEquals("dummyId", result.getOauthId().getOauthServerId());
         assertEquals("dummy@example.com", result.getEmail());
-        assertEquals("John Doe", result.getNickname());
+        assertEquals("DoeJohn", result.getNickname());
+        assertEquals("https://example.com/avatar.jpg", result.getProfileImageUrl());
+
+        // Verify interactions
+        MultiValueMap<String, String> expectedTokenRequest = new LinkedMultiValueMap<>();
+        expectedTokenRequest.add("grant_type", "authorization_code");
+        expectedTokenRequest.add("client_id", "mockClientId");
+        expectedTokenRequest.add("client_secret", "mockClientSecret");
+        expectedTokenRequest.add("code", authCode);
+        expectedTokenRequest.add("redirect_uri", "mockRedirectUri");
+        expectedTokenRequest.add("token_uri", "mockTokenUri");
+        expectedTokenRequest.add("resource_uri", "mockResourceUri");
+
+        verify(mockApiClient).fetchToken(expectedTokenRequest);
+        verify(mockApiClient).fetchMember(accessToken);
+
+    }
+
+    @Test
+    @DisplayName("구글 로그인 사용자 정보 가져오기(성이 없는 사용자)")
+    void testFetch_No_Last_Name() {
+        // 테스트 데이터
+        String authCode = "test12341234";
+        String accessToken = "testAccessToken";
+        String refreshToken = "testRefreshToken";
+        Integer expiresIn = 3600;
+        String tokenType = "Bearer";
+        String idToken = "testIdToken";
+
+        GoogleToken mockToken = new GoogleToken(accessToken, refreshToken, expiresIn, tokenType, idToken);
+        GoogleMemberResponse mockResponse = new GoogleMemberResponse("dummyId", "dummy@example.com", "John", null, "https://example.com/avatar.jpg");
+
+
+        when(mockApiClient.fetchToken(any(MultiValueMap.class))).thenReturn(mockToken);
+        when(mockApiClient.fetchMember(accessToken)).thenReturn(mockResponse);
+        when(mockOauthConfig.getClientId()).thenReturn("mockClientId");
+        when(mockOauthConfig.getClientSecret()).thenReturn("mockClientSecret");
+        when(mockOauthConfig.getRedirectUri()).thenReturn("mockRedirectUri");
+        when(mockOauthConfig.getTokenUri()).thenReturn("mockTokenUri");
+        when(mockOauthConfig.getResourceUri()).thenReturn("mockResourceUri");
+
+        // FRONT에서 넘겨주는 코드 받아서 사용자 정보 저장
+        OauthMember result = memberClient.fetch(authCode);
+
+        // THEN
+        assertNotNull(result);
+        assertEquals("dummyId", result.getOauthId().getOauthServerId());
+        assertEquals("dummy@example.com", result.getEmail());
+        assertEquals("John", result.getNickname());
         assertEquals("https://example.com/avatar.jpg", result.getProfileImageUrl());
 
         // Verify interactions

@@ -22,11 +22,11 @@ public class GoogleMemberResponse {
 
     String picture;
 
-    public OauthMember toDomain() {
+    public OauthMember toDomain(String nickname) {
         return OauthMember.builder()
                           .oauthId(new OauthId(String.valueOf(id), GOOGLE))
                           .email(email)
-                          .nickname(given_name + " " + family_name)
+                          .nickname(nickname)
                           .profileImageUrl(picture)
                           .build();
     }
