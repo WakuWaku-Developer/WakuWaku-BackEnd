@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+
 
 /**
  * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
@@ -36,7 +38,7 @@ public class KakaoMemberClient implements OauthMemberClient {
     @Override
     public OauthMember fetch(String authCode) {
         KakaoToken tokenInfo = kakaoApiClient.fetchToken(tokenRequestParams(authCode)); // (1)
-        KakaoMemberResponse kakaoMemberResponse = kakaoApiClient.fetchMember("Bearer " + tokenInfo.accessToken());  // (2)
+        KakaoMemberResponse kakaoMemberResponse = kakaoApiClient.fetchMember("Bearer " + tokenInfo.accessToken(), APPLICATION_FORM_URLENCODED_VALUE);  // (2)
 
         return kakaoMemberResponse.toDomain();  // (3)
     }
