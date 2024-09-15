@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import dev.backend.wakuwaku.domain.likes.service.LikesService;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
+import dev.backend.wakuwaku.domain.oauth.dto.Role;
 import dev.backend.wakuwaku.domain.oauth.dto.request.LoginRequest;
 import dev.backend.wakuwaku.domain.oauth.service.OauthService;
 import jakarta.persistence.EntityManager;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -68,6 +70,11 @@ class OauthControllerTest {
         // given
         Long memberId = 1L;
         String code = "authorization_code";
+        String testEmail = "test@test.com";
+        String testNickname = "testNickname";
+        String testAccessToken = "testAccessToken";
+        String testProfileImgUrl = "test-img-url";
+        String testBirthday = "2001.01.01";
 
         List<String> likesPlacesIds = new ArrayList<>();
 
@@ -76,8 +83,16 @@ class OauthControllerTest {
         likesPlacesIds.add(createPlacesIds(3));
         likesPlacesIds.add(createPlacesIds(4));
 
-        Member member = new Member();
-        member.createId(memberId);
+        Member member = Member.builder()
+                              .email(testEmail)
+                              .nickname(testNickname)
+                              .oauthServerId(testAccessToken)
+                              .oauthServerType(OauthServerType.GOOGLE)
+                              .profileImageUrl(testProfileImgUrl)
+                              .birthday(testBirthday)
+                              .role(Role.USER)
+                              .build();
+        ReflectionTestUtils.setField(member, "id", memberId);
 
         given(oauthService.login(OauthServerType.GOOGLE, code)).willReturn(member);
         given(likesService.getLikedRestaurantPlaceIds(member)).willReturn(likesPlacesIds);
@@ -97,6 +112,9 @@ class OauthControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(memberId))
+                .andExpect(jsonPath("$.data.profileUrl").value(testProfileImgUrl))
+                .andExpect(jsonPath("$.data.nickname").value(testNickname))
+                .andExpect(jsonPath("$.data.accessToken").value(testAccessToken))
                 .andExpect(jsonPath("$.data.likedRestaurantPlaceIds").value(likesPlacesIds))
                 .andDo(MockMvcRestDocumentationWrapper.document("oauth-login",
                         resource(ResourceSnippetParameters.builder()
@@ -110,6 +128,9 @@ class OauthControllerTest {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                                         fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("회원 ID"),
+                                        fieldWithPath("data.profileUrl").type(JsonFieldType.STRING).description("회원의 프로필 이미지 URL"),
+                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("회원의 닉네임"),
+                                        fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("회원의 Access TOken"),
                                         fieldWithPath("data.likedRestaurantPlaceIds").type(JsonFieldType.ARRAY).description("회원이 찜한 식당의 PlaceId")
                                 )
                                 .build()
