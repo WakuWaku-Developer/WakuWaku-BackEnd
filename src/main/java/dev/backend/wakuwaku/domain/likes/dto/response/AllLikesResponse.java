@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.likes.dto.response;
 
-import dev.backend.wakuwaku.domain.restaurant.entity.Restaurant;
+import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,15 +11,15 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class AllLikesResponse {
-    private List<GetRestaurantResponse> likesRestaurants = new ArrayList<>();
+    private List<GetLikesResponse> likesRestaurants = new ArrayList<>();
 
     private int totalPages;
 
     @Builder
-    public AllLikesResponse(List<Restaurant> likesRestaurants, int totalPages) {
-        this.likesRestaurants = likesRestaurants.stream()
-                                                .map(GetRestaurantResponse::new)
-                                                .toList();
+    public AllLikesResponse(List<Likes> likesList, int totalPages) {
+        this.likesRestaurants = likesList.stream()
+                                         .map(GetLikesResponse::new)
+                                         .toList();
         this.totalPages = totalPages;
     }
 }
