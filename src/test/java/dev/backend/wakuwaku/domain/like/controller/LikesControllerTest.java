@@ -110,15 +110,31 @@ class LikesControllerTest {
     @Test
     void getLikes() throws Exception {
         // given
-        List<Restaurant> restaurants = new ArrayList<>();
+        Likes likes1 = createLikes(createMember(1), createRestaurant(1), LikesStatusType.Y);
+        ReflectionTestUtils.setField(likes1, "id", 1L);
 
-        restaurants.add(createRestaurant(1));
-        restaurants.add(createRestaurant(2));
-        restaurants.add(createRestaurant(3));
-        restaurants.add(createRestaurant(4));
+        Likes likes2 = createLikes(createMember(1), createRestaurant(2), LikesStatusType.N);
+        ReflectionTestUtils.setField(likes2, "id", 2L);
+
+        Likes likes3 = createLikes(createMember(1), createRestaurant(3), LikesStatusType.Y);
+        ReflectionTestUtils.setField(likes3, "id", 3L);
+
+        Likes likes4 = createLikes(createMember(1), createRestaurant(4), LikesStatusType.N);
+        ReflectionTestUtils.setField(likes4, "id", 4L);
+
+        Likes likes5 = createLikes(createMember(1), createRestaurant(5), LikesStatusType.Y);
+        ReflectionTestUtils.setField(likes5, "id", 5L);
+
+        Likes likes6 = createLikes(createMember(1), createRestaurant(6), LikesStatusType.N);
+        ReflectionTestUtils.setField(likes6, "id", 6L);
+
+        Likes likes7 = createLikes(createMember(1), createRestaurant(7), LikesStatusType.Y);
+        ReflectionTestUtils.setField(likes7, "id", 7L);
+
+        List<Likes> likesList = List.of(likes1, likes2, likes3, likes4, likes5, likes6, likes7);
 
         AllLikesResponse allLikesResponse = AllLikesResponse.builder()
-                                                            .likesRestaurants(restaurants)
+                                                            .likesList(likesList)
                                                             .totalPages(10)
                                                             .build();
 
@@ -133,6 +149,7 @@ class LikesControllerTest {
                         .queryParam("size", "10")
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("data.likesRestaurants[*].likesId").exists())
                 .andExpect(jsonPath("data.likesRestaurants[*].placeId").exists())
                 .andExpect(jsonPath("data.likesRestaurants[*].name").exists())
                 .andExpect(jsonPath("data.likesRestaurants[*].rating").exists())
@@ -157,6 +174,7 @@ class LikesControllerTest {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 시 반환되는 code 값"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 시 반환되는 메시지"),
                                         fieldWithPath("data.likesRestaurants").type(JsonFieldType.ARRAY).description("요청한 페이지에 해당하는 회원의 찜 목록 식당"),
+                                        fieldWithPath("data.likesRestaurants[].likesId").type(JsonFieldType.NUMBER).description("해당 찜의 ID 값"),
                                         fieldWithPath("data.likesRestaurants[].placeId").type(JsonFieldType.STRING).description("식당의 PlaceId"),
                                         fieldWithPath("data.likesRestaurants[].name").type(JsonFieldType.STRING).description("식당 이름"),
                                         fieldWithPath("data.likesRestaurants[].lat").type(JsonFieldType.NUMBER).description("식당의 위도"),
@@ -287,5 +305,13 @@ class LikesControllerTest {
                          .userRatingsTotal(USER_RATINGS_TOTAL)
                          .rating(RATING)
                          .build();
+    }
+
+    private Likes createLikes(Member member, Restaurant restaurant, LikesStatusType likesStatus) {
+        return Likes.builder()
+                    .member(member)
+                    .restaurant(restaurant)
+                    .likesStatus(likesStatus)
+                    .build();
     }
 }
