@@ -22,12 +22,14 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     @Query("select l " +
             "from Likes l " +
+            "join fetch l.restaurant " +
             "where l.likesStatus = 'Y' " +
             "and l.member.id = :memberId")
     List<Likes> findAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("select l " +
             "from Likes l " +
+            "join fetch l.restaurant " +
             "where l.likesStatus = 'Y' " +
             "and l.member.id = :memberId")
     Page<Likes> findAllByMemberId(@Param("memberId") Long memberId, Pageable pageable);
