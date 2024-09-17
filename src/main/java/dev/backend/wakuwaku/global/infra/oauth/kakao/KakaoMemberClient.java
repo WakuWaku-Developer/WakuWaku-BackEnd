@@ -3,8 +3,8 @@ package dev.backend.wakuwaku.global.infra.oauth.kakao;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthMember;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.global.infra.oauth.client.OauthMemberClient;
-import dev.backend.wakuwaku.global.infra.oauth.kakao.dto.KakaoMemberResponse;
 import dev.backend.wakuwaku.global.infra.oauth.kakao.client.KakaoApiClient;
+import dev.backend.wakuwaku.global.infra.oauth.kakao.dto.KakaoMemberResponse;
 import dev.backend.wakuwaku.global.infra.oauth.kakao.dto.KakaoToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,13 +59,11 @@ public class KakaoMemberClient implements OauthMemberClient {
 
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoOauthConfig.getClientId());
-        params.add("redirect_uri", kakaoOauthConfig.getRedirectUri());
         params.add("code", authCode);
         params.add("client_secret", kakaoOauthConfig.getClientSecret());
 
         log.info("params.get(\"grant_type\") = {}", params.get("grant_type"));
         log.info("params.get(\"client_id\") = {}", params.get("client_id"));
-        log.info("params.get(\"redirect_uri\") = {}", params.get("redirect_uri"));
         log.info("params.get(\"code\") = {}", params.get("code"));
         log.info("params.get(\"client_secret\") = {}", params.get("client_secret"));
 

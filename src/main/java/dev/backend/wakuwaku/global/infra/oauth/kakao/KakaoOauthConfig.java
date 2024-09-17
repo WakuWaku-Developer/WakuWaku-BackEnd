@@ -11,9 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Getter
 public class KakaoOauthConfig{
-        @Value("${oauth.kakao.redirect_uri}")
-        String redirectUri;
-
         @Value("${oauth.kakao.client_id}")
         String clientId;
 
