@@ -27,6 +27,9 @@ public class OauthService {
         try {
             oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
+            log.info("oauthMember.getEmail() = {}", oauthMember.getEmail());
+            log.info("oauthMember = {}", oauthMember);
+
         } catch (Exception e) {
             log.error("Failed to fetch OAuth member: {}", e.getMessage(), e);
 
