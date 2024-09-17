@@ -7,6 +7,7 @@ import dev.backend.wakuwaku.global.infra.oauth.kakao.dto.KakaoMemberResponse;
 import dev.backend.wakuwaku.global.infra.oauth.kakao.client.KakaoApiClient;
 import dev.backend.wakuwaku.global.infra.oauth.kakao.dto.KakaoToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -20,6 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class KakaoMemberClient implements OauthMemberClient {
     private final KakaoApiClient kakaoApiClient;
 
@@ -37,8 +39,17 @@ public class KakaoMemberClient implements OauthMemberClient {
      */
     @Override
     public OauthMember fetch(String authCode) {
+        log.info("KakaoMemberClient Class fetch Method authCode = {}", authCode);
+
         KakaoToken tokenInfo = kakaoApiClient.fetchToken(tokenRequestParams(authCode)); // (1)
+
+        log.info("tokenInfo.accessToken() = {}", tokenInfo.accessToken());
+        log.info("tokenInfo = {}", tokenInfo);
+
         KakaoMemberResponse kakaoMemberResponse = kakaoApiClient.fetchMember("Bearer " + tokenInfo.accessToken(), APPLICATION_FORM_URLENCODED_VALUE);  // (2)
+
+        log.info("kakaoMemberResponse.toDomain().getEmail() = {}", kakaoMemberResponse.toDomain().getEmail());
+        log.info("kakaoMemberResponse = {]", kakaoMemberResponse);
 
         return kakaoMemberResponse.toDomain();  // (3)
     }
@@ -51,6 +62,14 @@ public class KakaoMemberClient implements OauthMemberClient {
         params.add("redirect_uri", kakaoOauthConfig.getRedirectUri());
         params.add("code", authCode);
         params.add("client_secret", kakaoOauthConfig.getClientSecret());
+
+        log.info("params.get(\"grant_type\") = {}", params.get("grant_type"));
+        log.info("params.get(\"client_id\") = {}", params.get("client_id"));
+        log.info("params.get(\"redirect_uri\") = {}", params.get("redirect_uri"));
+        log.info("params.get(\"code\") = {}", params.get("code"));
+        log.info("params.get(\"client_secret\") = {}", params.get("client_secret"));
+
+        log.info("params = {}", params);
 
         return params;
     }

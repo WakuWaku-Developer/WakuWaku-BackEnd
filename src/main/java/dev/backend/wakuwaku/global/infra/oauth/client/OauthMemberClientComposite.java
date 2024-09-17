@@ -3,6 +3,7 @@ package dev.backend.wakuwaku.global.infra.oauth.client;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthMember;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.global.exception.ExceptionStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,6 +14,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 @Component
+@Slf4j
 public class OauthMemberClientComposite {
     private final Map<OauthServerType, OauthMemberClient> mapping;
 
@@ -25,13 +27,21 @@ public class OauthMemberClientComposite {
     }
 
     public OauthMember fetch(OauthServerType oauthServerType, String authCode) {
-        return getClient(oauthServerType).fetch(authCode);
+        OauthMember oauthMember = getClient(oauthServerType).fetch(authCode);
+
+        log.info("oauthMember.getEmail() = {}", oauthMember.getEmail());
+
+        return oauthMember;
     }
 
     private OauthMemberClient getClient(OauthServerType oauthServerType) {
-        return Optional.ofNullable(mapping.get(oauthServerType))
-                       .orElseThrow(
-                               () -> new RuntimeException(ExceptionStatus.NOT_EXISTED_SOCIAL_TYPE.getMessage())
-                       );
+        OauthMemberClient oAuthMemberClient = Optional.ofNullable(mapping.get(oauthServerType))
+                                                      .orElseThrow(
+                                                              () -> new RuntimeException(ExceptionStatus.NOT_EXISTED_SOCIAL_TYPE.getMessage())
+                                                      );
+
+        log.info("(oAuthMemberClient == null) = {}", oAuthMemberClient == null);
+
+        return oAuthMemberClient;
     }
 }

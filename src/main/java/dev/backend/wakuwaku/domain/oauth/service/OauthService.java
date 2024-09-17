@@ -27,8 +27,14 @@ public class OauthService {
         try {
             oauthMember = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
+            log.info("oauthMember.getEmail() = {}", oauthMember.getEmail());
+            log.info("oauthMember = {}", oauthMember);
+
         } catch (Exception e) {
             log.error("Failed to fetch OAuth member: {}", e.getMessage(), e);
+            log.error("OAuthService Error getCause().getMessage() = {}", e.getCause().getMessage());
+            log.error("OAuthService Error getClass().getSimpleName() = {}", e.getClass().getSimpleName());
+            log.error("OAuthService Error getMessage().getClass().getSimpleName() = {}", e.getMessage().getClass().getSimpleName());
 
             throw WakuWakuException.FAILED_TO_LOGIN;
         }
