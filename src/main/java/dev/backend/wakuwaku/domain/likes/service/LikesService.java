@@ -123,13 +123,9 @@ public class LikesService {
 
         List<Likes> likes = likesPage.getContent();
 
-        List<Restaurant> likesRestaurants = restaurantRepository.findAllByPlaceIds(likes.stream()
-                                                                                                .map(likesList -> likesList.getRestaurant().getPlaceId())
-                                                                                                .toList());
-
         int totalPages = likesPage.getTotalPages();
 
-        return new AllLikesResponse(likesRestaurants, totalPages);
+        return new AllLikesResponse(likes, totalPages);
     }
 }
 

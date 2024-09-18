@@ -21,3 +21,10 @@ services:
       - /etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
     restart: always
+
+  ec2:
+    image: prom/node-exporter
+    container_name: ec2-info
+    ports:
+      - 9100:9100
+    restart: always

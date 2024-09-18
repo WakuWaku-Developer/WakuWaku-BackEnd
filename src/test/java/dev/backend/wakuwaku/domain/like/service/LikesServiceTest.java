@@ -234,20 +234,25 @@ class LikesServiceTest {
         Restaurant restaurant1 = createRestaurant();
         Restaurant restaurant2 = createRestaurant();
         Restaurant restaurant3 = createRestaurant();
+        Restaurant restaurant4 = createRestaurant();
+        Restaurant restaurant5 = createRestaurant();
 
-        List<Likes> likesList = new ArrayList<>();
-        likesList.add(createLikes(member, restaurant1));
-        likesList.add(createLikes(member, restaurant2));
-        likesList.add(createLikes(member, restaurant3));
+        Likes likes1 = createLikes(member, restaurant1);
+        ReflectionTestUtils.setField(likes1, "id", 1L);
 
-        List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(restaurant1);
-        restaurants.add(restaurant2);
-        restaurants.add(restaurant3);
+        Likes likes2 = createLikes(member, restaurant2);
+        ReflectionTestUtils.setField(likes2, "id", 2L);
 
-        List<String> placeIds = restaurants.stream()
-                                           .map(Restaurant::getPlaceId)
-                                           .toList();
+        Likes likes3 = createLikes(member, restaurant3);
+        ReflectionTestUtils.setField(likes3, "id", 3L);
+
+        Likes likes4 = createLikes(member, restaurant4);
+        ReflectionTestUtils.setField(likes4, "id", 4L);
+
+        Likes likes5 = createLikes(member, restaurant5);
+        ReflectionTestUtils.setField(likes5, "id", 5L);
+
+        List<Likes> likesList = List.of(likes1, likes2, likes3, likes4, likes5);
 
         // 0번 페이지 + 10개의 사이즈
         Pageable pageable = PageRequest.of(0, 10);
@@ -255,17 +260,15 @@ class LikesServiceTest {
         Page<Likes> likesPage = new PageImpl<>(likesList, pageable, likesList.size());
 
         given(likesRepository.findAllByMemberId(MEMBER_ID, pageable)).willReturn(likesPage);
-        given(restaurantRepository.findAllByPlaceIds(placeIds)).willReturn(restaurants);
 
         // when
         AllLikesResponse paginatedLikesList = likesService.getPaginatedLikesList(MEMBER_ID, pageable);
 
         // then
         then(likesRepository).should().findAllByMemberId(MEMBER_ID, pageable);
-        then(restaurantRepository).should().findAllByPlaceIds(placeIds);
 
         assertThat(paginatedLikesList).isNotNull();
-        assertThat(paginatedLikesList.getLikesRestaurants()).hasSize(3);
+        assertThat(paginatedLikesList.getLikesRestaurants()).hasSize(5);
         assertThat(paginatedLikesList.getTotalPages()).isEqualTo(1);
     }
 
