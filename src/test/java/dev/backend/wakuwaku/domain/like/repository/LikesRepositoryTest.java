@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.like.repository;
 
-import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
 import dev.backend.wakuwaku.domain.likes.repository.LikesRepository;
 import dev.backend.wakuwaku.domain.member.entity.Member;
@@ -97,7 +97,7 @@ class LikesRepositoryTest {
         Likes like = Likes.builder()
                           .member(testMember)
                           .restaurant(saveRestaurant)
-                          .likesStatus(LikesStatusType.Y)
+                          .status(Status.ACTIVE)
                           .build();
 
         likesRepository.save(like);
@@ -117,7 +117,7 @@ class LikesRepositoryTest {
         assertThat(foundLike).isPresent();
         assertThat(foundLike.get().getMember().getId()).isEqualTo(memberId);
         assertThat(foundLike.get().getRestaurant().getId()).isEqualTo(restaurantId);
-        assertThat(foundLike.get().getLikesStatus()).isEqualTo(LikesStatusType.Y);
+        assertThat(foundLike.get().getStatus()).isEqualTo(Status.ACTIVE);
     }
 
     @DisplayName("존재하지 않는 회원과 식당 ID로 찜 조회 시 비어있는 결과 반환")
@@ -153,7 +153,7 @@ class LikesRepositoryTest {
         Restaurant restaurant99 = restaurantRepository.save(createRestaurant(99));
 
         Likes likes99 = likesRepository.save(createLikes(member, restaurant99));
-        likes99.updateLikeStatus(LikesStatusType.N);
+        likes99.updateLikeStatus(Status.INACTIVE);
 
         // when
         List<Likes> likes = likesRepository.findAllByMemberId(member.getId());
@@ -186,7 +186,7 @@ class LikesRepositoryTest {
         Restaurant restaurant = restaurantRepository.save(createRestaurant(99));
 
         Likes likes = likesRepository.save(createLikes(member, restaurant));
-        likes.updateLikeStatus(LikesStatusType.N);
+        likes.updateLikeStatus(Status.INACTIVE);
 
         Pageable pageable = PageRequest.of(1, 10);
 
@@ -249,7 +249,7 @@ class LikesRepositoryTest {
         return Likes.builder()
                     .member(member)
                     .restaurant(restaurant)
-                    .likesStatus(LikesStatusType.Y)
+                    .status(Status.ACTIVE)
                     .build();
     }
 }

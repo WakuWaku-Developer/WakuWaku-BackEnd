@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.like.service;
 
-import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.likes.dto.request.LikesRestaurantRequest;
 import dev.backend.wakuwaku.domain.likes.dto.response.AllLikesResponse;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
@@ -100,7 +100,7 @@ class LikesServiceTest {
         assertEquals(PLACE_ID, like.getRestaurant().getPlaceId());
         assertEquals(RATING, like.getRestaurant().getRating());
 
-        assertEquals((LikesStatusType.Y), like.getLikesStatus());
+        assertEquals((Status.ACTIVE), like.getStatus());
 
     }
 
@@ -116,7 +116,7 @@ class LikesServiceTest {
         Likes existingLikes = Likes.builder()
                                    .member(createMember(1))
                                    .restaurant(restaurant)
-                                   .likesStatus(LikesStatusType.Y)
+                                   .status(Status.ACTIVE)
                                    .build();
 
         given(restaurantRepository.findByPlaceId(likesRestaurantRequest.getPlaceId())).willReturn(Optional.ofNullable(restaurant));
@@ -138,7 +138,7 @@ class LikesServiceTest {
         Likes existingLikes = Likes.builder()
                                    .member(createMember(1))
                                    .restaurant(createRestaurant())
-                                   .likesStatus(LikesStatusType.Y)
+                                   .status(Status.ACTIVE)
                                    .build();
 
         when(likesRepository.findById(LIKES_ID)).thenReturn(Optional.of(existingLikes));
@@ -147,7 +147,7 @@ class LikesServiceTest {
         likesService.deleteLikes(LIKES_ID); // 반환값 검증이 아닌 메소드 호출 자체를 테스트
 
         // then
-        assertEquals(LikesStatusType.N, existingLikes.getLikesStatus()); // 상태가 변경되었는지 검증
+        assertEquals(Status.INACTIVE, existingLikes.getStatus()); // 상태가 변경되었는지 검증
     }
 
     @Test
@@ -157,9 +157,6 @@ class LikesServiceTest {
         when(likesRepository.findById(LIKES_ID)).thenReturn(Optional.empty());
 
         // when & then
-
-        // --
-        //assertThrows(LIKE_NOT_FOUND_EXCEPTION.getClass(), () -> likeService.deleteLikes(memberId, restaurantId));
         BDDAssertions.thenThrownBy(
                 () -> likesService.deleteLikes(LIKES_ID)
         )
@@ -300,7 +297,7 @@ class LikesServiceTest {
         return Likes.builder()
                     .member(member)
                     .restaurant(restaurant)
-                    .likesStatus(LikesStatusType.Y)
+                    .status(Status.ACTIVE)
                     .build();
     }
 
