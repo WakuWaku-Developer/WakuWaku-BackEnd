@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.oauth.service;
 
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthId;
@@ -103,7 +104,7 @@ class OauthServiceTest {
                                       .build();
 
         existingMember.createId(1L);
-        existingMember.createCheckstatus("N");
+        existingMember.createStatus(Status.INACTIVE);
 
         given(oauthMemberClientComposite.fetch(oauthServerType, AUTH_CODE)).willReturn(oauthMember);
         given(memberRepository.findByEmail(EMAIL)).willReturn(Optional.of(existingMember));
@@ -122,7 +123,7 @@ class OauthServiceTest {
         assertThat(member.getNickname()).isEqualTo(existingMember.getNickname());
         assertThat(member.getProfileImageUrl()).isEqualTo(existingMember.getProfileImageUrl());
         assertThat(member.getRole()).isEqualTo(existingMember.getRole());
-        assertThat(existingMember.getCheckStatus()).isEqualTo("Y");
+        assertThat(existingMember.getStatus()).isEqualTo(Status.ACTIVE);
 
         then(memberRepository).should().findByEmail(EMAIL);
     }

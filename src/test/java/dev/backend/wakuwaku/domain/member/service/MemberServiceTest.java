@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.member.service;
 
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
@@ -179,7 +180,7 @@ class MemberServiceTest {
         Long memberId = 1L;
         Member member = new Member();
         member.createId(memberId);
-        member.updateCheckStatus("Y");
+        member.updateStatus(Status.ACTIVE);
 
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
@@ -188,7 +189,7 @@ class MemberServiceTest {
 
         // then
         then(memberRepository).should().findById(memberId);
-        assertThat(member.getCheckStatus()).isEqualTo("N");
+        assertThat(member.getStatus()).isEqualTo(Status.INACTIVE);
         then(memberRepository).should().save(member);
     }
 
