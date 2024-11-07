@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.oauth.service;
 
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthMember;
@@ -51,8 +52,8 @@ public class OauthService {
                                                 )
                                         );
 
-        if ("N".equals(member.getCheckStatus())) {
-            member.updateCheckStatus("Y");
+        if (Status.INACTIVE.equals(member.getStatus())) {
+            member.updateStatus(Status.ACTIVE);
         }
 
         return member;
