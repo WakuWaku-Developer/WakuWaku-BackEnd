@@ -4,8 +4,8 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.SimpleType;
 import com.google.gson.Gson;
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.likes.controller.LikesController;
-import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
 import dev.backend.wakuwaku.domain.likes.dto.request.LikesRestaurantRequest;
 import dev.backend.wakuwaku.domain.likes.dto.request.PushLikesRequest;
 import dev.backend.wakuwaku.domain.likes.dto.response.AllLikesResponse;
@@ -36,12 +36,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -102,7 +102,7 @@ class LikesControllerTest {
         testLikes = Likes.builder()
                          .member(testMember)
                          .restaurant(testRestaurant)
-                         .likesStatus(LikesStatusType.Y)
+                         .status(Status.ACTIVE)
                          .build();
     }
 
@@ -110,25 +110,25 @@ class LikesControllerTest {
     @Test
     void getLikes() throws Exception {
         // given
-        Likes likes1 = createLikes(createMember(1), createRestaurant(1), LikesStatusType.Y);
+        Likes likes1 = createLikes(createMember(1), createRestaurant(1), Status.ACTIVE);
         ReflectionTestUtils.setField(likes1, "id", 1L);
 
-        Likes likes2 = createLikes(createMember(1), createRestaurant(2), LikesStatusType.N);
+        Likes likes2 = createLikes(createMember(1), createRestaurant(2), Status.ACTIVE);
         ReflectionTestUtils.setField(likes2, "id", 2L);
 
-        Likes likes3 = createLikes(createMember(1), createRestaurant(3), LikesStatusType.Y);
+        Likes likes3 = createLikes(createMember(1), createRestaurant(3), Status.ACTIVE);
         ReflectionTestUtils.setField(likes3, "id", 3L);
 
-        Likes likes4 = createLikes(createMember(1), createRestaurant(4), LikesStatusType.N);
+        Likes likes4 = createLikes(createMember(1), createRestaurant(4), Status.ACTIVE);
         ReflectionTestUtils.setField(likes4, "id", 4L);
 
-        Likes likes5 = createLikes(createMember(1), createRestaurant(5), LikesStatusType.Y);
+        Likes likes5 = createLikes(createMember(1), createRestaurant(5), Status.ACTIVE);
         ReflectionTestUtils.setField(likes5, "id", 5L);
 
-        Likes likes6 = createLikes(createMember(1), createRestaurant(6), LikesStatusType.N);
+        Likes likes6 = createLikes(createMember(1), createRestaurant(6), Status.ACTIVE);
         ReflectionTestUtils.setField(likes6, "id", 6L);
 
-        Likes likes7 = createLikes(createMember(1), createRestaurant(7), LikesStatusType.Y);
+        Likes likes7 = createLikes(createMember(1), createRestaurant(7), Status.ACTIVE);
         ReflectionTestUtils.setField(likes7, "id", 7L);
 
         List<Likes> likesList = List.of(likes1, likes2, likes3, likes4, likes5, likes6, likes7);
@@ -210,7 +210,7 @@ class LikesControllerTest {
         Likes likes = Likes.builder()
                            .member(member)
                            .restaurant(restaurant)
-                           .likesStatus(LikesStatusType.Y)
+                           .status(Status.ACTIVE)
                            .build();
 
         ReflectionTestUtils.setField(likes, "id", LIKES_ID);
@@ -307,11 +307,11 @@ class LikesControllerTest {
                          .build();
     }
 
-    private Likes createLikes(Member member, Restaurant restaurant, LikesStatusType likesStatus) {
+    private Likes createLikes(Member member, Restaurant restaurant, Status status) {
         return Likes.builder()
                     .member(member)
                     .restaurant(restaurant)
-                    .likesStatus(likesStatus)
+                    .status(status)
                     .build();
     }
 }

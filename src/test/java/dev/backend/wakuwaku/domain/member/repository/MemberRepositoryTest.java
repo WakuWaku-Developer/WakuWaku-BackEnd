@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,5 +82,45 @@ class MemberRepositoryTest {
         assertThat(foundMember.getOauthServerId()).isEqualTo(savedMember.getOauthServerId());
         assertThat(foundMember.getOauthServerType()).isEqualTo(savedMember.getOauthServerType());
         assertThat(foundMember.getRole()).isEqualTo(savedMember.getRole());
+    }
+
+    @DisplayName("ACTIVE 멤버 전체 조회")
+    @Test
+    void findAllByActiveMember() {
+        // given
+        Member member1 = createMember(1);
+        memberRepository.save(member1);
+
+        Member member2 = createMember(2);
+        memberRepository.save(member2);
+
+        Member member3 = createMember(3);
+        memberRepository.save(member3);
+
+        Member member4 = createMember(4);
+        memberRepository.save(member4);
+
+        Member member5 = createMember(5);
+        memberRepository.save(member5);
+
+        member5.deactivate();
+
+        // when
+        List<Member> allByActiveMember = memberRepository.findAllByActiveMember();
+
+        // then
+        assertThat(allByActiveMember).hasSize(5);
+    }
+
+    private Member createMember(int number) {
+        return Member.builder()
+                .oauthServerId("testOauthServerId" + number)
+                .oauthServerType(OauthServerType.NAVER)
+                .email("test" + number + "@example.com")
+                .birthday("199" + number + "-0" + number + "-0" + number)
+                .nickname("testNickname" + number)
+                .profileImageUrl("http://example.com/image" + number + ".jpg")
+                .role(Role.USER)
+                .build();
     }
 }

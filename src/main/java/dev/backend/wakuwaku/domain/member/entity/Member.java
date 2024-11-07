@@ -1,10 +1,14 @@
 package dev.backend.wakuwaku.domain.member.entity;
 
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.StatusEntity;
 import dev.backend.wakuwaku.domain.oauth.dto.OauthServerType;
 import dev.backend.wakuwaku.domain.oauth.dto.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
 
@@ -62,7 +66,7 @@ public class Member extends StatusEntity {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
-        this.checkStatus = "Y"; // 회원 가입 시 기본값 설정
+        this.status = Status.ACTIVE; // 회원 가입 시 기본값 설정
     }
 
     public void updateNickname(String nickname) {
@@ -77,12 +81,12 @@ public class Member extends StatusEntity {
         this.birthday = birthday;
     }
 
-    public void updateCheckStatus(String checkStatus) {
-        this.checkStatus = checkStatus;
+    public void updateStatus(Status status) {
+        this.status = status;
     }
 
     public void deactivate() {
-        this.checkStatus = "N";
+        this.status = Status.INACTIVE;
     }
 
     /**
@@ -92,8 +96,8 @@ public class Member extends StatusEntity {
         this.email = email;
     }
 
-    public void createCheckstatus(String checkStatus) {
-        this.checkStatus = checkStatus;
+    public void createStatus(Status status) {
+        this.status = status;
     }
 
     public void createId(Long id) {

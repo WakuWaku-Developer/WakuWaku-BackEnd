@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.member.service;
 
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
@@ -21,7 +22,7 @@ public class MemberService {
     protected void validateDuplicateMember(Member member) {
         memberRepository.findByEmail(member.getEmail())
                         .ifPresent(m -> {
-                            if (!m.getCheckStatus().equals("N")) {
+                            if (!m.getStatus().equals(Status.INACTIVE)) {
                                 throw DUPLICATED_EMAIL;
                             }
                         });
@@ -31,7 +32,7 @@ public class MemberService {
     회원 리스트
      */
     public List<Member> findAll() {
-        return memberRepository.findAll();
+        return memberRepository.findAllByActiveMember();
     }
 
     /*

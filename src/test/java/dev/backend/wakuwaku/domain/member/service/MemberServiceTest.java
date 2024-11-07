@@ -1,5 +1,6 @@
 package dev.backend.wakuwaku.domain.member.service;
 
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.member.dto.request.MemberUpdateRequest;
 import dev.backend.wakuwaku.domain.member.entity.Member;
 import dev.backend.wakuwaku.domain.member.repository.MemberRepository;
@@ -52,7 +53,7 @@ class MemberServiceTest {
 
         Member existingMember = new Member();
 
-        existingMember.updateCheckStatus("Y"); // "Y"로 설정하여 중복 상황
+        existingMember.updateStatus(Status.ACTIVE); // "Y"로 설정하여 중복 상황
 
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
@@ -85,7 +86,7 @@ class MemberServiceTest {
     @DisplayName("모든 회원 조회 - 성공")
     void findAll() {
         // given
-        given(memberRepository.findAll()).willReturn(List.of(member));
+        given(memberRepository.findAllByActiveMember()).willReturn(List.of(member));
 
         // when
         List<Member> allMembers = memberService.findAll();
@@ -93,7 +94,7 @@ class MemberServiceTest {
         // then
         assertThat(allMembers).hasSize(1);
         assertThat(allMembers.get(0)).isEqualTo(member);
-        then(memberRepository).should().findAll();
+        then(memberRepository).should().findAllByActiveMember();
     }
 
     @Test
@@ -179,7 +180,7 @@ class MemberServiceTest {
         Long memberId = 1L;
         Member member = new Member();
         member.createId(memberId);
-        member.updateCheckStatus("Y");
+        member.updateStatus(Status.ACTIVE);
 
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
@@ -188,7 +189,7 @@ class MemberServiceTest {
 
         // then
         then(memberRepository).should().findById(memberId);
-        assertThat(member.getCheckStatus()).isEqualTo("N");
+        assertThat(member.getStatus()).isEqualTo(Status.INACTIVE);
         then(memberRepository).should().save(member);
     }
 
