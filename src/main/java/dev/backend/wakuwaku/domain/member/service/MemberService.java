@@ -32,7 +32,7 @@ public class MemberService {
     회원 리스트
      */
     public List<Member> findAll() {
-        return memberRepository.findAll();
+        return memberRepository.findAllByActiveMember();
     }
 
     /*
