@@ -1,6 +1,6 @@
 package dev.backend.wakuwaku.domain.likes.service;
 
-import dev.backend.wakuwaku.domain.likes.dto.LikesStatusType;
+import dev.backend.wakuwaku.domain.Status;
 import dev.backend.wakuwaku.domain.likes.dto.request.LikesRestaurantRequest;
 import dev.backend.wakuwaku.domain.likes.dto.response.AllLikesResponse;
 import dev.backend.wakuwaku.domain.likes.entity.Likes;
@@ -43,12 +43,12 @@ public class LikesService {
         return likesRepository.findByMemberIdAndRestaurantId(memberId, restaurant.getId())
                               .map(likes -> {
                                   // 이미 찜이 되어있을 때
-                                  if (LikesStatusType.Y.equals(likes.getLikesStatus())) {
+                                  if (Status.ACTIVE.equals(likes.getStatus())) {
                                       throw ALREADY_LIKED_EXCEPTION;
                                   }
 
                                   // 찜 상태 N -> Y로 업데이트
-                                  likes.updateLikeStatus(LikesStatusType.Y);  // "N" 상태인 경우 "Y"로 업데이트
+                                  likes.updateLikeStatus(Status.ACTIVE);  // "N" 상태인 경우 "Y"로 업데이트
 
                                   return likes;
                               })
@@ -86,7 +86,7 @@ public class LikesService {
         Likes newLikes = Likes.builder()
                 .member(member)
                 .restaurant(restaurant)
-                .likesStatus(LikesStatusType.Y)
+                .status(Status.ACTIVE)
                 .build();
 
         likesRepository.save(newLikes);
@@ -103,7 +103,7 @@ public class LikesService {
         Likes likes = likesRepository.findById(likesId)
                                      .orElseThrow(() -> LIKE_NOT_FOUND_EXCEPTION);  // 찜이 없으면 예외 발생
 
-        likes.updateLikeStatus(LikesStatusType.N);  // 찜 상태를 "N"으로 변경
+        likes.updateLikeStatus(Status.INACTIVE);  // 찜 상태를 "N"으로 변경
     }
 
     public List<String> getLikedRestaurantPlaceIds(Member member) {
