@@ -53,7 +53,7 @@ class MemberServiceTest {
 
         Member existingMember = new Member();
 
-        existingMember.updateCheckStatus("Y"); // "Y"로 설정하여 중복 상황
+        existingMember.updateStatus(Status.ACTIVE); // "Y"로 설정하여 중복 상황
 
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(existingMember));
 
@@ -86,7 +86,7 @@ class MemberServiceTest {
     @DisplayName("모든 회원 조회 - 성공")
     void findAll() {
         // given
-        given(memberRepository.findAll()).willReturn(List.of(member));
+        given(memberRepository.findAllByActiveMember()).willReturn(List.of(member));
 
         // when
         List<Member> allMembers = memberService.findAll();
@@ -94,7 +94,7 @@ class MemberServiceTest {
         // then
         assertThat(allMembers).hasSize(1);
         assertThat(allMembers.get(0)).isEqualTo(member);
-        then(memberRepository).should().findAll();
+        then(memberRepository).should().findAllByActiveMember();
     }
 
     @Test
